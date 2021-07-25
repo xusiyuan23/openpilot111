@@ -5,7 +5,7 @@ from selfdrive.car.interfaces import CarStateBase
 from opendbc.can.parser import CANParser
 from selfdrive.config import Conversions as CV
 from selfdrive.car.toyota.values import CAR, DBC, STEER_THRESHOLD, NO_STOP_TIMER_CAR, TSS2_CAR
-
+from common.params import Params
 
 class CarState(CarStateBase):
   def __init__(self, CP):
@@ -19,6 +19,8 @@ class CarState(CarStateBase):
     self.needs_angle_offset = True
     self.accurate_steer_angle_seen = False
     self.angle_offset = 0.
+    # dp
+    self.dp_toyota_zss = Params().get('dp_toyota_zss') == b'1'
 
     self.low_speed_lockout = False
     self.acc_type = 1
@@ -35,7 +37,10 @@ class CarState(CarStateBase):
       ret.gas = (cp.vl["GAS_SENSOR"]["INTERCEPTOR_GAS"] + cp.vl["GAS_SENSOR"]["INTERCEPTOR_GAS2"]) / 2.
       ret.gasPressed = ret.gas > 15
     else:
-      ret.gas = cp.vl["GAS_PEDAL"]["GAS_PEDAL"]
+      if self.CP.carFingerprint == CAR.LEXUS_ISH:
+        ret.gas = cp.vl["GAS_PEDAL_ALT"]['GAS_PEDAL']
+      else:
+        ret.gas = cp.vl["GAS_PEDAL"]['GAS_PEDAL']
       ret.gasPressed = cp.vl["PCM_CRUISE"]["GAS_RELEASED"] == 0
 
     ret.wheelSpeeds.fl = cp.vl["WHEEL_SPEEDS"]["WHEEL_SPEED_FL"] * CV.KPH_TO_MS
@@ -48,11 +53,14 @@ class CarState(CarStateBase):
     ret.standstill = ret.vEgoRaw < 0.001
 
     # Some newer models have a more accurate angle measurement in the TORQUE_SENSOR message. Use if non-zero
-    if abs(cp.vl["STEER_TORQUE_SENSOR"]["STEER_ANGLE"]) > 1e-3:
+    if self.dp_toyota_zss or abs(cp.vl["STEER_TORQUE_SENSOR"]["STEER_ANGLE"]) > 1e-3:
       self.accurate_steer_angle_seen = True
 
     if self.accurate_steer_angle_seen:
-      ret.steeringAngleDeg = cp.vl["STEER_TORQUE_SENSOR"]["STEER_ANGLE"] - self.angle_offset
+      if self.dp_toyota_zss:
+        ret.steeringAngleDeg = cp.vl["SECONDARY_STEER_ANGLE"]["ZORRO_STEER"] - self.angle_offset
+      else:
+        ret.steeringAngleDeg = cp.vl["STEER_TORQUE_SENSOR"]["STEER_ANGLE"] - self.angle_offset
       if self.needs_angle_offset:
         angle_wheel = cp.vl["STEER_ANGLE_SENSOR"]["STEER_ANGLE"] + cp.vl["STEER_ANGLE_SENSOR"]["STEER_FRACTION"]
         if abs(angle_wheel) > 1e-3:
@@ -74,7 +82,7 @@ class CarState(CarStateBase):
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
     ret.steerWarning = cp.vl["EPS_STATUS"]["LKA_STATE"] not in [1, 5]
 
-    if self.CP.carFingerprint == CAR.LEXUS_IS:
+    if self.CP.carFingerprint in [CAR.LEXUS_IS, CAR.LEXUS_ISH]:
       ret.cruiseState.available = cp.vl["DSU_CRUISE"]["MAIN_ON"] != 0
       ret.cruiseState.speed = cp.vl["DSU_CRUISE"]["SET_SPEED"] * CV.KPH_TO_MS
     else:
@@ -88,7 +96,7 @@ class CarState(CarStateBase):
     # these cars are identified by an ACC_TYPE value of 2.
     # TODO: it may be possible to avoid the lockout and gain stop and go if you
     # send your own ACC_CONTROL msg on startup with ACC_TYPE set to 1
-    if (self.CP.carFingerprint not in TSS2_CAR and self.CP.carFingerprint != CAR.LEXUS_IS) or \
+    if (self.CP.carFingerprint not in TSS2_CAR and self.CP.carFingerprint not in [CAR.LEXUS_IS, CAR.LEXUS_ISH]) or \
        (self.CP.carFingerprint in TSS2_CAR and self.acc_type == 1):
       self.low_speed_lockout = cp.vl["PCM_CRUISE_2"]["LOW_SPEED_LOCKOUT"] == 2
 
@@ -123,7 +131,6 @@ class CarState(CarStateBase):
       ("STEER_ANGLE", "STEER_ANGLE_SENSOR", 0),
       ("GEAR", "GEAR_PACKET", 0),
       ("BRAKE_PRESSED", "BRAKE_MODULE", 0),
-      ("GAS_PEDAL", "GAS_PEDAL", 0),
       ("WHEEL_SPEED_FL", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_FR", "WHEEL_SPEEDS", 0),
       ("WHEEL_SPEED_RL", "WHEEL_SPEEDS", 0),
@@ -155,14 +162,13 @@ class CarState(CarStateBase):
       ("ESP_CONTROL", 3),
       ("EPS_STATUS", 25),
       ("BRAKE_MODULE", 40),
-      ("GAS_PEDAL", 33),
       ("WHEEL_SPEEDS", 80),
       ("STEER_ANGLE_SENSOR", 80),
       ("PCM_CRUISE", 33),
       ("STEER_TORQUE_SENSOR", 50),
     ]
 
-    if CP.carFingerprint == CAR.LEXUS_IS:
+    if CP.carFingerprint in [CAR.LEXUS_IS, CAR.LEXUS_ISH]:
       signals.append(("MAIN_ON", "DSU_CRUISE", 0))
       signals.append(("SET_SPEED", "DSU_CRUISE", 0))
       checks.append(("DSU_CRUISE", 5))
@@ -171,6 +177,13 @@ class CarState(CarStateBase):
       signals.append(("SET_SPEED", "PCM_CRUISE_2", 0))
       signals.append(("LOW_SPEED_LOCKOUT", "PCM_CRUISE_2", 0))
       checks.append(("PCM_CRUISE_2", 33))
+
+    if CP.carFingerprint == CAR.LEXUS_ISH:
+      signals.append(("GAS_PEDAL", "GAS_PEDAL_ALT", 0))
+      checks.append(("GAS_PEDAL_ALT", 33))
+    else:
+      signals.append(("GAS_PEDAL", "GAS_PEDAL", 0))
+      checks.append(("GAS_PEDAL", 33))
 
     # add gas interceptor reading if we are using it
     if CP.enableGasInterceptor:
@@ -188,6 +201,9 @@ class CarState(CarStateBase):
       checks += [
         ("BSM", 1)
       ]
+
+    if Params().get('dp_toyota_zss') == b'1':
+      signals += [("ZORRO_STEER", "SECONDARY_STEER_ANGLE", 0)]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0)
 

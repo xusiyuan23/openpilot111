@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-export GIT_COMMITTER_NAME="Vehicle Researcher"
-export GIT_COMMITTER_EMAIL="user@comma.ai"
-export GIT_AUTHOR_NAME="Vehicle Researcher"
-export GIT_AUTHOR_EMAIL="user@comma.ai"
+export GIT_COMMITTER_NAME="rav4kumar"
+export GIT_COMMITTER_EMAIL=" 36933347+rav4kumar@users.noreply.github.com"
+export GIT_AUTHOR_NAME="rav4kumar"
+export GIT_AUTHOR_EMAIL=" 36933347+rav4kumar@users.noreply.github.com"
 
 export GIT_SSH_COMMAND="ssh -i /data/gitkey"
 
@@ -17,7 +17,7 @@ if [ ! -z "$CLEAN" ]; then
 
   # Create git repo
   git init
-  git remote add origin git@github.com:commaai/openpilot.git
+  git remote add origin git@github.com:rav4kumar/dp-devel.git
   git fetch origin devel-staging
 else
   cd /data/openpilot
@@ -26,7 +26,6 @@ else
 fi
 
 git fetch origin release2-staging
-git fetch origin dashcam-staging
 
 # Create release2 with no history
 if [ ! -z "$CLEAN" ]; then
@@ -41,19 +40,23 @@ echo "#define COMMA_VERSION \"$VERSION-release\"" > selfdrive/common/version.h
 git commit -m "openpilot v$VERSION"
 
 # Build signed panda firmware
-pushd panda/
-CERT=/tmp/pandaextra/certs/release RELEASE=1 scons -u .
-mv board/obj/panda.bin.signed /tmp/panda.bin.signed
-popd
+#pushd panda/
+#CERT=/data/openpilot/panda/certs/debug RELEASE=0 scons -u .
+#mv board/obj/panda.bin.signed /tmp/panda.bin.signed
+#popd
 
 # Build stuff
 ln -sfn /data/openpilot /data/pythonpath
 export PYTHONPATH="/data/openpilot:/data/openpilot/pyextra"
 scons -j3
 
-# Run tests
-python selfdrive/manager/test/test_manager.py
-selfdrive/car/tests/test_car_interfaces.py
+# Ensure no submodules in release
+if test "$(git submodule--helper list | wc -l)" -gt "0"; then
+  echo "submodules found:"
+  git submodule--helper list
+  exit 1
+fi
+git submodule status
 
 # Cleanup
 find . -name '*.a' -delete
@@ -61,13 +64,14 @@ find . -name '*.o' -delete
 find . -name '*.os' -delete
 find . -name '*.pyc' -delete
 find . -name '__pycache__' -delete
+find selfdrive/ui -name '*.h' -delete
 rm -rf panda/board panda/certs panda/crypto
 rm -rf .sconsign.dblite Jenkinsfile release/
 rm models/supercombo.dlc
 
 # Move back signed panda fw
-mkdir -p panda/board/obj
-mv /tmp/panda.bin.signed panda/board/obj/panda.bin.signed
+#mkdir -p panda/board/obj
+#mv /tmp/panda.bin.signed panda/board/obj/panda.bin.signed
 
 # Restore phonelibs
 git checkout phonelibs/
@@ -82,15 +86,7 @@ git commit --amend -m "openpilot v$VERSION"
 # Print committed files that are normally gitignored
 #git status --ignored
 
-if [ ! -z "$PUSH" ]; then
-  git remote set-url origin git@github.com:commaai/openpilot.git
+#git remote set-url origin git@github.com:rav4kumar/dp-devel.git
 
-  # Push to release2-staging
-  git push -f origin release2-staging
-
-  # Create dashcam release
-  git rm selfdrive/car/*/carcontroller.py
-
-  git commit -m "create dashcam release from release2"
-  git push -f origin release2-staging:dashcam-staging
-fi
+# Push to release2-staging
+#git push -f origin release2-staging
