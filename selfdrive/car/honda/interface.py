@@ -134,7 +134,7 @@ class CarInterface(CarInterfaceBase):
       ret.enableGasInterceptor = 0x201 in fingerprint[0]
       ret.openpilotLongitudinalControl = ret.enableCamera
 
-    if candidate == CAR.CRV_5G:
+    if candidate in (CAR.CRV_5G, CAR.CRV_HYBRID,):
       ret.enableBsm = 0x12f8bfa7 in fingerprint[0]
 
     # Accord 1.5T CVT has different gearbox message
