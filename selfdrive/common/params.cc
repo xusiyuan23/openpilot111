@@ -47,13 +47,13 @@ int mkdir_p(std::string path) {
   for (char *p = _path + 1; *p; p++) {
     if (*p == '/') {
       *p = '\0'; // Temporarily truncate
-      if (mkdir(_path, 0775) != 0) {
+      if (mkdir(_path, 0777) != 0) {
         if (errno != EEXIST) return -1;
       }
       *p = '/';
     }
   }
-  if (mkdir(_path, 0775) != 0) {
+  if (mkdir(_path, 0777) != 0) {
     if (errno != EEXIST) return -1;
   }
   return 0;
@@ -104,7 +104,7 @@ class FileLock {
   FileLock(const std::string& file_name, int op) : fn_(file_name), op_(op) {}
 
   void lock() {
-    fd_ = HANDLE_EINTR(open(fn_.c_str(), O_CREAT, 0775));
+    fd_ = HANDLE_EINTR(open(fn_.c_str(), O_CREAT, 0777));
     if (fd_ < 0) {
       LOGE("Failed to open lock file %s, errno=%d", fn_.c_str(), errno);
       return;
@@ -182,11 +182,16 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"RecordFrontLock", PERSISTENT},  // for the internal fleet
     {"ReleaseNotes", PERSISTENT},
     {"ShouldDoUpdate", CLEAR_ON_MANAGER_START},
+    {"ShowDebugUI", PERSISTENT},
+    {"SpeedLimitControl", PERSISTENT},
+    {"SpeedLimitPercOffset", PERSISTENT},
     {"SubscriberInfo", PERSISTENT},
     {"SshEnabled", PERSISTENT},
     {"TermsVersion", PERSISTENT},
     {"Timezone", PERSISTENT},
     {"TrainingVersion", PERSISTENT},
+    {"TurnSpeedControl", PERSISTENT},
+    {"TurnVisionControl", PERSISTENT},
     {"UpdateAvailable", CLEAR_ON_MANAGER_START},
     {"UpdateFailedCount", CLEAR_ON_MANAGER_START},
     {"Version", PERSISTENT},
@@ -205,6 +210,89 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"Offroad_NvmeMissing", CLEAR_ON_MANAGER_START},
     {"ForcePowerDown", CLEAR_ON_MANAGER_START},
     {"JoystickDebugMode", CLEAR_ON_MANAGER_START | CLEAR_ON_IGNITION_OFF},
+    // dp
+    {"dp_api_custom", PERSISTENT},
+    {"dp_api_custom_url", PERSISTENT},
+    {"dp_atl", PERSISTENT},
+    {"dp_atl_op_long", PERSISTENT},
+    {"dp_dashcamd", PERSISTENT},
+    {"dp_auto_shutdown", PERSISTENT},
+    {"dp_auto_shutdown_in", PERSISTENT},
+    {"dp_updated", PERSISTENT},
+    {"dp_logger", PERSISTENT},
+    {"dp_athenad", PERSISTENT},
+    {"dp_uploader", PERSISTENT},
+    {"dp_hotspot_on_boot", PERSISTENT},
+    {"dp_lateral_mode", PERSISTENT},
+    {"dp_signal_off_delay", PERSISTENT},
+    {"dp_lc_min_mph", PERSISTENT},
+    {"dp_lc_auto_min_mph", PERSISTENT},
+    {"dp_lc_auto_delay", PERSISTENT},
+    {"dp_lane_less_mode_ctrl", PERSISTENT},
+    {"dp_lane_less_mode", PERSISTENT},
+    {"dp_allow_gas", PERSISTENT},
+    {"dp_following_profile_ctrl", PERSISTENT},
+    {"dp_following_profile", PERSISTENT},
+    {"dp_accel_profile_ctrl", PERSISTENT},
+    {"dp_accel_profile", PERSISTENT},
+    {"dp_gear_check", PERSISTENT},
+    {"dp_speed_check", PERSISTENT},
+    {"dp_temp_monitor", PERSISTENT},
+    {"dp_ui_display_mode", PERSISTENT},
+    {"dp_ui_speed", PERSISTENT},
+    {"dp_ui_event", PERSISTENT},
+    {"dp_ui_max_speed", PERSISTENT},
+    {"dp_ui_face", PERSISTENT},
+    {"dp_ui_lane", PERSISTENT},
+    {"dp_ui_lead", PERSISTENT},
+    {"dp_ui_side", PERSISTENT},
+    {"dp_ui_top", PERSISTENT},
+    {"dp_ui_blinker", PERSISTENT},
+    {"dp_ui_brightness", PERSISTENT},
+    {"dp_ui_volume", PERSISTENT},
+    {"dp_lexus_rx_rpm_fix", PERSISTENT},
+    {"dp_toyota_ldw", PERSISTENT},
+    {"dp_toyota_sng", PERSISTENT},
+    {"dp_toyota_zss", PERSISTENT},
+    {"dp_toyota_fp_btn_link", PERSISTENT},
+    {"dp_toyota_ap_btn_link", PERSISTENT},
+    {"dp_toyota_disable_relay", PERSISTENT},
+    {"dp_toyota_cruise_override", PERSISTENT},
+    {"dp_toyota_cruise_override_vego", PERSISTENT},
+    {"dp_toyota_cruise_override_at", PERSISTENT},
+    {"dp_toyota_cruise_override_speed", PERSISTENT},
+    {"dp_hkg_smart_mdps", PERSISTENT},
+    {"dp_honda_eps_mod", PERSISTENT},
+    {"dp_honda_kmh_display", PERSISTENT},
+    {"dp_vw_panda", PERSISTENT},
+    {"dp_vw_timebomb_assist", PERSISTENT},
+    {"dp_fan_mode", PERSISTENT},
+    {"dp_last_modified", PERSISTENT},
+    {"dp_camera_offset", PERSISTENT},
+    {"dp_path_offset", PERSISTENT},
+    {"dp_locale", PERSISTENT},
+    {"dp_reg", PERSISTENT},
+    {"dp_sr_learner", PERSISTENT},
+    {"dp_sr_custom", PERSISTENT},
+    {"dp_sr_stock", PERSISTENT},
+    {"dp_lqr", PERSISTENT},
+    {"dp_reset_live_param_on_start", PERSISTENT},
+    {"dp_appd", PERSISTENT},
+    {"dp_jetson", PERSISTENT},
+    {"dp_car_assigned", PERSISTENT},
+    {"dp_car_list", PERSISTENT},
+    {"dp_no_batt", PERSISTENT},
+    {"dp_last_candidate", PERSISTENT},
+    {"dp_prebuilt", PERSISTENT},
+    {"dp_gpxd", PERSISTENT},
+    {"dp_mapd", PERSISTENT},
+    {"dp_otisserv", PERSISTENT},
+    {"dp_mapbox_token_pk", PERSISTENT},
+    {"dp_mapbox_token_sk", PERSISTENT},
+    {"dp_mapbox_full_screen", PERSISTENT},
+    {"dp_mapbox_traffic", PERSISTENT},
+    {"dp_mapbox_gmap_enable", PERSISTENT},
+    {"dp_mapbox_gmap_key", PERSISTENT},
 };
 
 } // namespace
@@ -327,4 +415,8 @@ void Params::clearAll(ParamKeyType key_type) {
   // fsync parent directory
   path = params_path + "/d";
   fsync_dir(path.c_str());
+}
+
+std::string Params::get_params_path() {
+  return params_path;
 }

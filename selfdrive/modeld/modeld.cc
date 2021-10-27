@@ -137,6 +137,8 @@ int main(int argc, char **argv) {
     set_core_affinity(2);
   } else if (Hardware::TICI()) {
     set_core_affinity(7);  
+  } else if (Hardware::JETSON()) {
+    set_core_affinity(1);
   }
   bool wide_camera = Hardware::TICI() ? Params().getBool("EnableWideCamera") : false;
 
@@ -144,7 +146,11 @@ int main(int argc, char **argv) {
   std::thread thread = std::thread(calibration_thread, wide_camera);
 
   // cl init
+  #ifdef XNX
+  cl_device_id device_id = cl_get_device_id(CL_DEVICE_TYPE_GPU);
+  #else
   cl_device_id device_id = cl_get_device_id(CL_DEVICE_TYPE_DEFAULT);
+  #endif
   cl_context context = CL_CHECK_ERR(clCreateContext(NULL, 1, &device_id, NULL, NULL, &err));
 
   // init the models

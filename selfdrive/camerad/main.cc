@@ -21,6 +21,8 @@
 #include "selfdrive/camerad/cameras/camera_qcom2.h"
 #elif WEBCAM
 #include "selfdrive/camerad/cameras/camera_webcam.h"
+#elif MIPI
+#include "selfdrive/camerad/cameras/camera_mipi.h"
 #else
 #include "selfdrive/camerad/cameras/camera_frame_stream.h"
 #endif
@@ -49,9 +51,15 @@ int main(int argc, char *argv[]) {
     set_core_affinity(2);
   } else if (Hardware::TICI()) {
     set_core_affinity(6);
+  } else if (Hardware::JETSON()) {
+    set_core_affinity(0);
   }
 
+  #ifdef XNX
+  cl_device_id device_id = cl_get_device_id(CL_DEVICE_TYPE_GPU);
+  #else
   cl_device_id device_id = cl_get_device_id(CL_DEVICE_TYPE_DEFAULT);
+  #endif
 
    // TODO: do this for QCOM2 too
 #if defined(QCOM)
