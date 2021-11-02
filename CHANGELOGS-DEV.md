@@ -1,3 +1,7 @@
+dragonpilot 0.8.9-4
+========================
+* Minor UI improvement.
+
 dragonpilot 0.8.9-3
 ========================
 * Bug fixes.

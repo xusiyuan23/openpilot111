@@ -61,6 +61,7 @@ class CAR:
   ALPHARD_TSS2 = "TOYOTA ALPHARD 2020"
   LEXUS_ISH = "LEXUS ISH 2017"
   PRIUS_ALPHA = "TOYOTA PRIUS ALPHA 2017"
+  PRIUS_C = "TOYOTA PRIUS C 2016 (MODED)"
 
 # (addr, cars, bus, 1/freq*100, vl)
 STATIC_DSU_MSGS = [
@@ -200,6 +201,7 @@ FINGERPRINTS = {
   # dp - fake values, for generate car selection
   CAR.LEXUS_ISH: [{ 65535: 1 }],
   CAR.PRIUS_ALPHA: [{ 65535: 1 }],
+  CAR.PRIUS_C: [{ 65535: 1 }],
 }
 
 
@@ -1677,6 +1679,7 @@ DBC = {
   CAR.ALPHARD_TSS2: dbc_dict('toyota_nodsu_pt_generated', 'toyota_tss2_adas'),
   CAR.LEXUS_ISH: dbc_dict('lexus_is300h_2017_pt_generated', 'toyota_adas'),
   CAR.PRIUS_ALPHA: dbc_dict('toyota_prius_alpha_2017_pt_generated', 'toyota_adas'),
+  CAR.PRIUS_C: dbc_dict('toyota_priusc_2016_pt_generated', 'toyota_adas'),
 }
 
 
