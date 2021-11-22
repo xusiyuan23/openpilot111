@@ -226,7 +226,7 @@ msgid "Press Resume to Move"
 msgstr "請按 RES 繼續"
 
 #: selfdrive/controls/lib/events.py:438
-msgid "Steer Left to Start Lane Change"
+msgid "Steer Left to Start Lane Change Once Safe"
 msgstr "請往左打方向盤切換至左車道"
 
 #: selfdrive/controls/lib/events.py:439 selfdrive/controls/lib/events.py:447
@@ -236,7 +236,7 @@ msgid "Monitor Other Vehicles"
 msgstr "請注意其它車輛"
 
 #: selfdrive/controls/lib/events.py:446
-msgid "Steer Right to Start Lane Change"
+msgid "Steer Right to Start Lane Change Once Safe"
 msgstr "請往右打方向盤切換至右車道"
 
 #: selfdrive/controls/lib/events.py:454
@@ -244,7 +244,7 @@ msgid "Car Detected in Blindspot"
 msgstr "盲點偵測到車輛"
 
 #: selfdrive/controls/lib/events.py:462
-msgid "Changing Lane"
+msgid "Changing Lanes"
 msgstr "切換車道中"
 
 #: selfdrive/controls/lib/events.py:471

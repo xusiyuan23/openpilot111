@@ -226,7 +226,7 @@ msgid "Press Resume to Move"
 msgstr "Resumeを押して移動します。"
 
 #: selfdrive/controls/lib/events.py:438
-msgid "Steer Left to Start Lane Change"
+msgid "Steer Left to Start Lane Change Once Safe"
 msgstr "左ハンドルで車線変更を開始"
 
 #: selfdrive/controls/lib/events.py:439 selfdrive/controls/lib/events.py:447
@@ -236,7 +236,7 @@ msgid "Monitor Other Vehicles"
 msgstr "他の車両を監視"
 
 #: selfdrive/controls/lib/events.py:446
-msgid "Steer Right to Start Lane Change"
+msgid "Steer Right to Start Lane Change Once Safe"
 msgstr "右ハンドルで車線変更を開始"
 
 #: selfdrive/controls/lib/events.py:454
@@ -244,7 +244,7 @@ msgid "Car Detected in Blindspot"
 msgstr "ブラインドスポットで車両を発見"
 
 #: selfdrive/controls/lib/events.py:462
-msgid "Changing Lane"
+msgid "Changing Lanes"
 msgstr "レーンチェンジ中"
 
 #: selfdrive/controls/lib/events.py:471
