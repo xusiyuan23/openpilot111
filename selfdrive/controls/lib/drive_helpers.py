@@ -85,10 +85,9 @@ def update_v_cruise(v_cruise_kph, buttonEvents, button_timers, enabled, metric):
         break
 
   if button_type:
-    v_cruise_kph = math.floor(v_cruise_kph)
     v_cruise_delta = v_cruise_delta * (5 if long_press else 1)
     if long_press:
-      remainder = v_cruise_kph % v_cruise_delta
+      remainder = round(v_cruise_kph % v_cruise_delta, 1)
       if remainder > 0:
         v_cruise_kph += (v_cruise_delta - remainder) * CRUISE_INTERVAL_SIGN[button_type]
       else:
