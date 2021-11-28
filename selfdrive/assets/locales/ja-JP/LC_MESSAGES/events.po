@@ -239,6 +239,9 @@ msgstr "他の車両を監視"
 msgid "Steer Right to Start Lane Change Once Safe"
 msgstr "右ハンドルで車線変更を開始"
 
+msgid "Auto Lane Change starts in %.1f secs"
+msgstr "自動レーン切り替えが％.1f秒間開始されます"
+
 #: selfdrive/controls/lib/events.py:454
 msgid "Car Detected in Blindspot"
 msgstr "ブラインドスポットで車両を発見"
