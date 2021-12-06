@@ -239,6 +239,9 @@ msgstr "請注意其它車輛"
 msgid "Steer Right to Start Lane Change Once Safe"
 msgstr "請往右打方向盤切換至右車道"
 
+msgid "Auto Lane Change starts in %.1f secs"
+msgstr "自動切換車道即將開啟 %.1f 秒"
+
 #: selfdrive/controls/lib/events.py:454
 msgid "Car Detected in Blindspot"
 msgstr "盲點偵測到車輛"

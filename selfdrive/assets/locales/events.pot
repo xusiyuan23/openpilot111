@@ -240,6 +240,9 @@ msgstr ""
 msgid "Steer Right to Start Lane Change"
 msgstr ""
 
+msgid "Auto Lane Change starts in %.1f secs"
+msgstr ""
+
 #: selfdrive/controls/lib/events.py:454
 msgid "Car Detected in Blindspot"
 msgstr ""
