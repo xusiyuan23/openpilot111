@@ -220,7 +220,7 @@ class CarState(CarStateBase):
 
     # dp - add lead distance to accord, accord h, insight
     if self.CP.carFingerprint in (CAR.ACCORD, CAR.ACCORDH, CAR.INSIGHT):
-      ret.lead_distance = cp.vl["RADAR_HUD"]["LEAD_DISTANCE"]
+      self.lead_distance = cp.vl["RADAR_HUD"]["LEAD_DISTANCE"]
 
     steer_status = self.steer_status_values[cp.vl["STEER_STATUS"]["STEER_STATUS"]]
     ret.steerError = steer_status not in ["NORMAL", "NO_TORQUE_ALERT_1", "NO_TORQUE_ALERT_2", "LOW_SPEED_LOCKOUT", "TMP_FAULT"]
