@@ -1,4 +1,4 @@
-dragonpilot [Latest] - EON/C2 Release
+dragonpilot 2023.02.08 - EON/C2 Release
 ========================
 * Synced with openpilot master 2022.12.14 commits.
 * TWEAK: Ability to disable build-in NAV completely. (reduced CPU/memory load)
