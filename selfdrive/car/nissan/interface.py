@@ -8,7 +8,7 @@ from selfdrive.car.nissan.values import CAR
 class CarInterface(CarInterfaceBase):
 
   @staticmethod
-  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long):
+  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
     ret.carName = "nissan"
     ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.nissan)]
     ret.autoResumeSng = False
@@ -35,9 +35,6 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1492 + STD_CARGO_KG
       ret.wheelbase = 2.824
       ret.centerToFront = ret.wheelbase * 0.44
-
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
 
     return ret
 

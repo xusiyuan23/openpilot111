@@ -4,7 +4,6 @@ from common.conversions import Conversions as CV
 from selfdrive.car.mazda.values import CAR, LKAS_LIMITS
 from selfdrive.car import STD_CARGO_KG, scale_tire_stiffness, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
-from common.params import Params
 
 ButtonType = car.CarState.ButtonEvent.Type
 EventName = car.CarEvent.EventName
@@ -12,12 +11,12 @@ EventName = car.CarEvent.EventName
 class CarInterface(CarInterfaceBase):
 
   @staticmethod
-  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long):
+  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
     ret.carName = "mazda"
     ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.mazda)]
     ret.radarUnavailable = True
 
-    ret.dashcamOnly = candidate not in (CAR.CX5_2022, CAR.CX9_2021) and not Params().get_bool('dp_mazda_dashcam_bypass')
+    ret.dashcamOnly = candidate not in (CAR.CX5_2022, CAR.CX9_2021)
 
     ret.steerActuatorDelay = 0.1
     ret.steerLimitTimer = 0.8
@@ -45,9 +44,6 @@ class CarInterface(CarInterfaceBase):
     if candidate not in (CAR.CX5_2022, ):
       ret.minSteerSpeed = LKAS_LIMITS.DISABLE_SPEED * CV.KPH_TO_MS
 
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
-
     ret.centerToFront = ret.wheelbase * 0.41
 
     # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
@@ -66,7 +62,7 @@ class CarInterface(CarInterfaceBase):
 
     if self.CS.lkas_disabled:
       events.add(EventName.lkasDisabled)
-    elif self.dragonconf.dpMazdaSteerAlert and self.CS.low_speed_alert:
+    elif self.CS.low_speed_alert:
       events.add(EventName.belowSteerSpeed)
 
     ret.events = events.to_msg()

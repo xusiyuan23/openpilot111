@@ -9,7 +9,6 @@ from selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR,
                                         UNSUPPORTED_DSU_CAR
 from opendbc.can.packer import CANPacker
 from common.conversions import Conversions as CV
-from common.params import Params
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
@@ -20,6 +19,7 @@ MAX_STEER_RATE_FRAMES = 18  # tx control frames needed before torque can be cut
 # EPS allows user torque above threshold for 50 frames before permanently faulting
 MAX_USER_TORQUE = 500
 
+# rick - toyota auto lock / unlock
 GearShifter = car.CarState.GearShifter
 UNLOCK_CMD = b'\x40\x05\x30\x11\x00\x40\x00\x00'
 LOCK_CMD = b'\x40\x05\x30\x11\x00\x80\x00\x00'
@@ -36,33 +36,15 @@ class CarController:
     self.standstill_req = False
     self.steer_rate_counter = 0
 
-    self.steer_rate_counter = 0
-
     self.packer = CANPacker(dbc_name)
     self.gas = 0
     self.accel = 0
 
-    # dp
-    self.dp_toyota_sng = False
+    self.dp_auto_lock_gear_prev = GearShifter.park
+    self.dp_auto_lock_once = False
 
-    self.dp_toyota_auto_lock = False
-    self.dp_toyota_auto_unlock = False
-    self.last_gear = GearShifter.park
-    self.lock_once = False
-    self.lat_controller_type = None
-    self.lat_controller_type_prev = None
 
-  def update(self, CC, CS, now_nanos, dragonconf):
-    if dragonconf is not None:
-      self.dp_toyota_sng = dragonconf.dpToyotaSng
-      self.dp_toyota_auto_lock = dragonconf.dpToyotaAutoLock
-      self.dp_toyota_auto_unlock = dragonconf.dpToyotaAutoUnlock
-    self.lat_controller_type = CC.latController
-    if self.lat_controller_type != self.lat_controller_type_prev:
-      self.torque_rate_limits.update(CC.latController)
-    self.lat_controller_type_prev = self.lat_controller_type
-
-    self.dp_toyota_change5speed = Params().get_bool("dp_toyota_change5speed")
+  def update(self, CC, CS, now_nanos):
     actuators = CC.actuators
     hud_control = CC.hudControl
     pcm_cancel_cmd = CC.cruiseControl.cancel
@@ -120,7 +102,6 @@ class CarController:
     if CS.pcm_acc_status != 8:
       # pcm entered standstill or it's disabled
       self.standstill_req = False
-    self.standstill_req = False if self.dp_toyota_sng else self.standstill_req
 
     self.last_steer = apply_steer
     self.last_standstill = CS.out.standstill
@@ -130,17 +111,15 @@ class CarController:
     # dp - door auto lock / unlock logic
     # thanks to AlexandreSato & cydia2020
     # https://github.com/AlexandreSato/animalpilot/blob/personal/doors.py
-    if self.dp_toyota_auto_lock or self.dp_toyota_auto_unlock:
+    if not CS.out.doorOpen:
       gear = CS.out.gearShifter
-      if self.last_gear != gear and gear == GearShifter.park:
-        if self.dp_toyota_auto_unlock:
+      if gear == GearShifter.park and self.dp_auto_lock_gear_prev != gear:
           can_sends.append(make_can_msg(0x750, UNLOCK_CMD, 0))
-        if self.dp_toyota_auto_lock:
-          self.lock_once = False
-      elif self.dp_toyota_auto_lock and not CS.out.doorOpen and gear == GearShifter.drive and not self.lock_once and CS.out.vEgo >= LOCK_AT_SPEED:
+          self.dp_auto_lock_once = False
+      elif gear == GearShifter.drive and not self.dp_auto_lock_once and CS.out.vEgo >= LOCK_AT_SPEED:
         can_sends.append(make_can_msg(0x750, LOCK_CMD, 0))
-        self.lock_once = True
-      self.last_gear = gear
+        self.dp_auto_lock_once = True
+      self.dp_auto_lock_gear_prev = gear
 
     # *** control msgs ***
     # print("steer {0} {1} {2} {3}".format(apply_steer, min_lim, max_lim, CS.steer_torque_motor)
@@ -165,10 +144,10 @@ class CarController:
       if pcm_cancel_cmd and self.CP.carFingerprint in UNSUPPORTED_DSU_CAR:
         can_sends.append(create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
-        can_sends.append(create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, CS.distance, self.dp_toyota_change5speed))
+        can_sends.append(create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type))
         self.accel = pcm_accel_cmd
       else:
-        can_sends.append(create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, CS.distance, self.dp_toyota_change5speed))
+        can_sends.append(create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type))
 
     if self.frame % 2 == 0 and self.CP.enableGasInterceptor and self.CP.openpilotLongitudinalControl:
       # send exactly zero if gas cmd is zero. Interceptor will send the max between read value and gas cmd.
@@ -195,7 +174,7 @@ class CarController:
       if self.frame % 20 == 0 or send_ui:
         can_sends.append(create_ui_command(self.packer, steer_alert, pcm_cancel_cmd, hud_control.leftLaneVisible,
                                            hud_control.rightLaneVisible, hud_control.leftLaneDepart,
-                                           hud_control.rightLaneDepart, CC.latActive, CS.lkas_hud))
+                                           hud_control.rightLaneDepart, CC.enabled, CS.lkas_hud))
 
       if (self.frame % 100 == 0 or send_ui) and self.CP.enableDsu:
         can_sends.append(create_fcw_command(self.packer, fcw_alert))

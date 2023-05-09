@@ -3,18 +3,21 @@ from cereal import car
 from panda import Panda
 from selfdrive.car import STD_CARGO_KG, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
-from selfdrive.car.subaru.values import CAR, GLOBAL_GEN2, PREGLOBAL_CARS
-from common.params import Params
+from selfdrive.car.subaru.values import CAR, GLOBAL_GEN2, PREGLOBAL_CARS, SubaruFlags
 
 
 class CarInterface(CarInterfaceBase):
 
   @staticmethod
-  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long):
+  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
     ret.carName = "subaru"
     ret.radarUnavailable = True
     ret.dashcamOnly = candidate in PREGLOBAL_CARS
     ret.autoResumeSng = False
+
+    # Detect infotainment message sent from the camera
+    if candidate not in PREGLOBAL_CARS and 0x323 in fingerprint[2]:
+      ret.flags |= SubaruFlags.SEND_INFOTAINMENT.value
 
     if candidate in PREGLOBAL_CARS:
       ret.enableBsm = 0x25c in fingerprint[0]
@@ -102,9 +105,6 @@ class CarInterface(CarInterfaceBase):
     else:
       raise ValueError(f"unknown car: {candidate}")
 
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
-    Params().put("dp_lateral_steer_rate_cost", "0.7")
     return ret
 
   # returns a car.CarState

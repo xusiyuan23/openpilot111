@@ -8,14 +8,12 @@ from cereal import car
 from common.basedir import BASEDIR
 from common.conversions import Conversions as CV
 from common.kalman.simple_kalman import KF1D
-from common.numpy_fast import clip, interp
+from common.numpy_fast import clip
 from common.realtime import DT_CTRL
 from selfdrive.car import apply_hysteresis, gen_empty_fingerprint, scale_rot_inertia, scale_tire_stiffness
-from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, apply_center_deadzone
+from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, get_friction
 from selfdrive.controls.lib.events import Events
 from selfdrive.controls.lib.vehicle_model import VehicleModel
-from common.params import Params
-from selfdrive.car.lat_controller_helper import configure_pid_tune, configure_lqr_tune
 
 ButtonType = car.CarState.ButtonEvent.Type
 GearShifter = car.CarState.GearShifter
@@ -66,6 +64,7 @@ class CarInterfaceBase(ABC):
     self.frame = 0
     self.steering_unpressed = 0
     self.low_speed_alert = False
+    self.no_steer_warning = False
     self.silent_steer_warning = True
     self.v_ego_cluster_seen = False
 
@@ -85,10 +84,6 @@ class CarInterfaceBase(ABC):
     if CarController is not None:
       self.CC = CarController(self.cp.dbc_name, CP, self.VM)
 
-    # dp
-    self.dp_last_cruise_actual_enabled = False
-    self.dragonconf = None
-
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
     return ACCEL_MIN, ACCEL_MAX
@@ -98,12 +93,12 @@ class CarInterfaceBase(ABC):
     """
     Parameters essential to controlling the car may be incomplete or wrong without FW versions or fingerprints.
     """
-    return cls.get_params(candidate, gen_empty_fingerprint(), list(), False)
+    return cls.get_params(candidate, gen_empty_fingerprint(), list(), False, False)
 
   @classmethod
-  def get_params(cls, candidate: str, fingerprint: Dict[int, Dict[int, int]], car_fw: List[car.CarParams.CarFw], experimental_long: bool):
+  def get_params(cls, candidate: str, fingerprint: Dict[int, Dict[int, int]], car_fw: List[car.CarParams.CarFw], experimental_long: bool, docs: bool):
     ret = CarInterfaceBase.get_std_params(candidate)
-    ret = cls._get_params(ret, candidate, fingerprint, car_fw, experimental_long)
+    ret = cls._get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs)
 
     # Set common params using fields set by the car interface
     # TODO: get actual value, for now starting with reasonable value for
@@ -120,7 +115,7 @@ class CarInterfaceBase(ABC):
 
   @staticmethod
   @abstractmethod
-  def _get_params(ret: car.CarParams, candidate: str, fingerprint: Dict[int, Dict[int, int]], car_fw: List[car.CarParams.CarFw], experimental_long: bool):
+  def _get_params(ret: car.CarParams, candidate: str, fingerprint: Dict[int, Dict[int, int]], car_fw: List[car.CarParams.CarFw], experimental_long: bool, docs: bool):
     raise NotImplementedError
 
   @staticmethod
@@ -137,15 +132,11 @@ class CarInterfaceBase(ABC):
     return self.get_steer_feedforward_default
 
   @staticmethod
-  def torque_from_lateral_accel_linear(lateral_accel_value, torque_params, lateral_accel_error, lateral_accel_deadzone, friction_compensation):
+  def torque_from_lateral_accel_linear(lateral_accel_value: float, torque_params: car.CarParams.LateralTorqueTuning,
+                                       lateral_accel_error: float, lateral_accel_deadzone: float, friction_compensation: bool) -> float:
     # The default is a linear relationship between torque and lateral acceleration (accounting for road roll and steering friction)
-    friction_interp = interp(
-      apply_center_deadzone(lateral_accel_error, lateral_accel_deadzone),
-      [-FRICTION_THRESHOLD, FRICTION_THRESHOLD],
-      [-torque_params.friction, torque_params.friction]
-    )
-    friction = friction_interp if friction_compensation else 0.0
-    return (lateral_accel_value / torque_params.latAccelFactor) + friction
+    friction = get_friction(lateral_accel_error, lateral_accel_deadzone, FRICTION_THRESHOLD, torque_params, friction_compensation)
+    return (lateral_accel_value / float(torque_params.latAccelFactor)) + friction
 
   def torque_from_lateral_accel(self) -> TorqueFromLateralAccelCallbackType:
     return self.torque_from_lateral_accel_linear
@@ -201,53 +192,11 @@ class CarInterfaceBase(ABC):
     tune.torque.latAccelOffset = 0.0
     tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
 
-  @staticmethod
-  def configure_dp_tune(stock, collection):
-    try:
-      dp_lateral_tune = int(Params().get("dp_lateral_tune").decode('utf-8'))
-    except:
-      dp_lateral_tune = 0
-
-    stock_tune = 0
-    if stock.which() == 'pid':
-      stock_tune = 1
-      collection.pid = stock.pid
-    elif stock.which() == 'lqr':
-      stock_tune = 2
-      collection.lqr = stock.lqr
-    elif stock.which() == 'torque':
-      stock_tune = 3
-      collection.torque = stock.torque
-    elif stock.which() == 'indi':
-      stock_tune = 4
-
-    if dp_lateral_tune > 0 and dp_lateral_tune != stock_tune:
-      if dp_lateral_tune == 1 and collection.pid is not None:
-        stock.pid = collection.pid
-      elif dp_lateral_tune == 2 and collection.lqr is not None:
-        stock.lqr = collection.lqr
-      elif dp_lateral_tune == 3 and collection.torque is not None:
-        stock.torque = collection.torque
-
-  @staticmethod
-  def dp_lat_tune_collection(candidate, collection, steering_angle_deadzone_deg=0.0, use_steering_angle=True):
-    for i in range(1, 4):
-      # pid - car specific
-      if i == 1:
-        configure_pid_tune(candidate, collection)
-      # lqr - all uses RAV4 one
-      elif i == 2:
-        configure_lqr_tune(candidate, collection)
-      # torque - car specific as per lookup table
-      elif i == 3:
-        CarInterfaceBase.configure_torque_tune(candidate, collection, steering_angle_deadzone_deg, use_steering_angle)
-
   @abstractmethod
   def _update(self, c: car.CarControl) -> car.CarState:
     pass
 
-  def update(self, c: car.CarControl, can_strings: List[bytes], dragonconf) -> car.CarState:
-    self.dragonconf = dragonconf
+  def update(self, c: car.CarControl, can_strings: List[bytes]) -> car.CarState:
     # parse can
     for cp in self.can_parsers:
       if cp is not None:
@@ -305,7 +254,7 @@ class CarInterfaceBase(ABC):
       events.add(EventName.stockFcw)
     if cs_out.stockAeb:
       events.add(EventName.stockAeb)
-    if self.dragonconf.dpSpeedCheck and cs_out.vEgo > MAX_CTRL_SPEED:
+    if cs_out.vEgo > MAX_CTRL_SPEED:
       events.add(EventName.speedTooHigh)
     if cs_out.cruiseState.nonAdaptive:
       events.add(EventName.wrongCruiseMode)
@@ -330,13 +279,19 @@ class CarInterfaceBase(ABC):
     # Handle permanent and temporary steering faults
     self.steering_unpressed = 0 if cs_out.steeringPressed else self.steering_unpressed + 1
     if cs_out.steerFaultTemporary:
-      # if the user overrode recently, show a less harsh alert
-      if self.silent_steer_warning or cs_out.standstill or self.steering_unpressed < int(1.5 / DT_CTRL):
-        self.silent_steer_warning = True
-        events.add(EventName.steerTempUnavailableSilent)
+      if cs_out.steeringPressed and (not self.CS.out.steerFaultTemporary or self.no_steer_warning):
+        self.no_steer_warning = True
       else:
-        events.add(EventName.steerTempUnavailable)
+        self.no_steer_warning = False
+
+        # if the user overrode recently, show a less harsh alert
+        if self.silent_steer_warning or cs_out.standstill or self.steering_unpressed < int(1.5 / DT_CTRL):
+          self.silent_steer_warning = True
+          events.add(EventName.steerTempUnavailableSilent)
+        else:
+          events.add(EventName.steerTempUnavailable)
     else:
+      self.no_steer_warning = False
       self.silent_steer_warning = False
     if cs_out.steerFaultPermanent:
       events.add(EventName.steerUnavailable)

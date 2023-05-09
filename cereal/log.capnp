@@ -3,7 +3,6 @@ $Cxx.namespace("cereal");
 
 using Car = import "car.capnp";
 using Legacy = import "legacy.capnp";
-using Dp = import "dp.capnp";
 
 @0xf3b1f17e25a4285b;
 
@@ -47,6 +46,7 @@ struct InitData {
     chffrIos @3;
     tici @4;
     pc @5;
+    tizi @6;
   }
 
   struct PandaInfo {
@@ -140,16 +140,6 @@ struct FrameData {
   targetGreyFraction @22 :Float32;
   exposureValPercent @27 :Float32;
 
-  # Focus
-  lensPos @11 :Int32;
-  lensSag @12 :Float32;
-  lensErr @13 :Float32;
-  lensTruePos @14 :Float32;
-  focusVal @16 :List(Int16);
-  focusConf @17 :List(UInt8);
-  sharpnessScore @18 :List(UInt16);
-  recoverState @19 :Int32;
-
   transform @10 :List(Float32);
 
   image @6 :Data;
@@ -172,6 +162,15 @@ struct FrameData {
 
   globalGainDEPRECATED @5 :Int32;
   androidCaptureResultDEPRECATED @9 :AndroidCaptureResult;
+  lensPosDEPRECATED @11 :Int32;
+  lensSagDEPRECATED @12 :Float32;
+  lensErrDEPRECATED @13 :Float32;
+  lensTruePosDEPRECATED @14 :Float32;
+  # rick - we need these for old camerad (16~19)
+  focusVal @16 :List(Int16);
+  focusConf @17 :List(UInt8);
+  sharpnessScore @18 :List(UInt16);
+  recoverState @19 :Int32;
   struct AndroidCaptureResult {
     sensitivity @0 :Int32;
     frameDuration @1 :Int64;
@@ -410,10 +409,16 @@ struct PandaState @0xa7649e2575e4591e {
   powerSaveEnabled @16 :Bool;
   uptime @17 :UInt32;
   faults @18 :List(FaultType);
-  harnessStatus @21 :HarnessStatus;
   heartbeatLost @22 :Bool;
   interruptLoad @25 :Float32;
   fanPower @28 :UInt8;
+  fanStallCount @34 :UInt8;
+
+  spiChecksumErrorCount @33 :UInt16;
+
+  harnessStatus @21 :HarnessStatus;
+  sbu1Voltage @35 :Float32;
+  sbu2Voltage @36 :Float32;
 
   # can health
   canState0 @29 :PandaCanState;
@@ -428,8 +433,9 @@ struct PandaState @0xa7649e2575e4591e {
   safetyParam @27 :UInt16;
   alternativeExperience @23 :Int16;
   safetyRxChecksInvalid @32 :Bool;
-  #dp: enable torque interceptor
-  torqueInterceptorDetected @33 :Bool;
+
+  voltage @0 :UInt32;
+  current @1 :UInt32;
 
   enum FaultStatus {
     none @0;
@@ -463,6 +469,8 @@ struct PandaState @0xa7649e2575e4591e {
     interruptRateExti @22;
     interruptRateSpi @23;
     interruptRateUart7 @24;
+    sirenMalfunction @25;
+    heartbeatLoopWatchdog @26;
     # Update max fault type in boardd when adding faults
   }
 
@@ -484,15 +492,6 @@ struct PandaState @0xa7649e2575e4591e {
     normal @1;
     flipped @2;
   }
-
-  startedSignalDetectedDEPRECATED @5 :Bool;
-  voltageDEPRECATED @0 :UInt32;
-  currentDEPRECATED @1 :UInt32;
-  hasGpsDEPRECATED @6 :Bool;
-  fanSpeedRpmDEPRECATED @11 :UInt16;
-  usbPowerMode @12 :PeripheralState.UsbPowerMode;
-  safetyParamDEPRECATED @20 :Int16;
-  safetyParam2DEPRECATED @26 :UInt32;
 
   struct PandaCanState {
     busOff @0 :Bool;
@@ -528,6 +527,13 @@ struct PandaState @0xa7649e2575e4591e {
       noChange @7;
     }
   }
+
+  startedSignalDetectedDEPRECATED @5 :Bool;
+  hasGpsDEPRECATED @6 :Bool;
+  fanSpeedRpmDEPRECATED @11 :UInt16;
+  usbPowerMode @12 :PeripheralState.UsbPowerMode;
+  safetyParamDEPRECATED @20 :Int16;
+  safetyParam2DEPRECATED @26 :UInt32;
 }
 
 struct PeripheralState {
@@ -653,9 +659,6 @@ struct ControlsState @0x97ff69c53601abf1 {
   cumLagMs @15 :Float32;
   canErrorCounter @57 :UInt32;
 
-  # dp - for alt lateral
-  dpLateralAltActive @66 :Bool;
-
   lateralControlState :union {
     indiState @52 :LateralINDIState;
     pidState @53 :LateralPIDState;
@@ -664,8 +667,7 @@ struct ControlsState @0x97ff69c53601abf1 {
     torqueState @60 :LateralTorqueState;
     curvatureState @65 :LateralCurvatureState;
 
-    #dp
-    lqrState @55 :LateralLQRState;
+    lqrStateDEPRECATED @55 :LateralLQRState;
   }
 
   enum OpenpilotState @0xdbe58b96d2d1ac61 {
@@ -961,34 +963,12 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
 
   solverExecutionTime @35 :Float32;
 
-  #dp
-  visionTurnControllerState @36 :VisionTurnControllerState;
-  visionTurnSpeed @37 :Float32;
-  speedLimitControlState @38 :SpeedLimitControlState;
-  speedLimit @39 :Float32;
-  speedLimitOffset @40 :Float32;
-  distToSpeedLimit @41 :Float32;
-  isMapSpeedLimit @42 :Bool;
-  speedLimitPercOffset @47 :Bool;
-  speedLimitValueOffset @48 :Float32;
-
-  distToTurn @43 :Float32;
-  turnSpeed @44 :Float32;
-  turnSpeedControlState @45 :SpeedLimitControlState;
-  turnSign @46 :Int16;
-
-  dpE2EIsBlended @49 :Bool;
-
   enum LongitudinalPlanSource {
     cruise @0;
     lead0 @1;
     lead1 @2;
     lead2 @3;
     e2e @4;
-    #dp
-    turn @5;
-    limit @6;
-    turnlimit @7;
   }
 
   # deprecated
@@ -1024,21 +1004,6 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
     x @0 :List(Float32);
     y @1 :List(Float32);
   }
-
-  #dp
-  enum SpeedLimitControlState {
-    inactive @0; # No speed limit set or not enabled by parameter.
-    tempInactive @1; # User wants to ignore speed limit until it changes.
-    adapting @2; # Reducing speed to match new speed limit.
-    active @3; # Cruising at speed limit.
-  }
-
-  enum VisionTurnControllerState {
-    disabled @0; # No predicted substancial turn on vision range or feature disabled.
-    entering @1; # A subsantial turn is predicted ahead, adapting speed to turn confort levels.
-    turning @2; # Actively turning. Managing acceleration to provide a roll on turn feeling.
-    leaving @3; # Road ahead straightens. Start to allow positive acceleration.
-  }
 }
 struct UiPlan {
   frameId @2 :UInt32;
@@ -1053,10 +1018,6 @@ struct LateralPlan @0xe1e9318e2ae8b51e {
   rProbDEPRECATED @7 :Float32;
   dPathPoints @20 :List(Float32);
   dProbDEPRECATED @21 :Float32;
-
-  #dp
-  dPathWLinesX @32 :List(Float32);
-  dPathWLinesY @33 :List(Float32);
 
   mpcSolutionValid @9 :Bool;
   desire @17 :Desire;
@@ -1154,6 +1115,7 @@ struct LiveLocationKalman {
   deviceStable @22 :Bool = true;
   timeSinceReset @23 :Float64;
   excessiveResets @24 :Bool;
+  timeToFirstFix @25 :Float32;
 
   enum Status {
     uninitialized @0;
@@ -1241,7 +1203,7 @@ struct GnssMeasurements {
     type @2 :EphemerisType;
     source @3 :EphemerisSource;
   }
-  
+
   struct CorrectedMeasurement {
     constellationId @0 :ConstellationId;
     svId @1 :UInt8;
@@ -1280,10 +1242,10 @@ struct GnssMeasurements {
     # Different ultra-rapid files:
     nasaUltraRapid @1;
     glonassIacUltraRapid @2;
-    # dp - eon/c2 need this renamed
+    # legacy - eon/c2 need this renamed
     qcompoly @3;
   }
-  
+
   enum EphemerisSource {
     gnssChip @0;
     internet @1;
@@ -1302,7 +1264,7 @@ struct UbloxGnss {
     glonassEphemeris @5 :GlonassEphemeris;
     satReport @6 :SatReport;
   }
-  
+
   struct SatReport {
     #received time of week in gps time in seconds and gps week
     iTow @0 :UInt32;
@@ -1517,7 +1479,7 @@ struct UbloxGnss {
     p4 @27 :UInt8;
 
     freqNumDEPRECATED @28 :UInt32;
-    
+
     n4 @29 :UInt8;
     nt @30 :UInt16;
     freqNum @31 :Int16;
@@ -2012,29 +1974,6 @@ struct CameraOdometry {
   wideFromDeviceEulerStd @7 :List(Float32);
 }
 
-struct LiveMapData {
-  speedLimitValid @0 :Bool;
-  speedLimit @1 :Float32;
-  speedLimitAheadValid @2 :Bool;
-  speedLimitAhead @3 :Float32;
-  speedLimitAheadDistance @4 :Float32;
-  turnSpeedLimitValid @5 :Bool;
-  turnSpeedLimit @6 :Float32;
-  turnSpeedLimitEndDistance @7 :Float32;
-  turnSpeedLimitSign @8 :Int16;
-  turnSpeedLimitsAhead @9 :List(Float32);
-  turnSpeedLimitsAheadDistances @10 :List(Float32);
-  turnSpeedLimitsAheadSigns @11 :List(Int16);
-  lastGpsTimestamp @12 :Int64;  # Milliseconds since January 1, 1970.
-  currentRoadName @13 :Text;
-  lastGpsLatitude @14 :Float64;
-  lastGpsLongitude @15 :Float64;
-  lastGpsSpeed @16 :Float32;
-  lastGpsBearingDeg @17 :Float32;
-  lastGpsAccuracy @18 :Float32;
-  lastGpsBearingAccuracyDeg @19 :Float32;
-}
-
 struct Sentinel {
   enum SentinelType {
     endOfSegment @0;
@@ -2245,16 +2184,13 @@ struct Event {
     # UI services
     userFlag @93 :UserFlag;
     uiDebug @102 :UIDebug;
-    # dp reserve 107,108
+
     # *********** debug ***********
     testJoystick @52 :Joystick;
     roadEncodeData @86 :EncodeData;
     driverEncodeData @87 :EncodeData;
     wideRoadEncodeData @88 :EncodeData;
     qRoadEncodeData @89 :EncodeData;
-
-    dragonConf @107 :Dp.DragonConf;
-    liveMapData @108 :LiveMapData;
 
     # *********** legacy + deprecated ***********
     model @9 :Legacy.ModelData; # TODO: rename modelV2 and mark this as deprecated
@@ -2292,7 +2228,7 @@ struct Event {
     kalmanOdometryDEPRECATED @65 :Legacy.KalmanOdometry;
     uiLayoutStateDEPRECATED @57 :Legacy.UiLayoutState;
     pandaStateDEPRECATED @12 :PandaState;
-    # dp - legacy
+    # legacy
     driverState @59 :DriverState;
     sensorEvents @11 :List(SensorEventData);
   }

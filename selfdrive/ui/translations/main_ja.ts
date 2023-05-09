@@ -89,54 +89,6 @@
         <source>LIMIT</source>
         <translation>制限速度</translation>
     </message>
-    <message>
-        <source>REAL STEER</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OFF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ENG RPM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RELAX</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FAR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CLOSE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FOLLOW</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NOR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SPT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ECO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ACCEL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lat Ctrl</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>C2NetworkPanel</name>
@@ -166,780 +118,6 @@
     <message>
         <source>Cancel</source>
         <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>DPCarPanel</name>
-    <message>
-        <source>Override Speed When Below</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Override feature will be enabled when set cruise speed is lower than this value.
-1 km/h = 0.62 mph.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> km/h</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Turn On Cruise Speed Override</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This feature will let you set your cruise speed below vehicle standard. (usually at 26~40 km/h)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toyota / Lexus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable SnG Mod</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to fix stop and go (SnG) issue on some models.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable FM Physical Button Ctrl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to link Following Distance Mode (FM) control to the physical button (TSS2).
-ONLY WORK ON SOME OF TSS1 VEHICLES WITH SDSU.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable AM Physical Button Ctrl</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to link Accel Mode (AM) control to the physical button (TSS2).
-ONLY WORK ON SOME OF TSS1 VEHICLES.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Door Auto Lock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to lock doors when drive above 25 km/h.
-ONLY WORK ON SOME VEHICLES.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Door Auto Unlock</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to unlock doors when shift to gear P.
-ONLY WORK ON SOME VEHICLES.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable TSS2 RAV4 Special PID Tune</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to use a special PID tune on 2019+ TSS2 RAV4.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable TSS-P Prius Special Torque Tune</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to use a special Torque tune on PRIUS 2017 w/ bad angle sensor.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Honda</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable EPS Mod Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this will increase steering, USE IT ONLY if you have a modded EPS firmware.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mazda</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Below Steer Speed Alert</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this will show below steer speed alert.
-Thanks to @TheCrowd</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bypass Dashcam mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to bypass dashcam mode.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Reverse ACC Set speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enabling this will reverse set acc short press +5 jump, Long press +1 Jump.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DPControlPanel</name>
-    <message>
-        <source>Once the vehicle meets all ALCA criteria, it will wait for the seconds set here before performing lane change automatically.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> secs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALCA minimum engage speed in mph.
-1 mph = 1.61 km/h.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> mph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>LCA minimum engage speed in mph.
-1 mph = 1.61 km/h.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lane Change Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>1 = Lane Change Assist (LCA)
-2 = Auto Lane Change Assist (ALCA)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust your camera position if your device is not mounted as per guidance.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust this if you wish to let openpilot drive slightly towards to left (+) or right (-)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> cm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Lanelines</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Lanelines instead of End-to-End when possible.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Longitudinal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Manually Control Accel Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this if you wish to adjust openpilot&apos;s acceleration control.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable vision based turn control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use vision path predictions to estimate the appropriate speed to drive through turns ahead.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Manually Control Following Dist. Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this if you wish to adjust openpilot&apos;s following distance.
-openpilot by default keeps 1.45 secs distance to lead car.
-When on close will be dynamic but get closer in traffic. Normal is also dynamic and it get further and far is stock 1.45sec </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OFF</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dynamic End-to-end</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Automatically Turn On and Off End-to-end longitudinal (extremely alpha), this will ignore the stock end-to-end settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lateral</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Planner Version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Override the default planner version.
-1 = 0.8.13
-2 = 0.8.16</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>LATEST</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Controller Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Override the default controller.
-1 = PID
-2 = LQR
-3 = Torque
-Your Vehicle may not support all the options, YMMV.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DEFAULT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Torque Ctrl Auto Tune</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable auto tune Torque controller.
-WORKS WELL ONLY ON SOME VEHICLES.
-More linear steering experience.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Always On Lateral</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Device Temp Check</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Max Ctrl Speed Check</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this if you wish to use following dist. mode in DE2E.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this if you wish to use accel mode in DE2E.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this if your vehicles is in VOACC (e.g. Honda Bosch / VAG).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALC RoadEdge Detection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enabling this will prevent lane change when you are too close to road edge.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALCA Delay</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ALCA Min Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>LCA Min Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera Offset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Driving Path Offset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DE2E Adapt Following Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DE2E Adapt Accel Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DE2E w/ VOACC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When Set Speed Above:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>when acc SET speed above the setting, it will switch to alternative controller. 
-1 km/h = 0.62 mph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> km/h</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Alternative Controller</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>
-1 = PID
-2 = LQR
-3 = Torque
-Your Vehicle may not support all the options, YMMV.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Alternative Controller</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This feature will let you use alternative lateral controller at higher set speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use at your own risk!
-1 = Stock Long
-2 = OP Long
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Manual Lane Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enabling this will allow lane change manually when blinker is on.
-NOTES: Once LCA/ALCA is enabled, those settings will override manual lane change.
-e.g. If you have this option on and LCA at 20km/hr, ALCA at 40km/hr, speed below 20km/hr will be manual lane change.<byte value="x8"/> If you disable LCA/ALCA and have this option on, manual lane change will apply to ALL SPEED.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DPGeneralPanel</name>
-    <message>
-        <source>Adjust your shutdown waiting period.
-0 = shutdown immediately.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Auto Shutdown</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this if you wish to shutdown your device automatically.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use Custom API Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this if you wish to connect to a custom API server.
-Default to &quot;https://api.retropilot.org/&quot;, change &quot;dp_api_custom&quot; if you want to change API server URL.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Services</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable On-Road Dashcam</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this if you wish to record screen, just like a dashcam.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable GPS Logger</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will store your track in /data/media/0/gpx_logs/.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Hardware - General</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Hotspot On Boot</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Miscellaneous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Jetson Support</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this option if you intend to run dp on Nvidia Jetson.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reboot recommended.
-Reboot?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Flashing Panda Firmware</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>FLASH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tap the button to update your panda firmware.
-The device should reboot once if it finish updating.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to flash the panda?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pandas Firmware Recovery</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RECOVER</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tap the button ONLY if your panda ran into issue.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to run recover panda script?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset dragonpilot conf</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation type="unfinished">ﾘｾｯﾄ</translation>
-    </message>
-    <message>
-        <source>Tap the button to reset all your dragonpilot congiration to default value.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reset dp params?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Delete All Driving Log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DELETE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tap the button to delete ALL your driving logs (including dashcam / gpx / driving logs).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Are you sure delete all media?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto Shutdown In</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Driver Monitor (Front Cam)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this option if you wish to use front camera for driver monitoring.
-On = Front Cam Monitor + Steering Monitor
-Off = Steering Monitor only.
-Enable this will increase device temp a lot, use at your own risk.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation type="unfinished">再起動</translation>
-    </message>
-</context>
-<context>
-    <name>DPMapsPanel</name>
-    <message>
-        <source>Show Full Screen Nav.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will show navigation in full screen.
-Please tap green boarder if you wish to switch back drive view.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search Destination using Google Map</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will allow you to search destination in google map api.
-You will need to apply your own google map api key.<byte value="x8"/>Enter your key detail in web interface once it&apos;s enabled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Local Nav Server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will let use Navigation feature with your own access key.
-Use web interface to control it: *http://&lt;device_ip&gt;:8082*.
-You will need to apply your own mapbox token at https://www.mapbox.com/.
-Internet access from mobile phone (tethering) is required.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reboot recommended.
-Reboot?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Nav.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This will let use the build in Navigation.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Speed Limit Control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use speed limit signs information from map data and car interface to automatically adapt cruise speed to road limits.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Speed Limit Offset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Set speed limit slightly higher than actual speed limit for a more natural drive.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Map Data Turn Control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use curvature info from map data to define speed limits to take turns ahead</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable MapD</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Use OSM to assist lateral/longitudinal control.
-Please note:
-1. This feature will works only when your car support OP longitudinal.
-2. MapD will contribute your route to OSM for future improvement automatically.
-3. You can add your own offset for mapd just follow the readme under /selfdrive/mapd.
-4. Not connecting to the internet for while might feel up device storage from all the gps traces. </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OpenStreetMap Database Update</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>CHECK</source>
-        <translation type="unfinished">確認</translation>
-    </message>
-    <message>
-        <source>&quot;OpenStreetMap Database Update&quot;
-Your device will reboot and perform a database update based on the region you have selected.
-Reboot now?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OpenStreetMap Database</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SELECT</source>
-        <translation type="unfinished">選択</translation>
-    </message>
-    <message>
-        <source>Select your location</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&quot;OpenStreetMap Database&quot;
-Restart your device to start downloading the selected database. Dragonpilot will only start downloading the database on reboot.
-Reboot now?</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DPUIPanel</name>
-    <message>
-        <source>Display Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>0 = Default
-1 = Screen Off While Driving</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Screen Brightness</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust your screen brightness.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AUTO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quiet Drive</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display alert and play important warning sound. Thanks @sunnyhaibin.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to display your current speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to display the icon.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Driver Monitor Indicator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Side Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to display steering angle / lead car distance / engine RPM.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Top Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable this to display time / system temp / battery level.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Lead Speed/Distance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display detected lead objects&apos; speed and distance.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Driver Camera</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Driver Camera when reversing.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rainbow Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>for all the tesla fanboy&apos;s.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Volume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>LAUNCH</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Date/Time</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1126,15 +304,11 @@ Reboot now?</source>
     <name>ExperimentalModeButton</name>
     <message>
         <source>EXPERIMENTAL MODE ON</source>
-        <translation type="vanished">実験モード</translation>
+        <translation>実験モード</translation>
     </message>
     <message>
         <source>CHILL MODE ON</source>
         <translation>チルモード</translation>
-    </message>
-    <message>
-        <source>EXPERIMENTAL MODE / DE2E ON </source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1220,7 +394,7 @@ Reboot now?</source>
     <message>
         <source>Get turn-by-turn directions displayed and more with a comma
 prime subscription. Sign up now: https://connect.comma.ai</source>
-        <translation type="vanished">より詳細な案内情報を得ることができます。
+        <translation>より詳細な案内情報を得ることができます。
 詳しくはこちら：https://connect.comma.ai</translation>
     </message>
     <message>
@@ -1384,11 +558,11 @@ location set</source>
     </message>
     <message>
         <source>dashcam</source>
-        <translation type="vanished">ﾄﾞﾗｲﾌﾞﾚｺｰﾀﾞｰ</translation>
+        <translation>ﾄﾞﾗｲﾌﾞﾚｺｰﾀﾞｰ</translation>
     </message>
     <message>
         <source>openpilot</source>
-        <translation type="vanished">openpilot</translation>
+        <translation>openpilot</translation>
     </message>
     <message numerus="yes">
         <source>%n minute(s) ago</source>
@@ -1453,7 +627,7 @@ This may take up to a minute.</source>
     <name>SettingsWindow</name>
     <message>
         <source>×</source>
-        <translation type="vanished">×</translation>
+        <translation>×</translation>
     </message>
     <message>
         <source>Device</source>
@@ -1474,30 +648,6 @@ This may take up to a minute.</source>
     <message>
         <source>Navigation</source>
         <translation>ﾅﾋﾞｹﾞｰｼｮﾝ</translation>
-    </message>
-    <message>
-        <source>BACK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DP - General</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DP - Controls</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DP - UI</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DP - Cars</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DP - Maps</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1618,15 +768,15 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>HIGH</source>
-        <translation type="vanished">高温</translation>
+        <translation>高温</translation>
     </message>
     <message>
         <source>GOOD</source>
-        <translation type="vanished">最適</translation>
+        <translation>最適</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>VEHICLE</source>
@@ -1676,10 +826,6 @@ This may take up to a minute.</source>
         <source>5G</source>
         <translation>5G</translation>
     </message>
-    <message>
-        <source>%1 m</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>SoftwarePanel</name>
@@ -1705,15 +851,15 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>Target Branch</source>
-        <translation type="vanished">対象のブランチ</translation>
+        <translation>対象のブランチ</translation>
     </message>
     <message>
         <source>SELECT</source>
-        <translation type="vanished">選択</translation>
+        <translation>選択</translation>
     </message>
     <message>
         <source>Select a branch</source>
-        <translation type="vanished">ブランチを選択</translation>
+        <translation>ブランチを選択</translation>
     </message>
     <message>
         <source>UNINSTALL</source>
@@ -1836,10 +982,6 @@ This may take up to a minute.</source>
         <translation>車内カメラの映像をアップロードし、ドライバー監視システムのアルゴリズムの向上に役立てます。</translation>
     </message>
     <message>
-        <source>Experimental openpilot Longitudinal Control</source>
-        <translation>実験段階のopenpilotによるアクセル制御</translation>
-    </message>
-    <message>
         <source>Disengage on Accelerator Pedal</source>
         <translation>ｱｸｾﾙを踏むと openpilot を中断</translation>
     </message>
@@ -1866,14 +1008,6 @@ This may take up to a minute.</source>
     <message>
         <source>Experimental Mode</source>
         <translation>実験モード</translation>
-    </message>
-    <message>
-        <source>WARNING: openpilot longitudinal control is experimental for this car and will disable Automatic Emergency Braking (AEB).</source>
-        <translation>警告: この車種でのopenpilotによるアクセル制御は実験段階であり、衝突被害軽減ブレーキ(AEB)を無効化します。</translation>
-    </message>
-    <message>
-        <source>On this car, openpilot defaults to the car&apos;s built-in ACC instead of openpilot&apos;s longitudinal control. Enable this to switch to openpilot longitudinal control. Enabling Experimental mode is recommended when using experimental openpilot longitudinal control.</source>
-        <translation>openpilotはこの車の場合、車に内蔵されているACCを標準で利用します。この機能を有効にすることで実験段階のopenpilotによるアクセル制御を利用できます。実験モードと合わせて利用することをお勧めします。</translation>
     </message>
     <message>
         <source>openpilot defaults to driving in &lt;b&gt;chill mode&lt;/b&gt;. Experimental mode enables &lt;b&gt;alpha-level features&lt;/b&gt; that aren&apos;t ready for chill mode. Experimental features are listed below:</source>
@@ -1910,6 +1044,18 @@ This may take up to a minute.</source>
     <message>
         <source>Enable experimental longitudinal control to allow Experimental mode.</source>
         <translation>実験段階のopenpilotによるアクセル制御を有効にしてください。</translation>
+    </message>
+    <message>
+        <source>openpilot Longitudinal Control (Alpha)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WARNING: openpilot longitudinal control is in alpha for this car and will disable Automatic Emergency Braking (AEB).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On this car, openpilot defaults to the car&apos;s built-in ACC instead of openpilot&apos;s longitudinal control. Enable this to switch to openpilot longitudinal control. Enabling Experimental mode is recommended when enabling openpilot longitudinal control alpha.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enable Right-Hand Drive</source>

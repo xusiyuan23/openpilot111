@@ -75,7 +75,6 @@ public:
   std::optional<std::string> get_serial();
   void set_power_saving(bool power_saving);
   void enable_deepsleep();
-  void set_usb_power_mode(cereal::PeripheralState::UsbPowerMode power_mode);
   void send_heartbeat(bool engaged);
   void set_can_speed_kbps(uint16_t bus, uint16_t speed);
   void set_data_speed_kbps(uint16_t bus, uint16_t speed);
@@ -83,13 +82,14 @@ public:
   void can_send(capnp::List<cereal::CanData>::Reader can_data_list);
   bool can_receive(std::vector<can_frame>& out_vec);
   void can_reset_communications();
-  // dp
+  #ifdef QCOM
+  void set_usb_power_mode(cereal::PeripheralState::UsbPowerMode power_mode);
   void set_pigeon_baud(int baud);
   bool has_gps = true;
-  // dp - passthru for pigeon
   int control_write(uint8_t request, uint16_t param1, uint16_t param2);
   int control_read(uint8_t request, uint16_t param1, uint16_t param2, unsigned char *data, uint16_t length);
   int bulk_write(unsigned char endpoint, unsigned char* data, int length);
+  #endif
 
 protected:
   // for unit tests

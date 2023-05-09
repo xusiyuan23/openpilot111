@@ -1,11 +1,11 @@
 import numpy as np
 import math
-from cereal import log
+# from cereal import log
 from common.numpy_fast import interp
-from common.params import Params
-from common.realtime import sec_since_boot
+# from common.params import Params
+# from common.realtime import sec_since_boot
 from common.conversions import Conversions as CV
-from selfdrive.controls.lib.lateral_planner import TRAJECTORY_SIZE
+from selfdrive.controls.lib.lane_planner import TRAJECTORY_SIZE
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX
 
 
@@ -35,8 +35,8 @@ _ENTERING_SMOOTH_DECEL_BP = [1.3, 3.]  # absolute value of lat acc ahead
 
 # Lookup table for the acceleration for the TURNING state
 # depending on the current lateral acceleration of the vehicle.
-_TURNING_ACC_V = [1.2, 0.94, 0.9, 0.8, -0.1]  # acc value
-_TURNING_ACC_BP = [1.5, 10, 12, 14, 16]  # absolute value of current lat acc
+_TURNING_ACC_V = [0.5, 0., -0.4]  # acc value
+_TURNING_ACC_BP = [1.5, 2.3, 3.]  # absolute value of current lat acc
 
 _LEAVING_ACC = 0.5  # Confortble acceleration to regain speed while leaving a turn.
 
@@ -51,7 +51,12 @@ def _debug(msg):
   print(msg)
 
 
-VisionTurnControllerState = log.LongitudinalPlan.VisionTurnControllerState
+# VisionTurnControllerState = log.LongitudinalPlan.VisionTurnControllerState
+class VisionTurnControllerState:
+  disabled = 0 # No predicted substancial turn on vision range or feature disabled.
+  entering = 1 # A subsantial turn is predicted ahead, adapting speed to turn confort levels.
+  turning = 2 # Actively turning. Managing acceleration to provide a roll on turn feeling.
+  leaving = 3 # Road ahead straightens. Start to allow positive acceleration.
 
 
 def eval_curvature(poly, x_vals):
@@ -93,11 +98,11 @@ def _description_for_state(turn_controller_state):
 
 class VisionTurnController():
   def __init__(self, CP):
-    self._params = Params()
+    # self._params = Params()
     self._CP = CP
     self._op_enabled = False
     self._gas_pressed = False
-    self._is_enabled = self._params.get_bool("TurnVisionControl")
+    self._is_enabled = True #self._params.get_bool("TurnVisionControl")
     self._last_params_update = 0.
     self._v_cruise_setpoint = 0.
     self._v_ego = 0.
@@ -142,11 +147,11 @@ class VisionTurnController():
     self._v_overshoot_distance = 200.
     self._lat_acc_overshoot_ahead = False
 
-  def _update_params(self):
-    time = sec_since_boot()
-    if time > self._last_params_update + 5.0:
-      self._is_enabled = self._params.get_bool("TurnVisionControl")
-      self._last_params_update = time
+  # def _update_params(self):
+  #   time = sec_since_boot()
+  #   if time > self._last_params_update + 5.0:
+  #     self._is_enabled = self._params.get_bool("TurnVisionControl")
+  #     self._last_params_update = time
 
   def _update_calculations(self, sm):
     # Get path polynomial aproximation for curvature estimation from model data.
@@ -287,7 +292,7 @@ class VisionTurnController():
     self._a_ego = a_ego
     self._v_cruise_setpoint = v_cruise_setpoint
 
-    self._update_params()
+    # self._update_params()
     self._update_calculations(sm)
     self._state_transition()
     self._update_solution()

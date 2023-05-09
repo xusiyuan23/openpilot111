@@ -12,18 +12,18 @@ import psutil
 
 import cereal.messaging as messaging
 from cereal import log
-from common.dict_helpers import strip_deprecated_keys
+# from common.dict_helpers import strip_deprecated_keys
 from common.filter_simple import FirstOrderFilter
 from common.params import Params
 from common.realtime import DT_TRML, sec_since_boot
 from selfdrive.controls.lib.alertmanager import set_offroad_alert
-from system.hardware import HARDWARE, TICI, AGNOS, EON
-from system.loggerd.config import get_available_percent
+from system.hardware import HARDWARE, TICI, AGNOS
+from selfdrive.loggerd.config import get_available_percent
 # from selfdrive.statsd import statlog
 from system.swaglog import cloudlog
 from selfdrive.thermald.power_monitoring import PowerMonitoring
-from selfdrive.thermald.fan_controller import EonFanController, UnoFanController, TiciFanController
-# from system.version import terms_version, training_version
+from selfdrive.thermald.fan_controller import TiciFanController, EonFanController, UnoFanController
+from system.version import terms_version, training_version
 
 ThermalStatus = log.DeviceState.ThermalStatus
 NetworkType = log.DeviceState.NetworkType
@@ -181,7 +181,6 @@ def thermald_thread(end_event, hw_queue):
   offroad_temp_filter = FirstOrderFilter(0., TEMP_TAU, DT_TRML)
   should_start_prev = False
   in_car = False
-  is_uno = False
   engaged_prev = False
 
   params = Params()
@@ -280,21 +279,21 @@ def thermald_thread(end_event, hw_queue):
     # **** starting logic ****
 
     # Ensure date/time are valid
-    now = datetime.datetime.utcnow()
-    startup_conditions["time_valid"] = (now.year > 2020) or (now.year == 2020 and now.month >= 10)
-    set_offroad_alert_if_changed("Offroad_InvalidTime", (not startup_conditions["time_valid"]))
+    # now = datetime.datetime.utcnow()
+    # startup_conditions["time_valid"] = (now.year > 2020) or (now.year == 2020 and now.month >= 10)
+    # set_offroad_alert_if_changed("Offroad_InvalidTime", (not startup_conditions["time_valid"]))
 
     # startup_conditions["up_to_date"] = params.get("Offroad_ConnectivityNeeded") is None or params.get_bool("DisableUpdates") or params.get_bool("SnoozeUpdate")
     startup_conditions["not_uninstalling"] = not params.get_bool("DoUninstall")
-    # startup_conditions["accepted_terms"] = params.get("HasAcceptedTerms") == terms_version
-    # startup_conditions["offroad_min_time"] = (not started_seen) or ((off_ts is not None) and (sec_since_boot() - off_ts) > 5.)
+    startup_conditions["accepted_terms"] = params.get("HasAcceptedTerms") == terms_version
+    startup_conditions["offroad_min_time"] = (not started_seen) or ((off_ts is not None) and (sec_since_boot() - off_ts) > 5.)
 
     # with 2% left, we killall, otherwise the phone will take a long time to boot
-    startup_conditions["free_space"] = msg.deviceState.freeSpacePercent > 2
-    # startup_conditions["completed_training"] = params.get("CompletedTrainingVersion") == training_version or \
-    #                                            params.get_bool("Passive")
+    # startup_conditions["free_space"] = msg.deviceState.freeSpacePercent > 2
+    startup_conditions["completed_training"] = params.get("CompletedTrainingVersion") == training_version or \
+                                               params.get_bool("Passive")
     startup_conditions["not_driver_view"] = not params.get_bool("IsDriverViewEnabled")
-    # startup_conditions["not_taking_snapshot"] = not params.get_bool("IsTakingSnapshot")
+    startup_conditions["not_taking_snapshot"] = not params.get_bool("IsTakingSnapshot")
     # if any CPU gets above 107 or the battery gets above 63, kill all processes
     # controls will warn with CPU above 95 or battery above 60
     onroad_conditions["device_temp_good"] = thermal_status < ThermalStatus.danger
@@ -368,15 +367,19 @@ def thermald_thread(end_event, hw_queue):
     # statlog.sample("som_power_draw", som_power_draw)
     msg.deviceState.somPowerDrawW = som_power_draw
 
-    # Check if we need to disable charging (handled by boardd)
-    msg.deviceState.chargingDisabled = power_monitor.should_disable_charging(onroad_conditions["ignition"], in_car, off_ts, started_seen)
+    if not TICI:
+      # Check if we need to disable charging (handled by boardd)
+      msg.deviceState.chargingDisabled = power_monitor.legacy_should_disable_charging(onroad_conditions["ignition"], in_car, off_ts)
 
-    # Check if we need to shut down
-    if power_monitor.should_shutdown(peripheralState, onroad_conditions["ignition"], in_car, off_ts, started_seen):
-      cloudlog.warning(f"shutting device down, offroad since {off_ts}")
-      params.put_bool("DoShutdown", True)
+      # Check if we need to shut down
+      if power_monitor.legacy_should_shutdown(peripheralState, onroad_conditions["ignition"], in_car, off_ts, started_seen):
+        cloudlog.warning(f"shutting device down, offroad since {off_ts}")
+        params.put_bool("DoShutdown", True)
+    else:
+      if power_monitor.should_shutdown(onroad_conditions["ignition"], in_car, off_ts, started_seen):
+        cloudlog.warning(f"shutting device down, offroad since {off_ts}")
+        params.put_bool("DoShutdown", True)
 
-    # msg.deviceState.chargingError = current_filter.x > 0. and msg.deviceState.batteryPercent < 90  # if current is positive, then battery is being discharged
     msg.deviceState.started = started_ts is not None
     msg.deviceState.startedMonoTime = int(1e9*(started_ts or 0))
 

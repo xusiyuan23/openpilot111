@@ -3,10 +3,9 @@ from cereal import car
 from common.conversions import Conversions as CV
 from panda import Panda
 from selfdrive.car.toyota.values import Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, TSS2_CAR, RADAR_ACC_CAR, NO_DSU_CAR, \
-  MIN_ACC_SPEED, EPS_SCALE, EV_HYBRID_CAR, UNSUPPORTED_DSU_CAR, NO_STOP_TIMER_CAR, ANGLE_CONTROL_CAR
+                                        MIN_ACC_SPEED, EPS_SCALE, EV_HYBRID_CAR, UNSUPPORTED_DSU_CAR, NO_STOP_TIMER_CAR, ANGLE_CONTROL_CAR
 from selfdrive.car import STD_CARGO_KG, scale_tire_stiffness, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
-from common.params import Params
 
 EventName = car.CarEvent.EventName
 
@@ -17,7 +16,7 @@ class CarInterface(CarInterfaceBase):
     return CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX
 
   @staticmethod
-  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long):
+  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
     ret.carName = "toyota"
     ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.toyota)]
     ret.safetyConfigs[0].safetyParam = EPS_SCALE[candidate]
@@ -39,7 +38,6 @@ class CarInterface(CarInterfaceBase):
 
     stop_and_go = False
 
-    params = Params()
     if candidate == CAR.PRIUS:
       stop_and_go = True
       ret.wheelbase = 2.70
@@ -47,14 +45,10 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.6371   # hand-tune
       ret.mass = 3045. * CV.LB_TO_KG + STD_CARGO_KG
       # Only give steer angle deadzone to for bad angle sensor prius
-      if params.get_bool("dp_toyota_prius_bad_angle_tune"):
-        ret.steerActuatorDelay = 0.25
-        CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning, steering_angle_deadzone_deg=0.2)
-      else:
-        for fw in car_fw:
-          if fw.ecu == "eps" and not fw.fwVersion == b'8965B47060\x00\x00\x00\x00\x00\x00':
-            ret.steerActuatorDelay = 0.25
-            CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning, steering_angle_deadzone_deg=0.2)
+      for fw in car_fw:
+        if fw.ecu == "eps" and not fw.fwVersion == b'8965B47060\x00\x00\x00\x00\x00\x00':
+          ret.steerActuatorDelay = 0.25
+          CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning, steering_angle_deadzone_deg=0.2)
 
     elif candidate == CAR.PRIUS_V:
       stop_and_go = True
@@ -144,8 +138,9 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.444  # not optimized yet
       ret.mass = 3060. * CV.LB_TO_KG + STD_CARGO_KG
 
-    elif candidate in (CAR.LEXUS_ES_TSS2, CAR.LEXUS_ESH_TSS2, CAR.LEXUS_ESH):
-      stop_and_go = True
+    elif candidate in (CAR.LEXUS_ES, CAR.LEXUS_ESH, CAR.LEXUS_ES_TSS2, CAR.LEXUS_ESH_TSS2):
+      if candidate not in (CAR.LEXUS_ES,):  # TODO: LEXUS_ES may have sng
+        stop_and_go = True
       ret.wheelbase = 2.8702
       ret.steerRatio = 16.0  # not optimized
       tire_stiffness_factor = 0.444  # not optimized yet
@@ -199,9 +194,6 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.444
       ret.mass = 4305. * CV.LB_TO_KG + STD_CARGO_KG
 
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection, steering_angle_deadzone_deg = 0.0)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
-
     ret.centerToFront = ret.wheelbase * 0.44
 
     # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
@@ -210,21 +202,19 @@ class CarInterface(CarInterfaceBase):
                                                                          tire_stiffness_factor=tire_stiffness_factor)
 
     ret.enableBsm = 0x3F6 in fingerprint[0] and candidate in TSS2_CAR
-    # Detect smartDSU, which intercepts ACC_CMD from the DSU allowing openpilot to send it
-    smartDsu = 0x2FF in fingerprint[0]
-    # In TSS2 cars the camera does long control
+
+    # Detect smartDSU, which intercepts ACC_CMD from the DSU (or radar) allowing openpilot to send it
+    if 0x2FF in fingerprint[0]:
+      ret.flags |= ToyotaFlags.SMART_DSU.value
+
+    # In TSS2 cars, the camera does long control
     found_ecus = [fw.ecu for fw in car_fw]
-    ret.enableDsu = len(found_ecus) > 0 and Ecu.dsu not in found_ecus and candidate not in (NO_DSU_CAR | UNSUPPORTED_DSU_CAR) and not smartDsu
+    ret.enableDsu = len(found_ecus) > 0 and Ecu.dsu not in found_ecus and candidate not in (NO_DSU_CAR | UNSUPPORTED_DSU_CAR) and not (ret.flags & ToyotaFlags.SMART_DSU)
     ret.enableGasInterceptor = 0x201 in fingerprint[0]
+
     # if the smartDSU is detected, openpilot can send ACC_CMD (and the smartDSU will block it from the DSU) or not (the DSU is "connected")
-    ret.openpilotLongitudinalControl = smartDsu or ret.enableDsu or candidate in (TSS2_CAR - RADAR_ACC_CAR)
+    ret.openpilotLongitudinalControl = bool(ret.flags & ToyotaFlags.SMART_DSU) or ret.enableDsu or candidate in (TSS2_CAR - RADAR_ACC_CAR)
     ret.autoResumeSng = ret.openpilotLongitudinalControl and candidate in NO_STOP_TIMER_CAR
-
-    if int(Params().get("dp_atl").decode('utf-8')) == 1:
-      ret.openpilotLongitudinalControl = False
-
-    if candidate == CAR.CHR_TSS2:
-      ret.enableBsm = True
 
     if not ret.openpilotLongitudinalControl:
       ret.safetyConfigs[0].safetyParam |= Panda.FLAG_TOYOTA_STOCK_LONGITUDINAL
@@ -244,19 +234,12 @@ class CarInterface(CarInterfaceBase):
     if candidate in TSS2_CAR or ret.enableGasInterceptor:
       tune.kpBP = [0., 5., 20.]
       tune.kpV = [1.3, 1.0, 0.7]
-      tune.kiBP = [0., 3., 4., 5., 12., 20., 23., 40.]
-      tune.kiV = [.08, .16, .26, .215, .20, .166, .1, .006]
+      tune.kiBP = [0., 5., 12., 20., 27.]
+      tune.kiV = [.35, .23, .20, .17, .1]
       if candidate in TSS2_CAR:
-        #ret.vEgoStopping = 0.3  # car is near 0.1 to 0.2 when car starts requesting stopping accel
-        ret.vEgoStarting = 0.1 # needs to be > or == vEgoStopping
-        #ret.stopAccel = -0.1  # Toyota requests -0.4 when stopped
-        ret.stoppingDecelRate = 0.04  # reach stopping target smoothly - seems to take 0.5 seconds to go from 0 to -0.4
-        #ret.longitudinalActuatorDelayLowerBound = 0.3
-        #ret.longitudinalActuatorDelayUpperBound = 0.3
-        ### stock ###
-        #ret.vEgoStopping = 0.25
-        #ret.vEgoStarting = 0.25
-        #ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
+        ret.vEgoStopping = 0.25
+        ret.vEgoStarting = 0.25
+        ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
     else:
       tune.kpBP = [0., 5., 35.]
       tune.kiBP = [0., 35.]
@@ -293,4 +276,4 @@ class CarInterface(CarInterfaceBase):
   # pass in a car.CarControl
   # to be called @ 100hz
   def apply(self, c, now_nanos):
-    return self.CC.update(c, self.CS, now_nanos, self.dragonconf)
+    return self.CC.update(c, self.CS, now_nanos)

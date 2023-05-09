@@ -4,7 +4,6 @@ from common.conversions import Conversions as CV
 from selfdrive.car import STD_CARGO_KG, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
 from selfdrive.car.volkswagen.values import CAR, PQ_CARS, CANBUS, NetworkLocation, TransmissionType, GearShifter
-from common.params import Params
 
 ButtonType = car.CarState.ButtonEvent.Type
 EventName = car.CarEvent.EventName
@@ -22,18 +21,16 @@ class CarInterface(CarInterfaceBase):
       self.cp_ext = self.cp_cam
 
   @staticmethod
-  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long):
+  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
     ret.carName = "volkswagen"
     ret.radarUnavailable = True
-
-    use_off_car_defaults = len(fingerprint[0]) == 0  # Pick sensible carParams during offline doc generation/CI jobs
 
     if candidate in PQ_CARS:
       # Set global PQ35/PQ46/NMS parameters
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.volkswagenPq)]
       ret.enableBsm = 0x3BA in fingerprint[0]  # SWA_1
 
-      if 0x440 in fingerprint[0] or use_off_car_defaults:  # Getriebe_1
+      if 0x440 in fingerprint[0] or docs:  # Getriebe_1
         ret.transmissionType = TransmissionType.automatic
       else:
         ret.transmissionType = TransmissionType.manual
@@ -56,7 +53,7 @@ class CarInterface(CarInterfaceBase):
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.volkswagen)]
       ret.enableBsm = 0x30F in fingerprint[0]  # SWA_01
 
-      if 0xAD in fingerprint[0] or use_off_car_defaults:  # Getriebe_11
+      if 0xAD in fingerprint[0] or docs:  # Getriebe_11
         ret.transmissionType = TransmissionType.automatic
       elif 0x187 in fingerprint[0]:  # EV_Gearshift
         ret.transmissionType = TransmissionType.direct
@@ -81,12 +78,8 @@ class CarInterface(CarInterfaceBase):
 
     # Global longitudinal tuning defaults, can be overridden per-vehicle
 
-    dp_atl = int(Params().get("dp_atl").decode('utf-8'))
-    if dp_atl == 1:
-      ret.openpilotLongitudinalControl = False
-
-    ret.experimentalLongitudinalAvailable = ret.networkLocation == NetworkLocation.gateway or use_off_car_defaults
-    if experimental_long and dp_atl != 1:
+    ret.experimentalLongitudinalAvailable = ret.networkLocation == NetworkLocation.gateway or docs
+    if experimental_long:
       # Proof-of-concept, prep for E2E only. No radar points available. Panda ALLOW_DEBUG firmware required.
       ret.openpilotLongitudinalControl = True
       ret.safetyConfigs[0].safetyParam |= Panda.FLAG_VOLKSWAGEN_LONG_CONTROL
@@ -222,9 +215,6 @@ class CarInterface(CarInterfaceBase):
 
     else:
       raise ValueError(f"unsupported car {candidate}")
-
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
 
     ret.autoResumeSng = ret.minEnableSpeed == -1
     ret.centerToFront = ret.wheelbase * 0.45

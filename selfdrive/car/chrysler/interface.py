@@ -8,7 +8,7 @@ from selfdrive.car.interfaces import CarInterfaceBase
 
 class CarInterface(CarInterfaceBase):
   @staticmethod
-  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long):
+  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
     ret.carName = "chrysler"
     ret.dashcamOnly = candidate in RAM_HD
 
@@ -77,9 +77,6 @@ class CarInterface(CarInterfaceBase):
 
     else:
       raise ValueError(f"Unsupported car: {candidate}")
-
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
 
     if ret.flags & ChryslerFlags.HIGHER_MIN_STEERING_SPEED:
       # TODO: allow these cars to steer down to 13 m/s if already engaged.

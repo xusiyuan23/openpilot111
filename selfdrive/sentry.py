@@ -83,7 +83,7 @@ def save_exception(exc_text):
   print('Logged current crash to {}'.format(log_file))
 
 def bind_user(**kwargs) -> None:
-    sentry_sdk.set_user(kwargs)
+  sentry_sdk.set_user(kwargs)
 
 def capture_warning(warning_string):
   bind_user(id=dongle_id, ip_address=ip, name=gitname)
@@ -101,7 +101,7 @@ def init(project: SentryProject) -> None:
   # forks like to mess with this, so double check
   #comma_remote = is_comma_remote() and "commaai" in get_origin(default="")
   #if not comma_remote or not is_registered_device() or PC:
-    #return
+  #return
 
   env = "release" if is_tested_branch() else "master"
   dongle_id = Params().get("DongleId", encoding='utf-8')

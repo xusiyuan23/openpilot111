@@ -51,10 +51,7 @@ class RouteEngine:
 
     self.reroute_counter = 0
 
-    if self.params.get_bool("dp_otisserv"):
-      self.mapbox_token = self.params.get("dp_nav_mapbox_token_pk", encoding='utf8')
-      self.mapbox_host = "https://api.mapbox.com"
-    elif "MAPBOX_TOKEN" in os.environ:
+    if "MAPBOX_TOKEN" in os.environ:
       self.mapbox_token = os.environ["MAPBOX_TOKEN"]
       self.mapbox_host = "https://api.mapbox.com"
     else:

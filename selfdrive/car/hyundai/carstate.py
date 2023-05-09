@@ -6,8 +6,8 @@ from cereal import car
 from common.conversions import Conversions as CV
 from opendbc.can.parser import CANParser
 from opendbc.can.can_define import CANDefine
-from selfdrive.car.hyundai.hyundaicanfd import get_e_can_bus
-from selfdrive.car.hyundai.values import HyundaiFlags, CAR, DBC, FEATURES, CAMERA_SCC_CAR, CANFD_CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams
+from selfdrive.car.hyundai.hyundaicanfd import CanBus
+from selfdrive.car.hyundai.values import HyundaiFlags, CAR, DBC, CAN_GEARS, CAMERA_SCC_CAR, CANFD_CAR, EV_CAR, HYBRID_CAR, Buttons, CarControllerParams
 from selfdrive.car.interfaces import CarStateBase
 
 PREV_BUTTON_SAMPLES = 8
@@ -27,9 +27,9 @@ class CarState(CarStateBase):
                           "GEAR_SHIFTER"
     if CP.carFingerprint in CANFD_CAR:
       self.shifter_values = can_define.dv[self.gear_msg_canfd]["GEAR"]
-    elif self.CP.carFingerprint in FEATURES["use_cluster_gears"]:
+    elif self.CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
       self.shifter_values = can_define.dv["CLU15"]["CF_Clu_Gear"]
-    elif self.CP.carFingerprint in FEATURES["use_tcu_gears"]:
+    elif self.CP.carFingerprint in CAN_GEARS["use_tcu_gears"]:
       self.shifter_values = can_define.dv["TCU12"]["CUR_GR"]
     else:  # preferred and elect gear methods use same definition
       self.shifter_values = can_define.dv["LVR12"]["CF_Lvr_Gear"]
@@ -89,8 +89,6 @@ class CarState(CarStateBase):
       50, cp.vl["CGW1"]["CF_Gway_TurnSigLh"], cp.vl["CGW1"]["CF_Gway_TurnSigRh"])
     ret.steeringTorque = cp.vl["MDPS12"]["CR_Mdps_StrColTq"]
     ret.steeringTorqueEps = cp.vl["MDPS12"]["CR_Mdps_OutTq"]
-    #dp
-    ret.engineRPM = cp.vl["TCU_DCT13"]['Cluster_Engine_RPM']
     ret.steeringPressed = self.update_steering_pressed(abs(ret.steeringTorque) > self.params.STEER_THRESHOLD, 5)
     ret.steerFaultTemporary = cp.vl["MDPS12"]["CF_Mdps_ToiUnavail"] != 0 or cp.vl["MDPS12"]["CF_Mdps_ToiFlt"] != 0
 
@@ -112,8 +110,6 @@ class CarState(CarStateBase):
     ret.brakeHoldActive = cp.vl["TCS15"]["AVH_LAMP"] == 2  # 0 OFF, 1 ERROR, 2 ACTIVE, 3 READY
     ret.parkingBrake = cp.vl["TCS13"]["PBRAKE_ACT"] == 1
     ret.accFaulted = cp.vl["TCS13"]["ACCEnable"] != 0  # 0 ACC CONTROL ENABLED, 1-3 ACC CONTROL DISABLED
-    #dp
-    ret.brakeLightsDEPRECATED = bool(cp.vl["TCS13"]["BrakeLight"] or ret.brakePressed or ret.brakeHoldActive or ret.parkingBrake)
 
     if self.CP.carFingerprint in (HYBRID_CAR | EV_CAR):
       if self.CP.carFingerprint in HYBRID_CAR:
@@ -127,11 +123,11 @@ class CarState(CarStateBase):
 
     # Gear Selection via Cluster - For those Kia/Hyundai which are not fully discovered, we can use the Cluster Indicator for Gear Selection,
     # as this seems to be standard over all cars, but is not the preferred method.
-    if self.CP.carFingerprint in FEATURES["use_cluster_gears"]:
+    if self.CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
       gear = cp.vl["CLU15"]["CF_Clu_Gear"]
-    elif self.CP.carFingerprint in FEATURES["use_tcu_gears"]:
+    elif self.CP.carFingerprint in CAN_GEARS["use_tcu_gears"]:
       gear = cp.vl["TCU12"]["CUR_GR"]
-    elif self.CP.carFingerprint in FEATURES["use_elect_gears"]:
+    elif self.CP.carFingerprint in CAN_GEARS["use_elect_gears"]:
       gear = cp.vl["ELECT_GEAR"]["Elect_Gear_Shifter"]
     else:
       gear = cp.vl["LVR12"]["CF_Lvr_Gear"]
@@ -292,9 +288,6 @@ class CarState(CarStateBase):
 
       ("SAS_Angle", "SAS11"),
       ("SAS_Speed", "SAS11"),
-      #dp
-      ("Cluster_Engine_RPM", "TCU_DCT13"),
-      ("BrakeLight", "TCS13"),
     ]
     checks = [
       # address, frequency
@@ -309,7 +302,6 @@ class CarState(CarStateBase):
       ("CGW4", 5),
       ("WHL_SPD11", 50),
       ("SAS11", 100),
-      ("TCU_DCT13", 100),
     ]
 
     if not CP.openpilotLongitudinalControl and CP.carFingerprint not in CAMERA_SCC_CAR:
@@ -362,12 +354,12 @@ class CarState(CarStateBase):
         ("EMS16", 100),
       ]
 
-    if CP.carFingerprint in FEATURES["use_cluster_gears"]:
+    if CP.carFingerprint in CAN_GEARS["use_cluster_gears"]:
       signals.append(("CF_Clu_Gear", "CLU15"))
-    elif CP.carFingerprint in FEATURES["use_tcu_gears"]:
+    elif CP.carFingerprint in CAN_GEARS["use_tcu_gears"]:
       signals.append(("CUR_GR", "TCU12"))
       checks.append(("TCU12", 100))
-    elif CP.carFingerprint in FEATURES["use_elect_gears"]:
+    elif CP.carFingerprint in CAN_GEARS["use_elect_gears"]:
       signals.append(("Elect_Gear_Shifter", "ELECT_GEAR"))
       checks.append(("ELECT_GEAR", 20))
     else:
@@ -524,7 +516,7 @@ class CarState(CarStateBase):
         ("ACCELERATOR_BRAKE_ALT", 100),
       ]
 
-    return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, get_e_can_bus(CP))
+    return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, CanBus(CP).ECAN)
 
   @staticmethod
   def get_cam_can_parser_canfd(CP):
@@ -551,4 +543,4 @@ class CarState(CarStateBase):
         ("SCC_CONTROL", 50),
       ]
 
-    return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 6)
+    return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, CanBus(CP).CAM)

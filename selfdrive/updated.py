@@ -72,7 +72,7 @@ def set_consistent_flag(consistent: bool) -> None:
 
 def parse_release_notes(basedir: str) -> bytes:
   try:
-    with open(os.path.join(basedir, "CHANGELOGS_c2.md"), "rb") as f:
+    with open(os.path.join(basedir, "RELEASES.md"), "rb") as f:
       r = f.read().split(b'\n\n', 1)[0]  # Slice latest release notes
     try:
       return bytes(MarkdownIt().render(r.decode("utf-8")), encoding="utf-8")
@@ -226,8 +226,8 @@ def handle_neos_update() -> None:
   from system.hardware.eon.neos import download_neos_update
 
   cur_neos = HARDWARE.get_os_version()
-  updated_neos = run(["bash", "-c", r"unset NEOS_VERSION && source launch_env.sh && \
-                       echo -n $NEOS_VERSION"], OVERLAY_MERGED).strip()
+  updated_neos = run(["bash", "-c", r"unset REQUIRED_NEOS_VERSION && source launch_env.sh && \
+                       echo -n $REQUIRED_NEOS_VERSION"], OVERLAY_MERGED).strip()
 
   cloudlog.info(f"NEOS version check: {cur_neos} vs {updated_neos}")
   if cur_neos == updated_neos:
@@ -352,7 +352,7 @@ class Updater:
   def check_for_update(self) -> None:
     cloudlog.info("checking for updates")
 
-    excluded_branches = ('release2', 'dashcam', 'dashcam-staging')
+    excluded_branches = ('release2', 'release2-staging', 'dashcam', 'dashcam-staging')
 
     try:
       run(["git", "ls-remote", "origin", "HEAD"], OVERLAY_MERGED)

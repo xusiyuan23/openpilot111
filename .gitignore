@@ -32,9 +32,11 @@ a.out
 *.class
 *.pyxbldc
 *.vcd
+*.qm
 config.json
 clcache
 compile_commands.json
+compare_runtime*.html
 
 persist
 board/obj/
@@ -61,7 +63,7 @@ panda_jungle
 provisioning
 
 .coverage*
-coverage.xmlcar
+coverage.xml
 htmlcov
 pandaextra
 
@@ -81,8 +83,13 @@ build/
 !**/.gitkeep
 
 poetry.toml
-selfdrive/ui/_ui_nonav
-*.po~
+
+# rick - these are generated during compilation.
+selfdrive/camerad/camerad
+selfdrive/golden/
+selfdrive/legacy_modeld/_dmonitoringmodeld
+selfdrive/legacy_modeld/_modeld
+selfdrive/legacy_modeld/models/supercombo.thneed
+selfdrive/legacy_modeld/models/supercombo_badweights.thneed
+selfdrive/legacy_modeld/thneed/compile
 selfdrive/loggerd/bootlog
-selfdrive/loggerd/loggerd
-selfdrive/proclogd/proclogd

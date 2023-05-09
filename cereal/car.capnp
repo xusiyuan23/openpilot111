@@ -65,7 +65,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     lowBattery @48;
     vehicleModelInvalid @50;
     accFaulted @51;
-    accFaultedTemp @115;
     sensorDataInvalid @52;
     commIssue @53;
     commIssueAvgFreq @109;
@@ -114,13 +113,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     canBusMissing @111;
     controlsdLagging @112;
     resumeBlocked @113;
-
-    #dp
-    speedLimitActive @116;
-    speedLimitValueChange @117;
-    leadMovingAlertSilent @118;
-    leadMovingAlert @119;
-    manualSteeringRequiredBlinkersOn @120;
+    steerTimeLimit @115;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
@@ -219,15 +212,6 @@ struct CarState {
   fuelGauge @41 :Float32; # battery or fuel tank level from 0.0 to 1.0
   charging @43 :Bool;
 
-  # dp
-  engineRPM @46 :Float32;
-  distanceLines @47 :UInt8;
-  rightBlindspotD1 @48 :Float32;
-  rightBlindspotD2 @49 :Float32;
-  leftBlindspotD1 @50 :Float32;
-  leftBlindspotD2 @51 :Float32;
-  blindspotside @52 :Float32;
-
   struct WheelSpeeds {
     # optional wheel speeds
     fl @0 :Float32;
@@ -244,7 +228,6 @@ struct CarState {
     speedOffset @3 :Float32;
     standstill @4 :Bool;
     nonAdaptive @5 :Bool;
-    speedLimit @7 :Float32;
   }
 
   enum GearShifter {
@@ -347,8 +330,6 @@ struct CarControl {
   cruiseControl @4 :CruiseControl;
   hudControl @5 :HUDControl;
 
-  latController @17 :Text;
-
   struct Actuators {
     # range from 0.0 - 1.0
     gas @0: Float32;
@@ -445,15 +426,6 @@ struct CarParams {
   enableBsm @56 :Bool;       # blind spot monitoring
   flags @64 :UInt32;         # flags for car specific quirks
   experimentalLongitudinalAvailable @71 :Bool;
-  #dp: enable torque interceptor
-  enableTorqueInterceptor @72 :Bool;
-  #dp: alt tune collection
-  latTuneCollection @73 :LatTunes;
-  struct LatTunes {
-    pid @0 :LateralPIDTuning;
-    lqr @1 :LateralLQRTuning;
-    torque @2 :LateralTorqueTuning;
-  }
 
   minEnableSpeed @7 :Float32;
   minSteerSpeed @8 :Float32;
@@ -614,7 +586,6 @@ struct CarParams {
     hongqi @26;
     body @27;
     hyundaiCanfd @28;
-    volvoC1 @29;
   }
 
   enum SteerControlType {
@@ -661,10 +632,10 @@ struct CarParams {
     adas @19;
     cornerRadar @21;
     hvac @20;
+    parkingAdas @7;  # parking assist system ECU, e.g. Toyota's IPAS, Hyundai's RSPA, etc.
 
     # Toyota only
     dsu @6;
-    apgs @7;
 
     # Honda only
     vsa @13; # Vehicle Stability Assist
@@ -673,10 +644,8 @@ struct CarParams {
     # Chrysler only
     hcp @18;  # Hybrid Control Processor
 
-    # Hyundai only
-    parking @22;  # ADAS parking ECU
-
     debug @17;
+    unused @22;
   }
 
   enum FingerprintSource {

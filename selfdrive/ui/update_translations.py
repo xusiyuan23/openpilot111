@@ -3,9 +3,9 @@ import argparse
 import json
 import os
 
-local_gen = False
 try:
   from common.basedir import BASEDIR
+  local_gen = False
 except Exception:
   BASEDIR = ""
   local_gen = True
@@ -31,9 +31,9 @@ def update_translations(vanish=False, plural_only=None, translations_dir=TRANSLA
       args += " -pluralonly"
     ret = os.system(args)
     assert ret == 0
-
-    ret = os.system(f"lrelease {tr_file}")
-    assert ret == 0
+    if local_gen:
+      ret = os.system(f"lrelease {tr_file}")
+      assert ret == 0
 
 
 if __name__ == "__main__":

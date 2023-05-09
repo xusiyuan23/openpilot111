@@ -334,15 +334,6 @@ def joystick_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster,
   vals = f"Gas: {round(gb * 100.)}%, Steer: {round(steer * 100.)}%"
   return NormalPermanentAlert(_("Joystick Mode"), vals)
 
-def speed_limit_adjust_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, metric: bool, soft_disable_time: int) -> Alert:
-  speedLimit = sm['longitudinalPlan'].speedLimit
-  speed = round(speedLimit * (CV.MS_TO_KPH if metric else CV.MS_TO_MPH))
-  message = _("Adjusting to %(speed)s %(unit)s") % ({"speed": speed, "unit": (_("km/h") if metric else _("mph"))})
-  return Alert(
-    message,
-    "",
-    AlertStatus.normal, AlertSize.small,
-    Priority.LOW, VisualAlert.none, AudibleAlert.none, 4.)
 
 
 EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
@@ -396,7 +387,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.cruiseMismatch: {
-    #ET.PERMANENT: ImmediateDisableAlert(_("openpilot failed to cancel cruise")),
+    #ET.PERMANENT: ImmediateDisableAlert("openpilot failed to cancel cruise"),
   },
 
   # openpilot doesn't recognize the car. This switches openpilot into a
@@ -542,10 +533,10 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.laneChangeBlocked: {
     ET.PERMANENT: Alert(
-      _("Car Detected in Blindspot or RoadEdge"),
+      _("Car Detected in Blindspot"),
       "",
       AlertStatus.userPrompt, AlertSize.small,
-      Priority.LOW, VisualAlert.none, AudibleAlert.prompt, .2),
+      Priority.LOW, VisualAlert.none, AudibleAlert.prompt, .1),
   },
 
   EventName.laneChange: {
@@ -591,19 +582,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   # current GPS position. This alert is thrown when the localizer is reset
   # more often than expected.
   EventName.localizerMalfunction: {
-    # ET.PERMANENT: NormalPermanentAlert(_("Sensor Malfunction"), _("Hardware Malfunction")),
-  },
-
-  EventName.speedLimitActive: {
-    ET.WARNING: Alert(
-      "Cruise set to speed limit",
-      "",
-      AlertStatus.normal, AlertSize.small,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, 2.),
-  },
-
-  EventName.speedLimitValueChange: {
-    ET.WARNING: speed_limit_adjust_alert,
+    # ET.PERMANENT: NormalPermanentAlert("Sensor Malfunction", "Hardware Malfunction"),
   },
 
   # ********** events that affect controls state transitions **********
@@ -622,7 +601,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.buttonCancel: {
     ET.USER_DISABLE: EngagementAlert(AudibleAlert.disengage),
-    ET.NO_ENTRY: NoEntryAlert("Cancel Pressed"),
+    ET.NO_ENTRY: NoEntryAlert(_("Cancel Pressed")),
   },
 
   EventName.brakeHold: {
@@ -671,7 +650,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.resumeBlocked: {
-    ET.NO_ENTRY: NoEntryAlert("Press Set to Engage"),
+    ET.NO_ENTRY: NoEntryAlert(_("Press Set to Engage")),
   },
 
   EventName.wrongCruiseMode: {
@@ -682,6 +661,11 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   EventName.steerTempUnavailable: {
     ET.SOFT_DISABLE: soft_disable_alert(_("Steering Temporarily Unavailable")),
     ET.NO_ENTRY: NoEntryAlert(_("Steering Temporarily Unavailable")),
+  },
+
+  EventName.steerTimeLimit: {
+    ET.SOFT_DISABLE: soft_disable_alert(_("Vehicle Steering Time Limit")),
+    ET.NO_ENTRY: NoEntryAlert(_("Vehicle Steering Time Limit")),
   },
 
   EventName.outOfSpace: {
@@ -723,7 +707,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.wrongGear: {
-    # ET.SOFT_DISABLE: user_soft_disable_alert(_("Gear not D")),
+    ET.SOFT_DISABLE: user_soft_disable_alert(_("Gear not D")),
     ET.NO_ENTRY: NoEntryAlert(_("Gear not D")),
   },
 
@@ -740,7 +724,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.calibrationIncomplete: {
     ET.PERMANENT: calibration_incomplete_alert,
-    ET.SOFT_DISABLE: soft_disable_alert(_("Calibration in Progress")),
+    ET.SOFT_DISABLE: soft_disable_alert(_("Device remount detected: recalibrating")),
     ET.NO_ENTRY: NoEntryAlert(_("Calibration in Progress")),
   },
 
@@ -826,8 +810,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.highCpuUsage: {
-    #ET.SOFT_DISABLE: soft_disable_alert(_("System Malfunction: Reboot Your Device")),
-    #ET.PERMANENT: NormalPermanentAlert(_("System Malfunction"), _("Reboot your Device")),
+    #ET.SOFT_DISABLE: soft_disable_alert("System Malfunction: Reboot Your Device"),
+    #ET.PERMANENT: NormalPermanentAlert("System Malfunction", "Reboot your Device"),
     ET.NO_ENTRY: high_cpu_usage_alert,
   },
 
@@ -835,10 +819,6 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.IMMEDIATE_DISABLE: ImmediateDisableAlert(_("Cruise Fault: Restart the Car")),
     ET.PERMANENT: NormalPermanentAlert(_("Cruise Fault: Restart the car to engage")),
     ET.NO_ENTRY: NoEntryAlert(_("Cruise Fault: Restart the Car")),
-  },
-
-  EventName.accFaultedTemp: {
-    ET.NO_ENTRY: NoEntryAlert("Cruise Temporarily Faulted"),
   },
 
   EventName.controlsMismatch: {
@@ -970,22 +950,4 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: NoEntryAlert(_("LKAS Disabled")),
   },
 
-  # dp - use for atl alert
-  EventName.communityFeatureDisallowedDEPRECATED: {
-    ET.OVERRIDE_LATERAL: Alert(
-      "",
-      "",
-      AlertStatus.normal, AlertSize.none,
-      Priority.MID, VisualAlert.none,
-      AudibleAlert.disengage, .2),
-  },
-
-  # dp - use for manual lane change
-  EventName.manualSteeringRequiredBlinkersOn: {
-    ET.PERMANENT: Alert(
-      _("STEERING REQUIRED: Blinkers ON"),
-      "",
-      AlertStatus.normal, AlertSize.small,
-      Priority.LOW, VisualAlert.none, AudibleAlert.none, .0, alert_rate=0.25),
-  },
 }
