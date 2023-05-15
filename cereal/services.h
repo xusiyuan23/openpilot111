@@ -70,6 +70,7 @@ static struct service services[] = {
   { "qRoadEncodeData", 8066, false, 20, -1 },
   { "driverState", 8067, true, 10, 5 },
   { "sensorEvents", 8068, true, 100, 100 },
+  { "liveMapData", 8069, true, 0, -1 },
 };
 #endif
 

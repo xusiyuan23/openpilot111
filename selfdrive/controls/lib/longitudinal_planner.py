@@ -9,9 +9,9 @@ from common.filter_simple import FirstOrderFilter
 from common.realtime import DT_MDL
 from selfdrive.legacy_modeld.constants import T_IDXS
 from selfdrive.controls.lib.longcontrol import LongCtrlState
-from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, MIN_ACCEL, MAX_ACCEL, T_FOLLOW
+from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, MIN_ACCEL, MAX_ACCEL, T_FOLLOW, STOP_DISTANCE
 from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
-from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N
+from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N, get_speed_error
 from system.swaglog import cloudlog
 from selfdrive.controls.lib.vision_turn_controller import VisionTurnController
 
@@ -217,8 +217,7 @@ class LongitudinalPlanner:
     # Prevent divergence, smooth in current v_ego
     self.v_desired_filter.x = max(0.0, self.v_desired_filter.update(v_ego))
     # Compute model v_ego error
-    if len(sm['modelV2'].temporalPose.trans):
-      self.v_model_error = sm['modelV2'].temporalPose.trans[0] - v_ego
+    self.v_model_error = get_speed_error(sm['modelV2'], v_ego)
 
     # rick - vision turn controller from move-fast team
     # https://github.com/move-fast/openpilot/blob/develop/selfdrive/controls/lib/vision_turn_controller.py
@@ -238,7 +237,7 @@ class LongitudinalPlanner:
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
-    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j)
+    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, prev_accel_constraint, T_FOLLOW, interp(sm['carState'].vEgo, [0., 2.78, 5.55, 22.], [3., 4., 5, STOP_DISTANCE]))
 
     self.v_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
