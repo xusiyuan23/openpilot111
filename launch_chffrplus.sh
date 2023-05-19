@@ -9,6 +9,11 @@ source "$BASEDIR/launch_env.sh"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 function two_init {
+  # convert to no ir ctrl param
+  if [ -f /data/media/0/no_ir_ctrl ]; then
+    echo -n 1 > /data/params/d/dp_no_ir_ctrl
+  fi
+
   mount -o remount,rw /system
   # font installer
   if [ -f /EON ]; then
@@ -186,6 +191,13 @@ function two_init {
     cp -f "$LIB_PATH/spidev.cpython-38.so" "$PY_LIB_DEST/"
   fi
   mount -o remount,r /system
+
+  # osm server
+  MODULE="osm-3s_v0.7.56"
+  if [ ! -d /data/media/0/osm/ ]; then
+    tar -vxf "/data/openpilot/selfdrive/mapd/assets/$MODULE.tar.xz" -C /data/media/0/
+    mv "/data/media/0/$MODULE" /data/media/0/osm
+  fi
 
   # Check for NEOS update
   if [ -f /LEECO ] && [ $(< /VERSION) != "$REQUIRED_NEOS_VERSION" ]; then
