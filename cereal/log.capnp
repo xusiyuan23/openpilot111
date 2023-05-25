@@ -591,7 +591,7 @@ struct RadarState @0x9a185389d6fdd05f {
 }
 
 struct LiveCalibrationData {
-  calStatus @1 :Int8;
+  calStatus @11 :Status;
   calCycle @2 :Int32;
   calPerc @3 :Int8;
   validBlocks @9 :Int32;
@@ -605,8 +605,16 @@ struct LiveCalibrationData {
   wideFromDeviceEuler @10 :List(Float32);
 
   warpMatrixDEPRECATED @0 :List(Float32);
+  calStatusDEPRECATED @1 :Int8;
   warpMatrix2DEPRECATED @5 :List(Float32);
   warpMatrixBigDEPRECATED @6 :List(Float32);
+
+  enum Status {
+    uncalibrated @0;
+    calibrated @1;
+    invalid @2;
+    recalibrating @3;
+  }
 }
 
 struct LiveTracks {
@@ -988,7 +996,7 @@ struct LongitudinalPlan @0xe00b5b3eba12876c {
   aTargetMinDEPRECATED @4 :Float32;
   aTargetMaxDEPRECATED @5 :Float32;
   lateralValidDEPRECATED @0 :Bool;
-  longitudinalValidDEPRECATED @2 :Bool;
+  longitudinalValid @2 :Bool;
   dPolyDEPRECATED @1 :List(Float32);
   laneWidthDEPRECATED @11 :Float32;
   vCurvatureDEPRECATED @21 :Float32;

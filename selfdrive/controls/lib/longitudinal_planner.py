@@ -31,9 +31,9 @@ _DP_E2E_LEAD_COUNT = 5
 
 _DP_E2E_STOP_BP = [0., 10., 20., 30., 40., 50., 55.]
 _DP_E2E_STOP_DIST = [10, 30., 50., 70., 80., 90., 120.]
-_DP_E2E_STOP_COUNT = 5
+_DP_E2E_STOP_COUNT = 3
 
-_DP_E2E_SNG_COUNT = 5
+_DP_E2E_SNG_COUNT = 3
 _DP_E2E_SNG_ACC_COUNT = 5
 _DP_E2E_SWAP_COUNT = 10
 
@@ -109,6 +109,8 @@ class LongitudinalPlanner:
     return reset_state
 
   def conditional_e2e(self, sm):
+    if not sm['controlsState'].experimentalMode:
+      return self._set_dp_e2e_mode('acc', True)
     v_ego_kph = sm['carState'].vEgo * 3.6
     standstill = sm['carState'].standstill
 
@@ -145,7 +147,7 @@ class LongitudinalPlanner:
 
     # when we see a lead
     # if sm['dragonConf'].dpE2EConditionalVoacc and self.dp_e2e_has_lead:
-    if True and self.dp_e2e_has_lead:
+    if self.CP.radarUnavailable and self.dp_e2e_has_lead:
       # drive above conditional speed and lead is too close
       if lead_dist <= v_ego_kph * self.dp_e2e_tf * interp(v_ego_kph, [50., 60., 80., 85, 90.], [1.25, 1.20, 1.10, 1.05, 1.]) / 3.6:
         self.dp_e2e_tf_count += 1
@@ -274,6 +276,7 @@ class LongitudinalPlanner:
     longitudinalPlan.hasLead = sm['radarState'].leadOne.status
     longitudinalPlan.longitudinalPlanSource = self.mpc.source
     longitudinalPlan.fcw = self.fcw
+    longitudinalPlan.longitudinalValid = self.mpc.mode == 'acc'
 
     longitudinalPlan.solverExecutionTime = self.mpc.solve_time
 

@@ -14,7 +14,7 @@ from common.params import Params, ParamKeyType
 from common.text_window import TextWindow
 from selfdrive.boardd.set_time import set_time
 from system.hardware import HARDWARE, PC
-from selfdrive.manager.helpers import unblock_stdout
+from selfdrive.manager.helpers import unblock_stdout, write_onroad_params
 from selfdrive.manager.process import ensure_running
 from selfdrive.manager.process_config import managed_processes
 from selfdrive.athena.registration import register, UNREGISTERED_DONGLE_ID
@@ -45,6 +45,8 @@ def manager_init() -> None:
     ("dp_no_gps_ctrl", "0"),
     ("dp_no_fan_ctrl", "0"),
     ("dp_alka", "1"),
+    ("dp_mapd", "1"),
+    ("dp_lat_lane_priority_mode", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -138,12 +140,15 @@ def manager_thread() -> None:
     ignore.append("pandad")
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
 
+  if not params.get_bool("dp_mapd") or params.get_bool("dp_no_gps_ctrl"):
+    ignore += ["mapd"]
   if params.get_bool("dp_no_gps_ctrl"):
-    ignore += ["ubloxd", "gpx_uploader", "mapd", "gpxd"]
+    ignore += ["ubloxd", "gpx_uploader", "gpxd"]
 
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll=['deviceState'])
   pm = messaging.PubMaster(['managerState'])
 
+  write_onroad_params(False, params)
   ensure_running(managed_processes.values(), False, params=params, CP=sm['carParams'], not_run=ignore)
 
   started_prev = False
@@ -158,10 +163,9 @@ def manager_thread() -> None:
     elif not started and started_prev:
       params.clear_all(ParamKeyType.CLEAR_ON_OFFROAD_TRANSITION)
 
-    # initialize and update onroad params, which drives boardd's safety setter thread
-    if started != started_prev or sm.frame == 0:
-      params.put_bool("IsOnroad", started)
-      params.put_bool("IsOffroad", not started)
+    # update onroad params, which drives boardd's safety setter thread
+    if started != started_prev:
+      write_onroad_params(started, params)
 
     started_prev = started
 

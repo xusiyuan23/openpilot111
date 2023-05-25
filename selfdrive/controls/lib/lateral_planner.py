@@ -9,6 +9,8 @@ from selfdrive.controls.lib.desire_helper import DesireHelper
 import cereal.messaging as messaging
 from cereal import log
 from selfdrive.hardware import EON
+from common.params import Params
+from selfdrive.controls.lib.lane_planner import LanePlanner
 
 TRAJECTORY_SIZE = 33
 if EON:
@@ -32,6 +34,11 @@ class LateralPlanner:
   def __init__(self, CP):
     self.DH = DesireHelper()
 
+    params = Params()
+    self.dp_lat_lane_priority_mode = params.get_bool("dp_lat_lane_priority_mode")
+    self.dp_lat_lane_priority_mode_active = False
+    self.LP = LanePlanner() if self.dp_lat_lane_priority_mode else None
+
     # Vehicle model parameters used to calculate lateral movement of car
     self.factor1 = CP.wheelbase - CP.centerToFront
     self.factor2 = (CP.centerToFront * CP.mass) / (CP.wheelbase * CP.tireStiffnessRear)
@@ -42,7 +49,11 @@ class LateralPlanner:
     self.plan_yaw = np.zeros((TRAJECTORY_SIZE,))
     self.plan_yaw_rate = np.zeros((TRAJECTORY_SIZE,))
     self.t_idxs = np.arange(TRAJECTORY_SIZE)
-    self.y_pts = np.zeros(TRAJECTORY_SIZE)
+    self.y_pts = np.zeros((TRAJECTORY_SIZE,))
+    self.v_plan = np.zeros((TRAJECTORY_SIZE,))
+    self.v_ego = 0.0
+    self.l_lane_change_prob = 0.0
+    self.r_lane_change_prob = 0.0
 
     self.lat_mpc = LateralMpc()
     self.reset_mpc(np.zeros(4))
@@ -69,10 +80,20 @@ class LateralPlanner:
     if len(desire_state):
       self.l_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeLeft]
       self.r_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeRight]
-    lane_change_prob = self.l_lane_change_prob + self.r_lane_change_prob
+
+    if self.dp_lat_lane_priority_mode:
+      self.LP.parse_model(md)
+      lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
+    else:
+      lane_change_prob = self.l_lane_change_prob + self.r_lane_change_prob
+
     self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob)
 
-    d_path_xyz = self.path_xyz
+    if self.dp_lat_lane_priority_mode:
+      d_path_xyz = self._get_laneless_laneline_d_path_xyz()
+    else:
+      d_path_xyz = self.path_xyz
+
     self.lat_mpc.set_weights(PATH_COST, LATERAL_MOTION_COST,
                              LATERAL_ACCEL_COST, LATERAL_JERK_COST,
                              STEERING_RATE_COST)
@@ -130,8 +151,30 @@ class LateralPlanner:
     lateralPlan.solverExecutionTime = self.lat_mpc.solve_time
 
     lateralPlan.desire = self.DH.desire
-    lateralPlan.useLaneLines = False
+    lateralPlan.useLaneLines = self.dp_lat_lane_priority_mode and self.dp_lat_lane_priority_mode_active
     lateralPlan.laneChangeState = self.DH.lane_change_state
     lateralPlan.laneChangeDirection = self.DH.lane_change_direction
 
     pm.send('lateralPlan', plan_send)
+
+  def _get_laneless_laneline_d_path_xyz(self):
+    if self.dp_lat_lane_priority_mode and self.LP is not None:
+      # Turn off lanes during lane change
+      if self.DH.desire == log.LateralPlan.Desire.laneChangeRight or self.DH.desire == log.LateralPlan.Desire.laneChangeLeft:
+        self.LP.lll_prob *= self.DH.lane_change_ll_prob
+        self.LP.rll_prob *= self.DH.lane_change_ll_prob
+
+      # decide what mode should we use
+      if (self.LP.lll_prob + self.LP.rll_prob)/2 < 0.3:
+        self.dp_lat_lane_priority_mode_active = False
+      if (self.LP.lll_prob + self.LP.rll_prob)/2 > 0.5:
+        self.dp_lat_lane_priority_mode_active = True
+
+      # use default path if not active
+      if not self.dp_lat_lane_priority_mode_active:
+        return self.path_xyz
+
+      # use lane planner path
+      return self.LP.get_d_path(self.v_ego, self.t_idxs, self.path_xyz)
+    else:
+      return self.path_xyz
