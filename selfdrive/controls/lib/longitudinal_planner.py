@@ -2,14 +2,16 @@
 import math
 import numpy as np
 from common.numpy_fast import clip, interp
+from common.params import Params
+from cereal import log
 
 import cereal.messaging as messaging
 from common.conversions import Conversions as CV
 from common.filter_simple import FirstOrderFilter
 from common.realtime import DT_MDL
-from selfdrive.legacy_modeld.constants import T_IDXS
+from selfdrive.hybrid_modeld.constants import T_IDXS
 from selfdrive.controls.lib.longcontrol import LongCtrlState
-from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, MIN_ACCEL, MAX_ACCEL, T_FOLLOW, STOP_DISTANCE
+from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, MIN_ACCEL, MAX_ACCEL, STOP_DISTANCE
 from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N, get_speed_error
 from system.swaglog import cloudlog
@@ -70,7 +72,6 @@ class LongitudinalPlanner:
     self.dp_e2e_standstill_last = False
     self.dp_e2e_swap_count = 0
     self.dp_e2e_stop_count = 0
-    self.dp_e2e_tf = T_FOLLOW
     self.dp_e2e_tf_count = 0
 
     self.CP = CP
@@ -85,6 +86,17 @@ class LongitudinalPlanner:
     self.a_desired_trajectory = np.zeros(CONTROL_N)
     self.j_desired_trajectory = np.zeros(CONTROL_N)
     self.solverExecutionTime = 0.0
+    self.params = Params()
+    self.param_read_counter = 0
+    self.read_param()
+    self.personality = log.LongitudinalPersonality.standard
+
+  def read_param(self):
+    param_value = self.params.get('LongitudinalPersonality')
+    if param_value is not None:
+      self.personality = int(param_value)
+    else:
+      self.personality = log.LongitudinalPersonality.standard
 
   def _set_dp_e2e_mode(self, mode, force=False):
     reset_state = False
@@ -149,7 +161,7 @@ class LongitudinalPlanner:
     # if sm['dragonConf'].dpE2EConditionalVoacc and self.dp_e2e_has_lead:
     if self.CP.radarUnavailable and self.dp_e2e_has_lead:
       # drive above conditional speed and lead is too close
-      if lead_dist <= v_ego_kph * self.dp_e2e_tf * interp(v_ego_kph, [50., 60., 80., 85, 90.], [1.25, 1.20, 1.10, 1.05, 1.]) / 3.6:
+      if lead_dist <= v_ego_kph * self.mpc.t_follow * interp(v_ego_kph, [50., 60., 80., 85, 90.], [1.25, 1.20, 1.10, 1.05, 1.]) / 3.6:
         self.dp_e2e_tf_count += 1
       else:
         self.dp_e2e_tf_count = 0
@@ -188,6 +200,10 @@ class LongitudinalPlanner:
     return x, v, a, j
 
   def update(self, sm):
+    if self.param_read_counter % 50 == 0:
+      self.read_param()
+    self.param_read_counter += 1
+    # self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
     dp_reset_state = self.conditional_e2e(sm)
 
     v_ego = sm['carState'].vEgo
@@ -235,13 +251,13 @@ class LongitudinalPlanner:
     accel_limits_turns[0] = min(accel_limits_turns[0], self.a_desired + 0.05)
     accel_limits_turns[1] = max(accel_limits_turns[1], self.a_desired - 0.05)
 
-    self.mpc.set_weights(prev_accel_constraint)
+    self.mpc.set_weights(prev_accel_constraint, personality=self.personality)
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
     # dynamic stopping distance ONLY when on radarUnavailable vehicles (e.g. Toyota C-HR, VW)
     stop_distance = STOP_DISTANCE if not self.CP.radarUnavailable else interp(sm['carState'].vEgo, [0., 2.78, 5.55, 22.], [3.7, 4., 5, STOP_DISTANCE])
-    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, prev_accel_constraint, T_FOLLOW, stop_distance)
+    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, personality=self.personality, stop_distance=stop_distance)
 
     self.v_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
@@ -279,5 +295,6 @@ class LongitudinalPlanner:
     longitudinalPlan.longitudinalValid = self.mpc.mode == 'acc'
 
     longitudinalPlan.solverExecutionTime = self.mpc.solve_time
+    longitudinalPlan.personality = self.personality
 
     pm.send('longitudinalPlan', plan_send)

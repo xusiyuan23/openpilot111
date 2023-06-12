@@ -4,7 +4,7 @@ from cereal import car, log
 from common.conversions import Conversions as CV
 from common.numpy_fast import clip, interp
 from common.realtime import DT_MDL
-from selfdrive.legacy_modeld.constants import T_IDXS
+from selfdrive.hybrid_modeld.constants import T_IDXS
 
 # WARNING: this value was determined based on the model's training distribution,
 #          model predictions above this speed can be unpredictable
@@ -36,6 +36,13 @@ CRUISE_INTERVAL_SIGN = {
   ButtonType.accelCruise: +1,
   ButtonType.decelCruise: -1,
 }
+
+# rick - for 0813
+LAT_MPC_N = 16
+class MPC_COST_LAT:
+  PATH = 1.0
+  HEADING = 1.0
+  STEER_RATE = 1.0
 
 
 class VCruiseHelper:

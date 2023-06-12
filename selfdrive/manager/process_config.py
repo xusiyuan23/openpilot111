@@ -6,7 +6,6 @@ from system.hardware import PC, TICI, EON
 from selfdrive.manager.process import PythonProcess, NativeProcess, DaemonProcess
 
 NO_IR_CTRL = os.path.isfile('/data/media/0/no_ir_ctrl')
-log_on = os.path.isfile('/data/media/0/log_on')
 
 WEBCAM = os.getenv("USE_WEBCAM") is not None
 
@@ -33,21 +32,24 @@ def ublox(started, params, CP: car.CarParams) -> bool:
 def qcomgps(started, params, CP: car.CarParams) -> bool:
   return started and not ublox_available()
 
+
+use_old_model = Params().get_bool("dp_0813")
+
 procs = [
   # due to qualcomm kernel bugs SIGKILLing camerad sometimes causes page table corruption
   NativeProcess("camerad", "selfdrive/camerad", ["./camerad"], unkillable=True, callback=driverview),
   NativeProcess("clocksd", "system/clocksd", ["./clocksd"]),
-  NativeProcess("logcatd", "system/logcatd", ["./logcatd"], enabled=log_on),
-  NativeProcess("proclogd", "system/proclogd", ["./proclogd"], enabled=log_on),
-  PythonProcess("logmessaged", "system.logmessaged", offroad=True, enabled=log_on),
+  NativeProcess("logcatd", "system/logcatd", ["./logcatd"]),
+  NativeProcess("proclogd", "system/proclogd", ["./proclogd"]),
+  PythonProcess("logmessaged", "system.logmessaged", offroad=True),
   # PythonProcess("micd", "system.micd"),
   # PythonProcess("timezoned", "system.timezoned", enabled=not PC, offroad=True),
 
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
-  NativeProcess("dmonitoringmodeld", "selfdrive/legacy_modeld", ["./dmonitoringmodeld"], enabled=(not PC or WEBCAM) and not NO_IR_CTRL, callback=driverview),
+  NativeProcess("dmonitoringmodeld", "selfdrive/hybrid_modeld", ["./dmonitoringmodeld"], enabled=(not PC or WEBCAM) and not NO_IR_CTRL, callback=driverview),
   # NativeProcess("encoderd", "system/loggerd", ["./encoderd"]),
-  NativeProcess("loggerd", "selfdrive/loggerd", ["./loggerd"], onroad=False, callback=logging, enabled=log_on),
-  NativeProcess("modeld", "selfdrive/legacy_modeld", ["./modeld"]),
+  NativeProcess("loggerd", "selfdrive/loggerd", ["./loggerd"], onroad=False, callback=logging),
+  NativeProcess("modeld", "selfdrive/hybrid_modeld" if not use_old_model else "selfdrive/legacy_modeld", ["./modeld"]),
   # NativeProcess("mapsd", "selfdrive/navd", ["./map_renderer"], enabled=False),
   # NativeProcess("navmodeld", "selfdrive/modeld", ["./navmodeld"], enabled=False),
   NativeProcess("sensord", "system/sensord", ["./sensord"], enabled=not PC, offroad=True),
@@ -58,7 +60,7 @@ procs = [
   PythonProcess("calibrationd", "selfdrive.locationd.calibrationd"),
   PythonProcess("torqued", "selfdrive.locationd.torqued"),
   PythonProcess("controlsd", "selfdrive.controls.controlsd"),
-  PythonProcess("deleter", "selfdrive.loggerd.deleter", offroad=True, enabled=log_on),
+  PythonProcess("deleter", "selfdrive.loggerd.deleter", offroad=True),
   PythonProcess("dmonitoringd", "selfdrive.legacy_monitoring.dmonitoringd", enabled=(not PC or WEBCAM) and not NO_IR_CTRL, callback=driverview),
   # PythonProcess("laikad", "selfdrive.locationd.laikad"),
   # PythonProcess("rawgpsd", "system.sensord.rawgps.rawgpsd", enabled=TICI, onroad=False, callback=qcomgps),
@@ -85,7 +87,7 @@ procs = [
   PythonProcess("androidd", "system.hardware.eon.androidd", enabled=EON, offroad=True),
 
   # mapd
-  PythonProcess("mapd", "selfdrive.dragonpilot.mapd"),
+  PythonProcess("mapd", "selfdrive.mapd.mapd"),
   # gpxd
   PythonProcess("gpxd", "selfdrive.dragonpilot.gpxd"),
   PythonProcess("gpx_uploader", "selfdrive.dragonpilot.gpx_uploader", offroad=True),
