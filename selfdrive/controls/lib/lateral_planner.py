@@ -4,12 +4,11 @@ from common.numpy_fast import interp
 from system.swaglog import cloudlog
 from selfdrive.controls.lib.lateral_mpc_lib.lat_mpc import LateralMpc
 from selfdrive.controls.lib.lateral_mpc_lib.lat_mpc import N as LAT_MPC_N
-from selfdrive.controls.lib.drive_helpers import CONTROL_N, MIN_SPEED, get_lane_laneless_mode, get_speed_error
+from selfdrive.controls.lib.drive_helpers import CONTROL_N, MIN_SPEED, get_speed_error
 from selfdrive.controls.lib.desire_helper import DesireHelper
 import cereal.messaging as messaging
 from cereal import log
 from selfdrive.controls.lib.lane_planner import LanePlanner
-from selfdrive.hardware import TICI
 from common.params import Params
 
 TRAJECTORY_SIZE = 33
@@ -30,13 +29,15 @@ STEERING_RATE_COST = 700.0
 class LateralPlanner:
   def __init__(self, CP, debug=False):
     self.DH = DesireHelper()
-    self.LP = LanePlanner()
 
-    # dp - laneline mode
-    self.dp_lanelines_enable = False
-    self.dp_lanelines_active = False
-    self.dp_camera_offset = 4 if TICI else -6
-    self.dp_path_offset = 4 if TICI else 0
+    # dp - lanefull
+    params = Params()
+    self._dp_lat_lane_priority_mode = params.get_bool("dp_lat_lane_priority_mode")
+    self._dp_lat_lane_priority_mode_active = False
+    self._dp_lat_lane_priority_mode_active_prev = False
+    self.LP = LanePlanner()
+    # dp // mapd - for vision turn controller
+    self.d_path_w_lines_xyz = np.zeros((TRAJECTORY_SIZE, 3))
 
     # Vehicle model parameters used to calculate lateral movement of car
     self.factor1 = CP.wheelbase - CP.centerToFront
@@ -54,7 +55,6 @@ class LateralPlanner:
     self.v_ego = 0.0
     self.l_lane_change_prob = 0.0
     self.r_lane_change_prob = 0.0
-    self.d_path_w_lines_xyz = np.zeros((TRAJECTORY_SIZE, 3))
 
     self.debug_mode = debug
 
@@ -69,14 +69,6 @@ class LateralPlanner:
     # clip speed , lateral planning is not possible at 0 speed
     measured_curvature = sm['controlsState'].curvature
     v_ego_car = sm['carState'].vEgo
-    if sm.updated['dragonConf']:
-      self.dp_lanelines_enable = sm['dragonConf'].dpLateralLanelines
-      self.dp_camera_offset = sm['dragonConf'].dpLateralCameraOffset
-      self.dp_path_offset = sm['dragonConf'].dpLateralPathOffset
-      if sm['controlsState'].dpLateralAltActive and sm['dragonConf'].dpLateralAltLanelines:
-        self.dp_lanelines_enable = True
-        self.dp_camera_offset = sm['dragonConf'].dpLateralAltCameraOffset
-        self.dp_path_offset = sm['dragonConf'].dpLateralAltPathOffset
 
     # Parse model predictions
     md = sm['modelV2']
@@ -90,27 +82,28 @@ class LateralPlanner:
       self.v_plan = np.clip(car_speed, MIN_SPEED, np.inf)
       self.v_ego = self.v_plan[0]
 
-    if self.dp_lanelines_enable:
-      # dp - when laneline mode enabled, we use old logic (including lane changing)
-      d_path_xyz = self.lanelines_mode(md, sm['carState'], sm['carControl'].latActive, sm['dragonConf'])
-    else:
-      self.dp_lanelines_active = False
-    # dp -- tab spacing begin (stock logic) --
-      # Lane change logic
-      desire_state = md.meta.desireState
-      if len(desire_state):
-        self.l_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeLeft]
-        self.r_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeRight]
-      lane_change_prob = self.l_lane_change_prob + self.r_lane_change_prob
-      self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob, sm['dragonConf'], md)
+    # Lane change logic
+    desire_state = md.meta.desireState
+    if len(desire_state):
+      self.l_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeLeft]
+      self.r_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeRight]
 
-      d_path_xyz = self.path_xyz
-    # dp -- tab spacing end (stock logic) --
+    if self._dp_lat_lane_priority_mode:
+      self.LP.parse_model(md)
+      lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
+    else:
+      lane_change_prob = self.l_lane_change_prob + self.r_lane_change_prob
+
+    self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob)
+
+    path_xyz = self._get_laneless_laneline_d_path_xyz() if self._dp_lat_lane_priority_mode else self.path_xyz
+    self.d_path_w_lines_xyz = path_xyz
+
     self.lat_mpc.set_weights(PATH_COST, LATERAL_MOTION_COST,
                              LATERAL_ACCEL_COST, LATERAL_JERK_COST,
                              STEERING_RATE_COST)
 
-    y_pts = d_path_xyz[:LAT_MPC_N+1, 1]
+    y_pts = path_xyz[:LAT_MPC_N+1, 1]
     heading_pts = self.plan_yaw[:LAT_MPC_N+1]
     yaw_rate_pts = self.plan_yaw_rate[:LAT_MPC_N+1]
     self.y_pts = y_pts
@@ -168,35 +161,44 @@ class LateralPlanner:
       lateralPlan.solverState.u = self.lat_mpc.u_sol.flatten().tolist()
 
     lateralPlan.desire = self.DH.desire
-    lateralPlan.useLaneLines = self.dp_lanelines_active
+    lateralPlan.useLaneLines = self._dp_lat_lane_priority_mode and self._dp_lat_lane_priority_mode_active
     lateralPlan.laneChangeState = self.DH.lane_change_state
     lateralPlan.laneChangeDirection = self.DH.lane_change_direction
 
-    plan_send.lateralPlan.dPathWLinesX = [float(x) for x in self.d_path_w_lines_xyz[:, 0]]
-    plan_send.lateralPlan.dPathWLinesY = [float(y) for y in self.d_path_w_lines_xyz[:, 1]]
-
     pm.send('lateralPlan', plan_send)
 
-  def lanelines_mode(self, md, car_state, lat_active, dragon_conf):
-    # update camera/path offset to lane planner
-    self.LP.update_dp_camera_offsets(self.dp_camera_offset, self.dp_path_offset)
-    # Parse model predictions
-    self.LP.parse_model(md)
+    # dp - extension
+    plan_ext_send = messaging.new_message('lateralPlanExt')
 
-    # Lane change logic
-    lane_change_prob = self.LP.l_lane_change_prob + self.LP.r_lane_change_prob
-    self.DH.update(car_state, lat_active, lane_change_prob, dragon_conf, md)
+    lateralPlanExt = plan_ext_send.lateralPlanExt
+    lateralPlanExt.dPathWLinesX = [float(x) for x in self.d_path_w_lines_xyz[:, 0]]
+    lateralPlanExt.dPathWLinesY = [float(y) for y in self.d_path_w_lines_xyz[:, 1]]
 
-    # Turn off lanes during lane change
-    if self.DH.desire == log.LateralPlan.Desire.laneChangeRight or self.DH.desire == log.LateralPlan.Desire.laneChangeLeft:
-      self.LP.lll_prob *= self.DH.lane_change_ll_prob
-      self.LP.rll_prob *= self.DH.lane_change_ll_prob
+    pm.send('lateralPlanExt', plan_ext_send)
 
-    # dynamic laneline/laneless logic
-    self.dp_lanelines_active = get_lane_laneless_mode(self.LP.lll_prob, self.LP.rll_prob, self.dp_lanelines_active)
+  def _get_laneless_laneline_d_path_xyz(self):
+    if self._dp_lat_lane_priority_mode and self.LP is not None:
+      # Turn off lanes during lane change
+      if self.DH.desire == log.LateralPlan.Desire.laneChangeRight or self.DH.desire == log.LateralPlan.Desire.laneChangeLeft:
+        self.LP.lll_prob *= self.DH.lane_change_ll_prob
+        self.LP.rll_prob *= self.DH.lane_change_ll_prob
 
-    # Calculate final driving path and set MPC costs
-    if self.dp_lanelines_active:
+      # decide what mode should we use
+      if (self.LP.lll_prob + self.LP.rll_prob)/2 < 0.3:
+        self._dp_lat_lane_priority_mode_active = False
+      if (self.LP.lll_prob + self.LP.rll_prob)/2 > 0.5:
+        self._dp_lat_lane_priority_mode_active = True
+
+      # perform reset mpc
+      if self._dp_lat_lane_priority_mode_active != self._dp_lat_lane_priority_mode_active_prev:
+        self.reset_mpc()
+      self._dp_lat_lane_priority_mode_active_prev = self._dp_lat_lane_priority_mode_active
+
+      # use default path if not active
+      if not self._dp_lat_lane_priority_mode_active:
+        return self.path_xyz
+
+      # use lane planner path
       return self.LP.get_d_path(self.v_ego, self.t_idxs, self.path_xyz)
     else:
       return self.path_xyz

@@ -3,13 +3,9 @@ import argparse
 import json
 import os
 
-try:
-  from common.basedir import BASEDIR
+from common.basedir import BASEDIR
 
-  UI_DIR = os.path.join(BASEDIR, "selfdrive", "ui")
-except ModuleNotFoundError:
-  UI_DIR = os.path.join("", "selfdrive", "ui")
-
+UI_DIR = os.path.join(BASEDIR, "selfdrive", "ui")
 TRANSLATIONS_DIR = os.path.join(UI_DIR, "translations")
 LANGUAGES_FILE = os.path.join(TRANSLATIONS_DIR, "languages.json")
 TRANSLATIONS_INCLUDE_FILE = os.path.join(TRANSLATIONS_DIR, "alerts_generated.h")

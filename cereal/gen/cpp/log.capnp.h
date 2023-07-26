@@ -12,7 +12,6 @@
 
 #include "car.capnp.h"
 #include "custom.capnp.h"
-#include "dp.capnp.h"
 #include "legacy.capnp.h"
 
 namespace capnp {
@@ -292,28 +291,9 @@ enum class LongitudinalPlanSource_b231a753cc079120: uint16_t {
   LEAD1,
   LEAD2,
   E2E,
-  TURN,
-  LIMIT,
-  TURNLIMIT,
 };
 CAPNP_DECLARE_ENUM(LongitudinalPlanSource, b231a753cc079120);
 CAPNP_DECLARE_SCHEMA(8cfeb072f5301000);
-CAPNP_DECLARE_SCHEMA(db9b50f4604547c0);
-enum class SpeedLimitControlState_db9b50f4604547c0: uint16_t {
-  INACTIVE,
-  TEMP_INACTIVE,
-  ADAPTING,
-  ACTIVE,
-};
-CAPNP_DECLARE_ENUM(SpeedLimitControlState, db9b50f4604547c0);
-CAPNP_DECLARE_SCHEMA(e1514857915ad376);
-enum class VisionTurnControllerState_e1514857915ad376: uint16_t {
-  DISABLED,
-  ENTERING,
-  TURNING,
-  LEAVING,
-};
-CAPNP_DECLARE_ENUM(VisionTurnControllerState, e1514857915ad376);
 CAPNP_DECLARE_SCHEMA(fc0c9bb05e3927c1);
 CAPNP_DECLARE_SCHEMA(e1e9318e2ae8b51e);
 CAPNP_DECLARE_SCHEMA(fdca7c675b7021c6);
@@ -470,7 +450,6 @@ CAPNP_DECLARE_SCHEMA(d9058dcb967c2753);
 CAPNP_DECLARE_SCHEMA(e61690eb0b091692);
 CAPNP_DECLARE_SCHEMA(943e268f93f711a6);
 CAPNP_DECLARE_SCHEMA(fa9a296b9fd41a96);
-CAPNP_DECLARE_SCHEMA(9854f620f0d3b9cc);
 CAPNP_DECLARE_SCHEMA(ef0382d244f56e38);
 CAPNP_DECLARE_SCHEMA(a2d8e61eb6f7031a);
 enum class SentinelType_a2d8e61eb6f7031a: uint16_t {
@@ -1130,7 +1109,7 @@ struct ControlsState::LateralControlState {
   enum Which: uint16_t {
     INDI_STATE,
     PID_STATE,
-    LQR_STATE,
+    LQR_STATE_D_E_P_R_E_C_A_T_E_D,
     ANGLE_STATE,
     DEBUG_STATE,
     TORQUE_STATE,
@@ -1175,7 +1154,7 @@ struct ModelDataV2 {
   struct Pose;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(c4713f6b0d36abe9, 5, 15)
+    CAPNP_DECLARE_STRUCT_HEADER(c4713f6b0d36abe9, 6, 15)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -1298,13 +1277,9 @@ struct LongitudinalPlan {
   typedef ::capnp::schemas::LongitudinalPlanSource_b231a753cc079120 LongitudinalPlanSource;
 
   struct GpsTrajectory;
-  typedef ::capnp::schemas::SpeedLimitControlState_db9b50f4604547c0 SpeedLimitControlState;
-
-  typedef ::capnp::schemas::VisionTurnControllerState_e1514857915ad376 VisionTurnControllerState;
-
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(e00b5b3eba12876c, 15, 7)
+    CAPNP_DECLARE_STRUCT_HEADER(e00b5b3eba12876c, 11, 6)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -1356,7 +1331,7 @@ struct LateralPlan {
 
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(e1e9318e2ae8b51e, 9, 11)
+    CAPNP_DECLARE_STRUCT_HEADER(e1e9318e2ae8b51e, 9, 9)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -2083,21 +2058,6 @@ struct CameraOdometry {
   };
 };
 
-struct LiveMapData {
-  LiveMapData() = delete;
-
-  class Reader;
-  class Builder;
-  class Pipeline;
-
-  struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(9854f620f0d3b9cc, 8, 4)
-    #if !CAPNP_LITE
-    static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
-    #endif  // !CAPNP_LITE
-  };
-};
-
 struct Sentinel {
   Sentinel() = delete;
 
@@ -2266,7 +2226,7 @@ struct NavModelData {
   struct XYData;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(ac3de5c437be057a, 2, 3)
+    CAPNP_DECLARE_STRUCT_HEADER(ac3de5c437be057a, 3, 3)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -2445,9 +2405,9 @@ struct Event {
     NAV_MODEL,
     MAP_RENDER_STATE,
     UI_PLAN,
-    CUSTOM_RESERVED0,
-    CUSTOM_RESERVED1,
-    CUSTOM_RESERVED2,
+    LIVE_MAP_DATA,
+    LONGITUDINAL_PLAN_EXT,
+    LATERAL_PLAN_EXT,
     CUSTOM_RESERVED3,
     CUSTOM_RESERVED4,
     CUSTOM_RESERVED5,
@@ -2461,8 +2421,6 @@ struct Event {
     LIVESTREAM_ROAD_ENCODE_DATA,
     LIVESTREAM_WIDE_ROAD_ENCODE_DATA,
     LIVESTREAM_DRIVER_ENCODE_DATA,
-    DRAGON_CONF,
-    LIVE_MAP_DATA,
   };
 
   struct _capnpPrivate {
@@ -5510,8 +5468,6 @@ public:
 
   inline float getSbu2Voltage() const;
 
-  inline bool getTorqueInterceptorDetected() const;
-
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -5667,9 +5623,6 @@ public:
 
   inline float getSbu2Voltage();
   inline void setSbu2Voltage(float value);
-
-  inline bool getTorqueInterceptorDetected();
-  inline void setTorqueInterceptorDetected(bool value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -6751,8 +6704,6 @@ public:
 
   inline bool getExperimentalMode() const;
 
-  inline bool getDpLateralAltActive() const;
-
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -6981,9 +6932,6 @@ public:
 
   inline bool getExperimentalMode();
   inline void setExperimentalMode(bool value);
-
-  inline bool getDpLateralAltActive();
-  inline void setDpLateralAltActive(bool value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -7830,9 +7778,9 @@ public:
   inline bool hasPidState() const;
   inline  ::cereal::ControlsState::LateralPIDState::Reader getPidState() const;
 
-  inline bool isLqrState() const;
-  inline bool hasLqrState() const;
-  inline  ::cereal::ControlsState::LateralLQRState::Reader getLqrState() const;
+  inline bool isLqrStateDEPRECATED() const;
+  inline bool hasLqrStateDEPRECATED() const;
+  inline  ::cereal::ControlsState::LateralLQRState::Reader getLqrStateDEPRECATED() const;
 
   inline bool isAngleState() const;
   inline bool hasAngleState() const;
@@ -7895,13 +7843,13 @@ public:
   inline void adoptPidState(::capnp::Orphan< ::cereal::ControlsState::LateralPIDState>&& value);
   inline ::capnp::Orphan< ::cereal::ControlsState::LateralPIDState> disownPidState();
 
-  inline bool isLqrState();
-  inline bool hasLqrState();
-  inline  ::cereal::ControlsState::LateralLQRState::Builder getLqrState();
-  inline void setLqrState( ::cereal::ControlsState::LateralLQRState::Reader value);
-  inline  ::cereal::ControlsState::LateralLQRState::Builder initLqrState();
-  inline void adoptLqrState(::capnp::Orphan< ::cereal::ControlsState::LateralLQRState>&& value);
-  inline ::capnp::Orphan< ::cereal::ControlsState::LateralLQRState> disownLqrState();
+  inline bool isLqrStateDEPRECATED();
+  inline bool hasLqrStateDEPRECATED();
+  inline  ::cereal::ControlsState::LateralLQRState::Builder getLqrStateDEPRECATED();
+  inline void setLqrStateDEPRECATED( ::cereal::ControlsState::LateralLQRState::Reader value);
+  inline  ::cereal::ControlsState::LateralLQRState::Builder initLqrStateDEPRECATED();
+  inline void adoptLqrStateDEPRECATED(::capnp::Orphan< ::cereal::ControlsState::LateralLQRState>&& value);
+  inline ::capnp::Orphan< ::cereal::ControlsState::LateralLQRState> disownLqrStateDEPRECATED();
 
   inline bool isAngleState();
   inline bool hasAngleState();
@@ -8189,6 +8137,8 @@ public:
 
   inline  ::cereal::ModelDataV2::ConfidenceClass getConfidence() const;
 
+  inline  ::uint64_t getLocationMonoTime() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -8351,6 +8301,9 @@ public:
 
   inline  ::cereal::ModelDataV2::ConfidenceClass getConfidence();
   inline void setConfidence( ::cereal::ModelDataV2::ConfidenceClass value);
+
+  inline  ::uint64_t getLocationMonoTime();
+  inline void setLocationMonoTime( ::uint64_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -9394,37 +9347,6 @@ public:
 
   inline  ::cereal::LongitudinalPersonality getPersonality() const;
 
-  inline  ::cereal::LongitudinalPlan::VisionTurnControllerState getVisionTurnControllerState() const;
-
-  inline float getVisionTurnSpeed() const;
-
-  inline  ::cereal::LongitudinalPlan::SpeedLimitControlState getSpeedLimitControlState() const;
-
-  inline float getSpeedLimit() const;
-
-  inline float getSpeedLimitOffset() const;
-
-  inline float getDistToSpeedLimit() const;
-
-  inline bool getIsMapSpeedLimit() const;
-
-  inline bool getSpeedLimitPercOffset() const;
-
-  inline float getSpeedLimitValueOffset() const;
-
-  inline float getDistToTurn() const;
-
-  inline float getTurnSpeed() const;
-
-  inline  ::cereal::LongitudinalPlan::SpeedLimitControlState getTurnSpeedControlState() const;
-
-  inline  ::int16_t getTurnSign() const;
-
-  inline bool getDpE2EIsBlended() const;
-
-  inline bool hasDistances() const;
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getDistances() const;
-
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -9591,56 +9513,6 @@ public:
 
   inline  ::cereal::LongitudinalPersonality getPersonality();
   inline void setPersonality( ::cereal::LongitudinalPersonality value);
-
-  inline  ::cereal::LongitudinalPlan::VisionTurnControllerState getVisionTurnControllerState();
-  inline void setVisionTurnControllerState( ::cereal::LongitudinalPlan::VisionTurnControllerState value);
-
-  inline float getVisionTurnSpeed();
-  inline void setVisionTurnSpeed(float value);
-
-  inline  ::cereal::LongitudinalPlan::SpeedLimitControlState getSpeedLimitControlState();
-  inline void setSpeedLimitControlState( ::cereal::LongitudinalPlan::SpeedLimitControlState value);
-
-  inline float getSpeedLimit();
-  inline void setSpeedLimit(float value);
-
-  inline float getSpeedLimitOffset();
-  inline void setSpeedLimitOffset(float value);
-
-  inline float getDistToSpeedLimit();
-  inline void setDistToSpeedLimit(float value);
-
-  inline bool getIsMapSpeedLimit();
-  inline void setIsMapSpeedLimit(bool value);
-
-  inline bool getSpeedLimitPercOffset();
-  inline void setSpeedLimitPercOffset(bool value);
-
-  inline float getSpeedLimitValueOffset();
-  inline void setSpeedLimitValueOffset(float value);
-
-  inline float getDistToTurn();
-  inline void setDistToTurn(float value);
-
-  inline float getTurnSpeed();
-  inline void setTurnSpeed(float value);
-
-  inline  ::cereal::LongitudinalPlan::SpeedLimitControlState getTurnSpeedControlState();
-  inline void setTurnSpeedControlState( ::cereal::LongitudinalPlan::SpeedLimitControlState value);
-
-  inline  ::int16_t getTurnSign();
-  inline void setTurnSign( ::int16_t value);
-
-  inline bool getDpE2EIsBlended();
-  inline void setDpE2EIsBlended(bool value);
-
-  inline bool hasDistances();
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getDistances();
-  inline void setDistances( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
-  inline void setDistances(::kj::ArrayPtr<const float> value);
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initDistances(unsigned int size);
-  inline void adoptDistances(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
-  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownDistances();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -9954,12 +9826,6 @@ public:
   inline bool hasSolverState() const;
   inline  ::cereal::LateralPlan::SolverState::Reader getSolverState() const;
 
-  inline bool hasDPathWLinesX() const;
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getDPathWLinesX() const;
-
-  inline bool hasDPathWLinesY() const;
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getDPathWLinesY() const;
-
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -10133,22 +9999,6 @@ public:
   inline  ::cereal::LateralPlan::SolverState::Builder initSolverState();
   inline void adoptSolverState(::capnp::Orphan< ::cereal::LateralPlan::SolverState>&& value);
   inline ::capnp::Orphan< ::cereal::LateralPlan::SolverState> disownSolverState();
-
-  inline bool hasDPathWLinesX();
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getDPathWLinesX();
-  inline void setDPathWLinesX( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
-  inline void setDPathWLinesX(::kj::ArrayPtr<const float> value);
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initDPathWLinesX(unsigned int size);
-  inline void adoptDPathWLinesX(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
-  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownDPathWLinesX();
-
-  inline bool hasDPathWLinesY();
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getDPathWLinesY();
-  inline void setDPathWLinesY( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
-  inline void setDPathWLinesY(::kj::ArrayPtr<const float> value);
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initDPathWLinesY(unsigned int size);
-  inline void adoptDPathWLinesY(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
-  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownDPathWLinesY();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -16928,200 +16778,6 @@ private:
 };
 #endif  // !CAPNP_LITE
 
-class LiveMapData::Reader {
-public:
-  typedef LiveMapData Reads;
-
-  Reader() = default;
-  inline explicit Reader(::capnp::_::StructReader base): _reader(base) {}
-
-  inline ::capnp::MessageSize totalSize() const {
-    return _reader.totalSize().asPublic();
-  }
-
-#if !CAPNP_LITE
-  inline ::kj::StringTree toString() const {
-    return ::capnp::_::structString(_reader, *_capnpPrivate::brand());
-  }
-#endif  // !CAPNP_LITE
-
-  inline bool getSpeedLimitValid() const;
-
-  inline float getSpeedLimit() const;
-
-  inline bool getSpeedLimitAheadValid() const;
-
-  inline float getSpeedLimitAhead() const;
-
-  inline float getSpeedLimitAheadDistance() const;
-
-  inline bool getTurnSpeedLimitValid() const;
-
-  inline float getTurnSpeedLimit() const;
-
-  inline float getTurnSpeedLimitEndDistance() const;
-
-  inline  ::int16_t getTurnSpeedLimitSign() const;
-
-  inline bool hasTurnSpeedLimitsAhead() const;
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getTurnSpeedLimitsAhead() const;
-
-  inline bool hasTurnSpeedLimitsAheadDistances() const;
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getTurnSpeedLimitsAheadDistances() const;
-
-  inline bool hasTurnSpeedLimitsAheadSigns() const;
-  inline  ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>::Reader getTurnSpeedLimitsAheadSigns() const;
-
-  inline  ::int64_t getLastGpsTimestamp() const;
-
-  inline bool hasCurrentRoadName() const;
-  inline  ::capnp::Text::Reader getCurrentRoadName() const;
-
-  inline double getLastGpsLatitude() const;
-
-  inline double getLastGpsLongitude() const;
-
-  inline float getLastGpsSpeed() const;
-
-  inline float getLastGpsBearingDeg() const;
-
-  inline float getLastGpsAccuracy() const;
-
-  inline float getLastGpsBearingAccuracyDeg() const;
-
-private:
-  ::capnp::_::StructReader _reader;
-  template <typename, ::capnp::Kind>
-  friend struct ::capnp::ToDynamic_;
-  template <typename, ::capnp::Kind>
-  friend struct ::capnp::_::PointerHelpers;
-  template <typename, ::capnp::Kind>
-  friend struct ::capnp::List;
-  friend class ::capnp::MessageBuilder;
-  friend class ::capnp::Orphanage;
-};
-
-class LiveMapData::Builder {
-public:
-  typedef LiveMapData Builds;
-
-  Builder() = delete;  // Deleted to discourage incorrect usage.
-                       // You can explicitly initialize to nullptr instead.
-  inline Builder(decltype(nullptr)) {}
-  inline explicit Builder(::capnp::_::StructBuilder base): _builder(base) {}
-  inline operator Reader() const { return Reader(_builder.asReader()); }
-  inline Reader asReader() const { return *this; }
-
-  inline ::capnp::MessageSize totalSize() const { return asReader().totalSize(); }
-#if !CAPNP_LITE
-  inline ::kj::StringTree toString() const { return asReader().toString(); }
-#endif  // !CAPNP_LITE
-
-  inline bool getSpeedLimitValid();
-  inline void setSpeedLimitValid(bool value);
-
-  inline float getSpeedLimit();
-  inline void setSpeedLimit(float value);
-
-  inline bool getSpeedLimitAheadValid();
-  inline void setSpeedLimitAheadValid(bool value);
-
-  inline float getSpeedLimitAhead();
-  inline void setSpeedLimitAhead(float value);
-
-  inline float getSpeedLimitAheadDistance();
-  inline void setSpeedLimitAheadDistance(float value);
-
-  inline bool getTurnSpeedLimitValid();
-  inline void setTurnSpeedLimitValid(bool value);
-
-  inline float getTurnSpeedLimit();
-  inline void setTurnSpeedLimit(float value);
-
-  inline float getTurnSpeedLimitEndDistance();
-  inline void setTurnSpeedLimitEndDistance(float value);
-
-  inline  ::int16_t getTurnSpeedLimitSign();
-  inline void setTurnSpeedLimitSign( ::int16_t value);
-
-  inline bool hasTurnSpeedLimitsAhead();
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getTurnSpeedLimitsAhead();
-  inline void setTurnSpeedLimitsAhead( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
-  inline void setTurnSpeedLimitsAhead(::kj::ArrayPtr<const float> value);
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initTurnSpeedLimitsAhead(unsigned int size);
-  inline void adoptTurnSpeedLimitsAhead(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
-  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownTurnSpeedLimitsAhead();
-
-  inline bool hasTurnSpeedLimitsAheadDistances();
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getTurnSpeedLimitsAheadDistances();
-  inline void setTurnSpeedLimitsAheadDistances( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
-  inline void setTurnSpeedLimitsAheadDistances(::kj::ArrayPtr<const float> value);
-  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initTurnSpeedLimitsAheadDistances(unsigned int size);
-  inline void adoptTurnSpeedLimitsAheadDistances(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
-  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownTurnSpeedLimitsAheadDistances();
-
-  inline bool hasTurnSpeedLimitsAheadSigns();
-  inline  ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>::Builder getTurnSpeedLimitsAheadSigns();
-  inline void setTurnSpeedLimitsAheadSigns( ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>::Reader value);
-  inline void setTurnSpeedLimitsAheadSigns(::kj::ArrayPtr<const  ::int16_t> value);
-  inline  ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>::Builder initTurnSpeedLimitsAheadSigns(unsigned int size);
-  inline void adoptTurnSpeedLimitsAheadSigns(::capnp::Orphan< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>&& value);
-  inline ::capnp::Orphan< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>> disownTurnSpeedLimitsAheadSigns();
-
-  inline  ::int64_t getLastGpsTimestamp();
-  inline void setLastGpsTimestamp( ::int64_t value);
-
-  inline bool hasCurrentRoadName();
-  inline  ::capnp::Text::Builder getCurrentRoadName();
-  inline void setCurrentRoadName( ::capnp::Text::Reader value);
-  inline  ::capnp::Text::Builder initCurrentRoadName(unsigned int size);
-  inline void adoptCurrentRoadName(::capnp::Orphan< ::capnp::Text>&& value);
-  inline ::capnp::Orphan< ::capnp::Text> disownCurrentRoadName();
-
-  inline double getLastGpsLatitude();
-  inline void setLastGpsLatitude(double value);
-
-  inline double getLastGpsLongitude();
-  inline void setLastGpsLongitude(double value);
-
-  inline float getLastGpsSpeed();
-  inline void setLastGpsSpeed(float value);
-
-  inline float getLastGpsBearingDeg();
-  inline void setLastGpsBearingDeg(float value);
-
-  inline float getLastGpsAccuracy();
-  inline void setLastGpsAccuracy(float value);
-
-  inline float getLastGpsBearingAccuracyDeg();
-  inline void setLastGpsBearingAccuracyDeg(float value);
-
-private:
-  ::capnp::_::StructBuilder _builder;
-  template <typename, ::capnp::Kind>
-  friend struct ::capnp::ToDynamic_;
-  friend class ::capnp::Orphanage;
-  template <typename, ::capnp::Kind>
-  friend struct ::capnp::_::PointerHelpers;
-};
-
-#if !CAPNP_LITE
-class LiveMapData::Pipeline {
-public:
-  typedef LiveMapData Pipelines;
-
-  inline Pipeline(decltype(nullptr)): _typeless(nullptr) {}
-  inline explicit Pipeline(::capnp::AnyPointer::Pipeline&& typeless)
-      : _typeless(kj::mv(typeless)) {}
-
-private:
-  ::capnp::AnyPointer::Pipeline _typeless;
-  friend class ::capnp::PipelineHook;
-  template <typename, ::capnp::Kind>
-  friend struct ::capnp::ToDynamic_;
-};
-#endif  // !CAPNP_LITE
-
 class Sentinel::Reader {
 public:
   typedef Sentinel Reads;
@@ -18100,6 +17756,8 @@ public:
   inline bool hasDesirePrediction() const;
   inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getDesirePrediction() const;
 
+  inline  ::uint64_t getLocationMonoTime() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -18159,6 +17817,9 @@ public:
   inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initDesirePrediction(unsigned int size);
   inline void adoptDesirePrediction(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
   inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownDesirePrediction();
+
+  inline  ::uint64_t getLocationMonoTime();
+  inline void setLocationMonoTime( ::uint64_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -19013,17 +18674,17 @@ public:
   inline bool hasUiPlan() const;
   inline  ::cereal::UiPlan::Reader getUiPlan() const;
 
-  inline bool isCustomReserved0() const;
-  inline bool hasCustomReserved0() const;
-  inline  ::cereal::CustomReserved0::Reader getCustomReserved0() const;
+  inline bool isLiveMapData() const;
+  inline bool hasLiveMapData() const;
+  inline  ::cereal::LiveMapData::Reader getLiveMapData() const;
 
-  inline bool isCustomReserved1() const;
-  inline bool hasCustomReserved1() const;
-  inline  ::cereal::CustomReserved1::Reader getCustomReserved1() const;
+  inline bool isLongitudinalPlanExt() const;
+  inline bool hasLongitudinalPlanExt() const;
+  inline  ::cereal::LongitudinalPlanExt::Reader getLongitudinalPlanExt() const;
 
-  inline bool isCustomReserved2() const;
-  inline bool hasCustomReserved2() const;
-  inline  ::cereal::CustomReserved2::Reader getCustomReserved2() const;
+  inline bool isLateralPlanExt() const;
+  inline bool hasLateralPlanExt() const;
+  inline  ::cereal::LateralPlanExt::Reader getLateralPlanExt() const;
 
   inline bool isCustomReserved3() const;
   inline bool hasCustomReserved3() const;
@@ -19076,14 +18737,6 @@ public:
   inline bool isLivestreamDriverEncodeData() const;
   inline bool hasLivestreamDriverEncodeData() const;
   inline  ::cereal::EncodeData::Reader getLivestreamDriverEncodeData() const;
-
-  inline bool isDragonConf() const;
-  inline bool hasDragonConf() const;
-  inline  ::cereal::DragonConf::Reader getDragonConf() const;
-
-  inline bool isLiveMapData() const;
-  inline bool hasLiveMapData() const;
-  inline  ::cereal::LiveMapData::Reader getLiveMapData() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -19960,29 +19613,29 @@ public:
   inline void adoptUiPlan(::capnp::Orphan< ::cereal::UiPlan>&& value);
   inline ::capnp::Orphan< ::cereal::UiPlan> disownUiPlan();
 
-  inline bool isCustomReserved0();
-  inline bool hasCustomReserved0();
-  inline  ::cereal::CustomReserved0::Builder getCustomReserved0();
-  inline void setCustomReserved0( ::cereal::CustomReserved0::Reader value);
-  inline  ::cereal::CustomReserved0::Builder initCustomReserved0();
-  inline void adoptCustomReserved0(::capnp::Orphan< ::cereal::CustomReserved0>&& value);
-  inline ::capnp::Orphan< ::cereal::CustomReserved0> disownCustomReserved0();
+  inline bool isLiveMapData();
+  inline bool hasLiveMapData();
+  inline  ::cereal::LiveMapData::Builder getLiveMapData();
+  inline void setLiveMapData( ::cereal::LiveMapData::Reader value);
+  inline  ::cereal::LiveMapData::Builder initLiveMapData();
+  inline void adoptLiveMapData(::capnp::Orphan< ::cereal::LiveMapData>&& value);
+  inline ::capnp::Orphan< ::cereal::LiveMapData> disownLiveMapData();
 
-  inline bool isCustomReserved1();
-  inline bool hasCustomReserved1();
-  inline  ::cereal::CustomReserved1::Builder getCustomReserved1();
-  inline void setCustomReserved1( ::cereal::CustomReserved1::Reader value);
-  inline  ::cereal::CustomReserved1::Builder initCustomReserved1();
-  inline void adoptCustomReserved1(::capnp::Orphan< ::cereal::CustomReserved1>&& value);
-  inline ::capnp::Orphan< ::cereal::CustomReserved1> disownCustomReserved1();
+  inline bool isLongitudinalPlanExt();
+  inline bool hasLongitudinalPlanExt();
+  inline  ::cereal::LongitudinalPlanExt::Builder getLongitudinalPlanExt();
+  inline void setLongitudinalPlanExt( ::cereal::LongitudinalPlanExt::Reader value);
+  inline  ::cereal::LongitudinalPlanExt::Builder initLongitudinalPlanExt();
+  inline void adoptLongitudinalPlanExt(::capnp::Orphan< ::cereal::LongitudinalPlanExt>&& value);
+  inline ::capnp::Orphan< ::cereal::LongitudinalPlanExt> disownLongitudinalPlanExt();
 
-  inline bool isCustomReserved2();
-  inline bool hasCustomReserved2();
-  inline  ::cereal::CustomReserved2::Builder getCustomReserved2();
-  inline void setCustomReserved2( ::cereal::CustomReserved2::Reader value);
-  inline  ::cereal::CustomReserved2::Builder initCustomReserved2();
-  inline void adoptCustomReserved2(::capnp::Orphan< ::cereal::CustomReserved2>&& value);
-  inline ::capnp::Orphan< ::cereal::CustomReserved2> disownCustomReserved2();
+  inline bool isLateralPlanExt();
+  inline bool hasLateralPlanExt();
+  inline  ::cereal::LateralPlanExt::Builder getLateralPlanExt();
+  inline void setLateralPlanExt( ::cereal::LateralPlanExt::Reader value);
+  inline  ::cereal::LateralPlanExt::Builder initLateralPlanExt();
+  inline void adoptLateralPlanExt(::capnp::Orphan< ::cereal::LateralPlanExt>&& value);
+  inline ::capnp::Orphan< ::cereal::LateralPlanExt> disownLateralPlanExt();
 
   inline bool isCustomReserved3();
   inline bool hasCustomReserved3();
@@ -20087,22 +19740,6 @@ public:
   inline  ::cereal::EncodeData::Builder initLivestreamDriverEncodeData();
   inline void adoptLivestreamDriverEncodeData(::capnp::Orphan< ::cereal::EncodeData>&& value);
   inline ::capnp::Orphan< ::cereal::EncodeData> disownLivestreamDriverEncodeData();
-
-  inline bool isDragonConf();
-  inline bool hasDragonConf();
-  inline  ::cereal::DragonConf::Builder getDragonConf();
-  inline void setDragonConf( ::cereal::DragonConf::Reader value);
-  inline  ::cereal::DragonConf::Builder initDragonConf();
-  inline void adoptDragonConf(::capnp::Orphan< ::cereal::DragonConf>&& value);
-  inline ::capnp::Orphan< ::cereal::DragonConf> disownDragonConf();
-
-  inline bool isLiveMapData();
-  inline bool hasLiveMapData();
-  inline  ::cereal::LiveMapData::Builder getLiveMapData();
-  inline void setLiveMapData( ::cereal::LiveMapData::Reader value);
-  inline  ::cereal::LiveMapData::Builder initLiveMapData();
-  inline void adoptLiveMapData(::capnp::Orphan< ::cereal::LiveMapData>&& value);
-  inline ::capnp::Orphan< ::cereal::LiveMapData> disownLiveMapData();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -25719,20 +25356,6 @@ inline void PandaState::Builder::setSbu2Voltage(float value) {
       ::capnp::bounded<17>() * ::capnp::ELEMENTS, value);
 }
 
-inline bool PandaState::Reader::getTorqueInterceptorDetected() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<481>() * ::capnp::ELEMENTS);
-}
-
-inline bool PandaState::Builder::getTorqueInterceptorDetected() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<481>() * ::capnp::ELEMENTS);
-}
-inline void PandaState::Builder::setTorqueInterceptorDetected(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<481>() * ::capnp::ELEMENTS, value);
-}
-
 inline bool PandaState::PandaCanState::Reader::getBusOff() const {
   return _reader.getDataField<bool>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
@@ -28127,20 +27750,6 @@ inline void ControlsState::Builder::setExperimentalMode(bool value) {
       ::capnp::bounded<715>() * ::capnp::ELEMENTS, value);
 }
 
-inline bool ControlsState::Reader::getDpLateralAltActive() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<716>() * ::capnp::ELEMENTS);
-}
-
-inline bool ControlsState::Builder::getDpLateralAltActive() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<716>() * ::capnp::ELEMENTS);
-}
-inline void ControlsState::Builder::setDpLateralAltActive(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<716>() * ::capnp::ELEMENTS, value);
-}
-
 inline bool ControlsState::LateralINDIState::Reader::getActive() const {
   return _reader.getDataField<bool>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
@@ -29084,55 +28693,55 @@ inline ::capnp::Orphan< ::cereal::ControlsState::LateralPIDState> ControlsState:
       ::capnp::bounded<5>() * ::capnp::POINTERS));
 }
 
-inline bool ControlsState::LateralControlState::Reader::isLqrState() const {
-  return which() == ControlsState::LateralControlState::LQR_STATE;
+inline bool ControlsState::LateralControlState::Reader::isLqrStateDEPRECATED() const {
+  return which() == ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool ControlsState::LateralControlState::Builder::isLqrState() {
-  return which() == ControlsState::LateralControlState::LQR_STATE;
+inline bool ControlsState::LateralControlState::Builder::isLqrStateDEPRECATED() {
+  return which() == ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool ControlsState::LateralControlState::Reader::hasLqrState() const {
-  if (which() != ControlsState::LateralControlState::LQR_STATE) return false;
+inline bool ControlsState::LateralControlState::Reader::hasLqrStateDEPRECATED() const {
+  if (which() != ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS).isNull();
 }
-inline bool ControlsState::LateralControlState::Builder::hasLqrState() {
-  if (which() != ControlsState::LateralControlState::LQR_STATE) return false;
+inline bool ControlsState::LateralControlState::Builder::hasLqrStateDEPRECATED() {
+  if (which() != ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::ControlsState::LateralLQRState::Reader ControlsState::LateralControlState::Reader::getLqrState() const {
-  KJ_IREQUIRE((which() == ControlsState::LateralControlState::LQR_STATE),
+inline  ::cereal::ControlsState::LateralLQRState::Reader ControlsState::LateralControlState::Reader::getLqrStateDEPRECATED() const {
+  KJ_IREQUIRE((which() == ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::ControlsState::LateralLQRState>::get(_reader.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS));
 }
-inline  ::cereal::ControlsState::LateralLQRState::Builder ControlsState::LateralControlState::Builder::getLqrState() {
-  KJ_IREQUIRE((which() == ControlsState::LateralControlState::LQR_STATE),
+inline  ::cereal::ControlsState::LateralLQRState::Builder ControlsState::LateralControlState::Builder::getLqrStateDEPRECATED() {
+  KJ_IREQUIRE((which() == ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::ControlsState::LateralLQRState>::get(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS));
 }
-inline void ControlsState::LateralControlState::Builder::setLqrState( ::cereal::ControlsState::LateralLQRState::Reader value) {
+inline void ControlsState::LateralControlState::Builder::setLqrStateDEPRECATED( ::cereal::ControlsState::LateralLQRState::Reader value) {
   _builder.setDataField<ControlsState::LateralControlState::Which>(
-      ::capnp::bounded<71>() * ::capnp::ELEMENTS, ControlsState::LateralControlState::LQR_STATE);
+      ::capnp::bounded<71>() * ::capnp::ELEMENTS, ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::ControlsState::LateralLQRState>::set(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::ControlsState::LateralLQRState::Builder ControlsState::LateralControlState::Builder::initLqrState() {
+inline  ::cereal::ControlsState::LateralLQRState::Builder ControlsState::LateralControlState::Builder::initLqrStateDEPRECATED() {
   _builder.setDataField<ControlsState::LateralControlState::Which>(
-      ::capnp::bounded<71>() * ::capnp::ELEMENTS, ControlsState::LateralControlState::LQR_STATE);
+      ::capnp::bounded<71>() * ::capnp::ELEMENTS, ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D);
   return ::capnp::_::PointerHelpers< ::cereal::ControlsState::LateralLQRState>::init(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS));
 }
-inline void ControlsState::LateralControlState::Builder::adoptLqrState(
+inline void ControlsState::LateralControlState::Builder::adoptLqrStateDEPRECATED(
     ::capnp::Orphan< ::cereal::ControlsState::LateralLQRState>&& value) {
   _builder.setDataField<ControlsState::LateralControlState::Which>(
-      ::capnp::bounded<71>() * ::capnp::ELEMENTS, ControlsState::LateralControlState::LQR_STATE);
+      ::capnp::bounded<71>() * ::capnp::ELEMENTS, ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::ControlsState::LateralLQRState>::adopt(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::ControlsState::LateralLQRState> ControlsState::LateralControlState::Builder::disownLqrState() {
-  KJ_IREQUIRE((which() == ControlsState::LateralControlState::LQR_STATE),
+inline ::capnp::Orphan< ::cereal::ControlsState::LateralLQRState> ControlsState::LateralControlState::Builder::disownLqrStateDEPRECATED() {
+  KJ_IREQUIRE((which() == ControlsState::LateralControlState::LQR_STATE_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::ControlsState::LateralLQRState>::disown(_builder.getPointerField(
       ::capnp::bounded<5>() * ::capnp::POINTERS));
@@ -30301,6 +29910,20 @@ inline  ::cereal::ModelDataV2::ConfidenceClass ModelDataV2::Builder::getConfiden
 inline void ModelDataV2::Builder::setConfidence( ::cereal::ModelDataV2::ConfidenceClass value) {
   _builder.setDataField< ::cereal::ModelDataV2::ConfidenceClass>(
       ::capnp::bounded<17>() * ::capnp::ELEMENTS, value);
+}
+
+inline  ::uint64_t ModelDataV2::Reader::getLocationMonoTime() const {
+  return _reader.getDataField< ::uint64_t>(
+      ::capnp::bounded<5>() * ::capnp::ELEMENTS);
+}
+
+inline  ::uint64_t ModelDataV2::Builder::getLocationMonoTime() {
+  return _builder.getDataField< ::uint64_t>(
+      ::capnp::bounded<5>() * ::capnp::ELEMENTS);
+}
+inline void ModelDataV2::Builder::setLocationMonoTime( ::uint64_t value) {
+  _builder.setDataField< ::uint64_t>(
+      ::capnp::bounded<5>() * ::capnp::ELEMENTS, value);
 }
 
 inline float ModelDataV2::LeadDataV2::Reader::getProb() const {
@@ -32317,240 +31940,6 @@ inline void LongitudinalPlan::Builder::setPersonality( ::cereal::LongitudinalPer
       ::capnp::bounded<40>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::cereal::LongitudinalPlan::VisionTurnControllerState LongitudinalPlan::Reader::getVisionTurnControllerState() const {
-  return _reader.getDataField< ::cereal::LongitudinalPlan::VisionTurnControllerState>(
-      ::capnp::bounded<41>() * ::capnp::ELEMENTS);
-}
-
-inline  ::cereal::LongitudinalPlan::VisionTurnControllerState LongitudinalPlan::Builder::getVisionTurnControllerState() {
-  return _builder.getDataField< ::cereal::LongitudinalPlan::VisionTurnControllerState>(
-      ::capnp::bounded<41>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setVisionTurnControllerState( ::cereal::LongitudinalPlan::VisionTurnControllerState value) {
-  _builder.setDataField< ::cereal::LongitudinalPlan::VisionTurnControllerState>(
-      ::capnp::bounded<41>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LongitudinalPlan::Reader::getVisionTurnSpeed() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<21>() * ::capnp::ELEMENTS);
-}
-
-inline float LongitudinalPlan::Builder::getVisionTurnSpeed() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<21>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setVisionTurnSpeed(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<21>() * ::capnp::ELEMENTS, value);
-}
-
-inline  ::cereal::LongitudinalPlan::SpeedLimitControlState LongitudinalPlan::Reader::getSpeedLimitControlState() const {
-  return _reader.getDataField< ::cereal::LongitudinalPlan::SpeedLimitControlState>(
-      ::capnp::bounded<44>() * ::capnp::ELEMENTS);
-}
-
-inline  ::cereal::LongitudinalPlan::SpeedLimitControlState LongitudinalPlan::Builder::getSpeedLimitControlState() {
-  return _builder.getDataField< ::cereal::LongitudinalPlan::SpeedLimitControlState>(
-      ::capnp::bounded<44>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setSpeedLimitControlState( ::cereal::LongitudinalPlan::SpeedLimitControlState value) {
-  _builder.setDataField< ::cereal::LongitudinalPlan::SpeedLimitControlState>(
-      ::capnp::bounded<44>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LongitudinalPlan::Reader::getSpeedLimit() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<23>() * ::capnp::ELEMENTS);
-}
-
-inline float LongitudinalPlan::Builder::getSpeedLimit() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<23>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setSpeedLimit(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<23>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LongitudinalPlan::Reader::getSpeedLimitOffset() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<24>() * ::capnp::ELEMENTS);
-}
-
-inline float LongitudinalPlan::Builder::getSpeedLimitOffset() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<24>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setSpeedLimitOffset(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<24>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LongitudinalPlan::Reader::getDistToSpeedLimit() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<25>() * ::capnp::ELEMENTS);
-}
-
-inline float LongitudinalPlan::Builder::getDistToSpeedLimit() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<25>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setDistToSpeedLimit(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<25>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool LongitudinalPlan::Reader::getIsMapSpeedLimit() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS);
-}
-
-inline bool LongitudinalPlan::Builder::getIsMapSpeedLimit() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setIsMapSpeedLimit(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool LongitudinalPlan::Reader::getSpeedLimitPercOffset() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<13>() * ::capnp::ELEMENTS);
-}
-
-inline bool LongitudinalPlan::Builder::getSpeedLimitPercOffset() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<13>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setSpeedLimitPercOffset(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<13>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LongitudinalPlan::Reader::getSpeedLimitValueOffset() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<26>() * ::capnp::ELEMENTS);
-}
-
-inline float LongitudinalPlan::Builder::getSpeedLimitValueOffset() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<26>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setSpeedLimitValueOffset(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<26>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LongitudinalPlan::Reader::getDistToTurn() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<27>() * ::capnp::ELEMENTS);
-}
-
-inline float LongitudinalPlan::Builder::getDistToTurn() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<27>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setDistToTurn(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<27>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LongitudinalPlan::Reader::getTurnSpeed() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<28>() * ::capnp::ELEMENTS);
-}
-
-inline float LongitudinalPlan::Builder::getTurnSpeed() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<28>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setTurnSpeed(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<28>() * ::capnp::ELEMENTS, value);
-}
-
-inline  ::cereal::LongitudinalPlan::SpeedLimitControlState LongitudinalPlan::Reader::getTurnSpeedControlState() const {
-  return _reader.getDataField< ::cereal::LongitudinalPlan::SpeedLimitControlState>(
-      ::capnp::bounded<45>() * ::capnp::ELEMENTS);
-}
-
-inline  ::cereal::LongitudinalPlan::SpeedLimitControlState LongitudinalPlan::Builder::getTurnSpeedControlState() {
-  return _builder.getDataField< ::cereal::LongitudinalPlan::SpeedLimitControlState>(
-      ::capnp::bounded<45>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setTurnSpeedControlState( ::cereal::LongitudinalPlan::SpeedLimitControlState value) {
-  _builder.setDataField< ::cereal::LongitudinalPlan::SpeedLimitControlState>(
-      ::capnp::bounded<45>() * ::capnp::ELEMENTS, value);
-}
-
-inline  ::int16_t LongitudinalPlan::Reader::getTurnSign() const {
-  return _reader.getDataField< ::int16_t>(
-      ::capnp::bounded<58>() * ::capnp::ELEMENTS);
-}
-
-inline  ::int16_t LongitudinalPlan::Builder::getTurnSign() {
-  return _builder.getDataField< ::int16_t>(
-      ::capnp::bounded<58>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setTurnSign( ::int16_t value) {
-  _builder.setDataField< ::int16_t>(
-      ::capnp::bounded<58>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool LongitudinalPlan::Reader::getDpE2EIsBlended() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<14>() * ::capnp::ELEMENTS);
-}
-
-inline bool LongitudinalPlan::Builder::getDpE2EIsBlended() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<14>() * ::capnp::ELEMENTS);
-}
-inline void LongitudinalPlan::Builder::setDpE2EIsBlended(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<14>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool LongitudinalPlan::Reader::hasDistances() const {
-  return !_reader.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS).isNull();
-}
-inline bool LongitudinalPlan::Builder::hasDistances() {
-  return !_builder.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS).isNull();
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader LongitudinalPlan::Reader::getDistances() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS));
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LongitudinalPlan::Builder::getDistances() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS));
-}
-inline void LongitudinalPlan::Builder::setDistances( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS), value);
-}
-inline void LongitudinalPlan::Builder::setDistances(::kj::ArrayPtr<const float> value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS), value);
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LongitudinalPlan::Builder::initDistances(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS), size);
-}
-inline void LongitudinalPlan::Builder::adoptDistances(
-    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> LongitudinalPlan::Builder::disownDistances() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
-      ::capnp::bounded<6>() * ::capnp::POINTERS));
-}
-
 inline bool LongitudinalPlan::GpsTrajectory::Reader::hasX() const {
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
@@ -33409,82 +32798,6 @@ inline void LateralPlan::Builder::adoptSolverState(
 inline ::capnp::Orphan< ::cereal::LateralPlan::SolverState> LateralPlan::Builder::disownSolverState() {
   return ::capnp::_::PointerHelpers< ::cereal::LateralPlan::SolverState>::disown(_builder.getPointerField(
       ::capnp::bounded<8>() * ::capnp::POINTERS));
-}
-
-inline bool LateralPlan::Reader::hasDPathWLinesX() const {
-  return !_reader.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS).isNull();
-}
-inline bool LateralPlan::Builder::hasDPathWLinesX() {
-  return !_builder.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS).isNull();
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader LateralPlan::Reader::getDPathWLinesX() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS));
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LateralPlan::Builder::getDPathWLinesX() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS));
-}
-inline void LateralPlan::Builder::setDPathWLinesX( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS), value);
-}
-inline void LateralPlan::Builder::setDPathWLinesX(::kj::ArrayPtr<const float> value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS), value);
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LateralPlan::Builder::initDPathWLinesX(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS), size);
-}
-inline void LateralPlan::Builder::adoptDPathWLinesX(
-    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> LateralPlan::Builder::disownDPathWLinesX() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
-      ::capnp::bounded<9>() * ::capnp::POINTERS));
-}
-
-inline bool LateralPlan::Reader::hasDPathWLinesY() const {
-  return !_reader.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS).isNull();
-}
-inline bool LateralPlan::Builder::hasDPathWLinesY() {
-  return !_builder.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS).isNull();
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader LateralPlan::Reader::getDPathWLinesY() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS));
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LateralPlan::Builder::getDPathWLinesY() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS));
-}
-inline void LateralPlan::Builder::setDPathWLinesY( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS), value);
-}
-inline void LateralPlan::Builder::setDPathWLinesY(::kj::ArrayPtr<const float> value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS), value);
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LateralPlan::Builder::initDPathWLinesY(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS), size);
-}
-inline void LateralPlan::Builder::adoptDPathWLinesY(
-    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> LateralPlan::Builder::disownDPathWLinesY() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
-      ::capnp::bounded<10>() * ::capnp::POINTERS));
 }
 
 inline bool LateralPlan::SolverState::Reader::hasX() const {
@@ -44626,378 +43939,6 @@ inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> CameraO
       ::capnp::bounded<7>() * ::capnp::POINTERS));
 }
 
-inline bool LiveMapData::Reader::getSpeedLimitValid() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<0>() * ::capnp::ELEMENTS);
-}
-
-inline bool LiveMapData::Builder::getSpeedLimitValid() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<0>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setSpeedLimitValid(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<0>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getSpeedLimit() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getSpeedLimit() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setSpeedLimit(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool LiveMapData::Reader::getSpeedLimitAheadValid() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
-}
-
-inline bool LiveMapData::Builder::getSpeedLimitAheadValid() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setSpeedLimitAheadValid(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getSpeedLimitAhead() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getSpeedLimitAhead() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setSpeedLimitAhead(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getSpeedLimitAheadDistance() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<3>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getSpeedLimitAheadDistance() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<3>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setSpeedLimitAheadDistance(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<3>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool LiveMapData::Reader::getTurnSpeedLimitValid() const {
-  return _reader.getDataField<bool>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
-}
-
-inline bool LiveMapData::Builder::getTurnSpeedLimitValid() {
-  return _builder.getDataField<bool>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitValid(bool value) {
-  _builder.setDataField<bool>(
-      ::capnp::bounded<2>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getTurnSpeedLimit() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getTurnSpeedLimit() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setTurnSpeedLimit(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getTurnSpeedLimitEndDistance() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<5>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getTurnSpeedLimitEndDistance() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<5>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitEndDistance(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<5>() * ::capnp::ELEMENTS, value);
-}
-
-inline  ::int16_t LiveMapData::Reader::getTurnSpeedLimitSign() const {
-  return _reader.getDataField< ::int16_t>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
-}
-
-inline  ::int16_t LiveMapData::Builder::getTurnSpeedLimitSign() {
-  return _builder.getDataField< ::int16_t>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitSign( ::int16_t value) {
-  _builder.setDataField< ::int16_t>(
-      ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool LiveMapData::Reader::hasTurnSpeedLimitsAhead() const {
-  return !_reader.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
-}
-inline bool LiveMapData::Builder::hasTurnSpeedLimitsAhead() {
-  return !_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader LiveMapData::Reader::getTurnSpeedLimitsAhead() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LiveMapData::Builder::getTurnSpeedLimitsAhead() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitsAhead( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitsAhead(::kj::ArrayPtr<const float> value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LiveMapData::Builder::initTurnSpeedLimitsAhead(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), size);
-}
-inline void LiveMapData::Builder::adoptTurnSpeedLimitsAhead(
-    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> LiveMapData::Builder::disownTurnSpeedLimitsAhead() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-
-inline bool LiveMapData::Reader::hasTurnSpeedLimitsAheadDistances() const {
-  return !_reader.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS).isNull();
-}
-inline bool LiveMapData::Builder::hasTurnSpeedLimitsAheadDistances() {
-  return !_builder.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS).isNull();
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader LiveMapData::Reader::getTurnSpeedLimitsAheadDistances() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS));
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LiveMapData::Builder::getTurnSpeedLimitsAheadDistances() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS));
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitsAheadDistances( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS), value);
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitsAheadDistances(::kj::ArrayPtr<const float> value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS), value);
-}
-inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder LiveMapData::Builder::initTurnSpeedLimitsAheadDistances(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS), size);
-}
-inline void LiveMapData::Builder::adoptTurnSpeedLimitsAheadDistances(
-    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> LiveMapData::Builder::disownTurnSpeedLimitsAheadDistances() {
-  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
-      ::capnp::bounded<1>() * ::capnp::POINTERS));
-}
-
-inline bool LiveMapData::Reader::hasTurnSpeedLimitsAheadSigns() const {
-  return !_reader.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS).isNull();
-}
-inline bool LiveMapData::Builder::hasTurnSpeedLimitsAheadSigns() {
-  return !_builder.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS).isNull();
-}
-inline  ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>::Reader LiveMapData::Reader::getTurnSpeedLimitsAheadSigns() const {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS));
-}
-inline  ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>::Builder LiveMapData::Builder::getTurnSpeedLimitsAheadSigns() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS));
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitsAheadSigns( ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS), value);
-}
-inline void LiveMapData::Builder::setTurnSpeedLimitsAheadSigns(::kj::ArrayPtr<const  ::int16_t> value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS), value);
-}
-inline  ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>::Builder LiveMapData::Builder::initTurnSpeedLimitsAheadSigns(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS), size);
-}
-inline void LiveMapData::Builder::adoptTurnSpeedLimitsAheadSigns(
-    ::capnp::Orphan< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>> LiveMapData::Builder::disownTurnSpeedLimitsAheadSigns() {
-  return ::capnp::_::PointerHelpers< ::capnp::List< ::int16_t,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
-      ::capnp::bounded<2>() * ::capnp::POINTERS));
-}
-
-inline  ::int64_t LiveMapData::Reader::getLastGpsTimestamp() const {
-  return _reader.getDataField< ::int64_t>(
-      ::capnp::bounded<3>() * ::capnp::ELEMENTS);
-}
-
-inline  ::int64_t LiveMapData::Builder::getLastGpsTimestamp() {
-  return _builder.getDataField< ::int64_t>(
-      ::capnp::bounded<3>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setLastGpsTimestamp( ::int64_t value) {
-  _builder.setDataField< ::int64_t>(
-      ::capnp::bounded<3>() * ::capnp::ELEMENTS, value);
-}
-
-inline bool LiveMapData::Reader::hasCurrentRoadName() const {
-  return !_reader.getPointerField(
-      ::capnp::bounded<3>() * ::capnp::POINTERS).isNull();
-}
-inline bool LiveMapData::Builder::hasCurrentRoadName() {
-  return !_builder.getPointerField(
-      ::capnp::bounded<3>() * ::capnp::POINTERS).isNull();
-}
-inline  ::capnp::Text::Reader LiveMapData::Reader::getCurrentRoadName() const {
-  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_reader.getPointerField(
-      ::capnp::bounded<3>() * ::capnp::POINTERS));
-}
-inline  ::capnp::Text::Builder LiveMapData::Builder::getCurrentRoadName() {
-  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_builder.getPointerField(
-      ::capnp::bounded<3>() * ::capnp::POINTERS));
-}
-inline void LiveMapData::Builder::setCurrentRoadName( ::capnp::Text::Reader value) {
-  ::capnp::_::PointerHelpers< ::capnp::Text>::set(_builder.getPointerField(
-      ::capnp::bounded<3>() * ::capnp::POINTERS), value);
-}
-inline  ::capnp::Text::Builder LiveMapData::Builder::initCurrentRoadName(unsigned int size) {
-  return ::capnp::_::PointerHelpers< ::capnp::Text>::init(_builder.getPointerField(
-      ::capnp::bounded<3>() * ::capnp::POINTERS), size);
-}
-inline void LiveMapData::Builder::adoptCurrentRoadName(
-    ::capnp::Orphan< ::capnp::Text>&& value) {
-  ::capnp::_::PointerHelpers< ::capnp::Text>::adopt(_builder.getPointerField(
-      ::capnp::bounded<3>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::capnp::Text> LiveMapData::Builder::disownCurrentRoadName() {
-  return ::capnp::_::PointerHelpers< ::capnp::Text>::disown(_builder.getPointerField(
-      ::capnp::bounded<3>() * ::capnp::POINTERS));
-}
-
-inline double LiveMapData::Reader::getLastGpsLatitude() const {
-  return _reader.getDataField<double>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS);
-}
-
-inline double LiveMapData::Builder::getLastGpsLatitude() {
-  return _builder.getDataField<double>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setLastGpsLatitude(double value) {
-  _builder.setDataField<double>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, value);
-}
-
-inline double LiveMapData::Reader::getLastGpsLongitude() const {
-  return _reader.getDataField<double>(
-      ::capnp::bounded<5>() * ::capnp::ELEMENTS);
-}
-
-inline double LiveMapData::Builder::getLastGpsLongitude() {
-  return _builder.getDataField<double>(
-      ::capnp::bounded<5>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setLastGpsLongitude(double value) {
-  _builder.setDataField<double>(
-      ::capnp::bounded<5>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getLastGpsSpeed() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getLastGpsSpeed() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setLastGpsSpeed(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<12>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getLastGpsBearingDeg() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<13>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getLastGpsBearingDeg() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<13>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setLastGpsBearingDeg(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<13>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getLastGpsAccuracy() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<14>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getLastGpsAccuracy() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<14>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setLastGpsAccuracy(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<14>() * ::capnp::ELEMENTS, value);
-}
-
-inline float LiveMapData::Reader::getLastGpsBearingAccuracyDeg() const {
-  return _reader.getDataField<float>(
-      ::capnp::bounded<15>() * ::capnp::ELEMENTS);
-}
-
-inline float LiveMapData::Builder::getLastGpsBearingAccuracyDeg() {
-  return _builder.getDataField<float>(
-      ::capnp::bounded<15>() * ::capnp::ELEMENTS);
-}
-inline void LiveMapData::Builder::setLastGpsBearingAccuracyDeg(float value) {
-  _builder.setDataField<float>(
-      ::capnp::bounded<15>() * ::capnp::ELEMENTS, value);
-}
-
 inline  ::cereal::Sentinel::SentinelType Sentinel::Reader::getType() const {
   return _reader.getDataField< ::cereal::Sentinel::SentinelType>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
@@ -45875,6 +44816,20 @@ inline void NavModelData::Builder::adoptDesirePrediction(
 inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> NavModelData::Builder::disownDesirePrediction() {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
       ::capnp::bounded<2>() * ::capnp::POINTERS));
+}
+
+inline  ::uint64_t NavModelData::Reader::getLocationMonoTime() const {
+  return _reader.getDataField< ::uint64_t>(
+      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
+}
+
+inline  ::uint64_t NavModelData::Builder::getLocationMonoTime() {
+  return _builder.getDataField< ::uint64_t>(
+      ::capnp::bounded<2>() * ::capnp::ELEMENTS);
+}
+inline void NavModelData::Builder::setLocationMonoTime( ::uint64_t value) {
+  _builder.setDataField< ::uint64_t>(
+      ::capnp::bounded<2>() * ::capnp::ELEMENTS, value);
 }
 
 inline bool NavModelData::XYData::Reader::hasX() const {
@@ -51913,165 +50868,165 @@ inline ::capnp::Orphan< ::cereal::UiPlan> Event::Builder::disownUiPlan() {
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline bool Event::Reader::isCustomReserved0() const {
-  return which() == Event::CUSTOM_RESERVED0;
+inline bool Event::Reader::isLiveMapData() const {
+  return which() == Event::LIVE_MAP_DATA;
 }
-inline bool Event::Builder::isCustomReserved0() {
-  return which() == Event::CUSTOM_RESERVED0;
+inline bool Event::Builder::isLiveMapData() {
+  return which() == Event::LIVE_MAP_DATA;
 }
-inline bool Event::Reader::hasCustomReserved0() const {
-  if (which() != Event::CUSTOM_RESERVED0) return false;
+inline bool Event::Reader::hasLiveMapData() const {
+  if (which() != Event::LIVE_MAP_DATA) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline bool Event::Builder::hasCustomReserved0() {
-  if (which() != Event::CUSTOM_RESERVED0) return false;
+inline bool Event::Builder::hasLiveMapData() {
+  if (which() != Event::LIVE_MAP_DATA) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::CustomReserved0::Reader Event::Reader::getCustomReserved0() const {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED0),
+inline  ::cereal::LiveMapData::Reader Event::Reader::getLiveMapData() const {
+  KJ_IREQUIRE((which() == Event::LIVE_MAP_DATA),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved0>::get(_reader.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::get(_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline  ::cereal::CustomReserved0::Builder Event::Builder::getCustomReserved0() {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED0),
+inline  ::cereal::LiveMapData::Builder Event::Builder::getLiveMapData() {
+  KJ_IREQUIRE((which() == Event::LIVE_MAP_DATA),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved0>::get(_builder.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::get(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::setCustomReserved0( ::cereal::CustomReserved0::Reader value) {
+inline void Event::Builder::setLiveMapData( ::cereal::LiveMapData::Reader value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED0);
-  ::capnp::_::PointerHelpers< ::cereal::CustomReserved0>::set(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LIVE_MAP_DATA);
+  ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::set(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::CustomReserved0::Builder Event::Builder::initCustomReserved0() {
+inline  ::cereal::LiveMapData::Builder Event::Builder::initLiveMapData() {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED0);
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved0>::init(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LIVE_MAP_DATA);
+  return ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::init(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::adoptCustomReserved0(
-    ::capnp::Orphan< ::cereal::CustomReserved0>&& value) {
+inline void Event::Builder::adoptLiveMapData(
+    ::capnp::Orphan< ::cereal::LiveMapData>&& value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED0);
-  ::capnp::_::PointerHelpers< ::cereal::CustomReserved0>::adopt(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LIVE_MAP_DATA);
+  ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::adopt(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::CustomReserved0> Event::Builder::disownCustomReserved0() {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED0),
+inline ::capnp::Orphan< ::cereal::LiveMapData> Event::Builder::disownLiveMapData() {
+  KJ_IREQUIRE((which() == Event::LIVE_MAP_DATA),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved0>::disown(_builder.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline bool Event::Reader::isCustomReserved1() const {
-  return which() == Event::CUSTOM_RESERVED1;
+inline bool Event::Reader::isLongitudinalPlanExt() const {
+  return which() == Event::LONGITUDINAL_PLAN_EXT;
 }
-inline bool Event::Builder::isCustomReserved1() {
-  return which() == Event::CUSTOM_RESERVED1;
+inline bool Event::Builder::isLongitudinalPlanExt() {
+  return which() == Event::LONGITUDINAL_PLAN_EXT;
 }
-inline bool Event::Reader::hasCustomReserved1() const {
-  if (which() != Event::CUSTOM_RESERVED1) return false;
+inline bool Event::Reader::hasLongitudinalPlanExt() const {
+  if (which() != Event::LONGITUDINAL_PLAN_EXT) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline bool Event::Builder::hasCustomReserved1() {
-  if (which() != Event::CUSTOM_RESERVED1) return false;
+inline bool Event::Builder::hasLongitudinalPlanExt() {
+  if (which() != Event::LONGITUDINAL_PLAN_EXT) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::CustomReserved1::Reader Event::Reader::getCustomReserved1() const {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED1),
+inline  ::cereal::LongitudinalPlanExt::Reader Event::Reader::getLongitudinalPlanExt() const {
+  KJ_IREQUIRE((which() == Event::LONGITUDINAL_PLAN_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved1>::get(_reader.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LongitudinalPlanExt>::get(_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline  ::cereal::CustomReserved1::Builder Event::Builder::getCustomReserved1() {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED1),
+inline  ::cereal::LongitudinalPlanExt::Builder Event::Builder::getLongitudinalPlanExt() {
+  KJ_IREQUIRE((which() == Event::LONGITUDINAL_PLAN_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved1>::get(_builder.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LongitudinalPlanExt>::get(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::setCustomReserved1( ::cereal::CustomReserved1::Reader value) {
+inline void Event::Builder::setLongitudinalPlanExt( ::cereal::LongitudinalPlanExt::Reader value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED1);
-  ::capnp::_::PointerHelpers< ::cereal::CustomReserved1>::set(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LONGITUDINAL_PLAN_EXT);
+  ::capnp::_::PointerHelpers< ::cereal::LongitudinalPlanExt>::set(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::CustomReserved1::Builder Event::Builder::initCustomReserved1() {
+inline  ::cereal::LongitudinalPlanExt::Builder Event::Builder::initLongitudinalPlanExt() {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED1);
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved1>::init(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LONGITUDINAL_PLAN_EXT);
+  return ::capnp::_::PointerHelpers< ::cereal::LongitudinalPlanExt>::init(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::adoptCustomReserved1(
-    ::capnp::Orphan< ::cereal::CustomReserved1>&& value) {
+inline void Event::Builder::adoptLongitudinalPlanExt(
+    ::capnp::Orphan< ::cereal::LongitudinalPlanExt>&& value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED1);
-  ::capnp::_::PointerHelpers< ::cereal::CustomReserved1>::adopt(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LONGITUDINAL_PLAN_EXT);
+  ::capnp::_::PointerHelpers< ::cereal::LongitudinalPlanExt>::adopt(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::CustomReserved1> Event::Builder::disownCustomReserved1() {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED1),
+inline ::capnp::Orphan< ::cereal::LongitudinalPlanExt> Event::Builder::disownLongitudinalPlanExt() {
+  KJ_IREQUIRE((which() == Event::LONGITUDINAL_PLAN_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved1>::disown(_builder.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LongitudinalPlanExt>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline bool Event::Reader::isCustomReserved2() const {
-  return which() == Event::CUSTOM_RESERVED2;
+inline bool Event::Reader::isLateralPlanExt() const {
+  return which() == Event::LATERAL_PLAN_EXT;
 }
-inline bool Event::Builder::isCustomReserved2() {
-  return which() == Event::CUSTOM_RESERVED2;
+inline bool Event::Builder::isLateralPlanExt() {
+  return which() == Event::LATERAL_PLAN_EXT;
 }
-inline bool Event::Reader::hasCustomReserved2() const {
-  if (which() != Event::CUSTOM_RESERVED2) return false;
+inline bool Event::Reader::hasLateralPlanExt() const {
+  if (which() != Event::LATERAL_PLAN_EXT) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline bool Event::Builder::hasCustomReserved2() {
-  if (which() != Event::CUSTOM_RESERVED2) return false;
+inline bool Event::Builder::hasLateralPlanExt() {
+  if (which() != Event::LATERAL_PLAN_EXT) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::CustomReserved2::Reader Event::Reader::getCustomReserved2() const {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED2),
+inline  ::cereal::LateralPlanExt::Reader Event::Reader::getLateralPlanExt() const {
+  KJ_IREQUIRE((which() == Event::LATERAL_PLAN_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved2>::get(_reader.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LateralPlanExt>::get(_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline  ::cereal::CustomReserved2::Builder Event::Builder::getCustomReserved2() {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED2),
+inline  ::cereal::LateralPlanExt::Builder Event::Builder::getLateralPlanExt() {
+  KJ_IREQUIRE((which() == Event::LATERAL_PLAN_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved2>::get(_builder.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LateralPlanExt>::get(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::setCustomReserved2( ::cereal::CustomReserved2::Reader value) {
+inline void Event::Builder::setLateralPlanExt( ::cereal::LateralPlanExt::Reader value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED2);
-  ::capnp::_::PointerHelpers< ::cereal::CustomReserved2>::set(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LATERAL_PLAN_EXT);
+  ::capnp::_::PointerHelpers< ::cereal::LateralPlanExt>::set(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::CustomReserved2::Builder Event::Builder::initCustomReserved2() {
+inline  ::cereal::LateralPlanExt::Builder Event::Builder::initLateralPlanExt() {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED2);
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved2>::init(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LATERAL_PLAN_EXT);
+  return ::capnp::_::PointerHelpers< ::cereal::LateralPlanExt>::init(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::adoptCustomReserved2(
-    ::capnp::Orphan< ::cereal::CustomReserved2>&& value) {
+inline void Event::Builder::adoptLateralPlanExt(
+    ::capnp::Orphan< ::cereal::LateralPlanExt>&& value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED2);
-  ::capnp::_::PointerHelpers< ::cereal::CustomReserved2>::adopt(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LATERAL_PLAN_EXT);
+  ::capnp::_::PointerHelpers< ::cereal::LateralPlanExt>::adopt(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::CustomReserved2> Event::Builder::disownCustomReserved2() {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED2),
+inline ::capnp::Orphan< ::cereal::LateralPlanExt> Event::Builder::disownLateralPlanExt() {
+  KJ_IREQUIRE((which() == Event::LATERAL_PLAN_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved2>::disown(_builder.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::LateralPlanExt>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
@@ -52774,114 +51729,6 @@ inline ::capnp::Orphan< ::cereal::EncodeData> Event::Builder::disownLivestreamDr
   KJ_IREQUIRE((which() == Event::LIVESTREAM_DRIVER_ENCODE_DATA),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::EncodeData>::disown(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-
-inline bool Event::Reader::isDragonConf() const {
-  return which() == Event::DRAGON_CONF;
-}
-inline bool Event::Builder::isDragonConf() {
-  return which() == Event::DRAGON_CONF;
-}
-inline bool Event::Reader::hasDragonConf() const {
-  if (which() != Event::DRAGON_CONF) return false;
-  return !_reader.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
-}
-inline bool Event::Builder::hasDragonConf() {
-  if (which() != Event::DRAGON_CONF) return false;
-  return !_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
-}
-inline  ::cereal::DragonConf::Reader Event::Reader::getDragonConf() const {
-  KJ_IREQUIRE((which() == Event::DRAGON_CONF),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::DragonConf>::get(_reader.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline  ::cereal::DragonConf::Builder Event::Builder::getDragonConf() {
-  KJ_IREQUIRE((which() == Event::DRAGON_CONF),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::DragonConf>::get(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline void Event::Builder::setDragonConf( ::cereal::DragonConf::Reader value) {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::DRAGON_CONF);
-  ::capnp::_::PointerHelpers< ::cereal::DragonConf>::set(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
-}
-inline  ::cereal::DragonConf::Builder Event::Builder::initDragonConf() {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::DRAGON_CONF);
-  return ::capnp::_::PointerHelpers< ::cereal::DragonConf>::init(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline void Event::Builder::adoptDragonConf(
-    ::capnp::Orphan< ::cereal::DragonConf>&& value) {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::DRAGON_CONF);
-  ::capnp::_::PointerHelpers< ::cereal::DragonConf>::adopt(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::cereal::DragonConf> Event::Builder::disownDragonConf() {
-  KJ_IREQUIRE((which() == Event::DRAGON_CONF),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::DragonConf>::disown(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-
-inline bool Event::Reader::isLiveMapData() const {
-  return which() == Event::LIVE_MAP_DATA;
-}
-inline bool Event::Builder::isLiveMapData() {
-  return which() == Event::LIVE_MAP_DATA;
-}
-inline bool Event::Reader::hasLiveMapData() const {
-  if (which() != Event::LIVE_MAP_DATA) return false;
-  return !_reader.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
-}
-inline bool Event::Builder::hasLiveMapData() {
-  if (which() != Event::LIVE_MAP_DATA) return false;
-  return !_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
-}
-inline  ::cereal::LiveMapData::Reader Event::Reader::getLiveMapData() const {
-  KJ_IREQUIRE((which() == Event::LIVE_MAP_DATA),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::get(_reader.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline  ::cereal::LiveMapData::Builder Event::Builder::getLiveMapData() {
-  KJ_IREQUIRE((which() == Event::LIVE_MAP_DATA),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::get(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline void Event::Builder::setLiveMapData( ::cereal::LiveMapData::Reader value) {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LIVE_MAP_DATA);
-  ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::set(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
-}
-inline  ::cereal::LiveMapData::Builder Event::Builder::initLiveMapData() {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LIVE_MAP_DATA);
-  return ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::init(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS));
-}
-inline void Event::Builder::adoptLiveMapData(
-    ::capnp::Orphan< ::cereal::LiveMapData>&& value) {
-  _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::LIVE_MAP_DATA);
-  ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::adopt(_builder.getPointerField(
-      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
-}
-inline ::capnp::Orphan< ::cereal::LiveMapData> Event::Builder::disownLiveMapData() {
-  KJ_IREQUIRE((which() == Event::LIVE_MAP_DATA),
-              "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::LiveMapData>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 

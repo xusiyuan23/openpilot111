@@ -3,10 +3,9 @@ from cereal import car
 from common.conversions import Conversions as CV
 from panda import Panda
 from selfdrive.car.toyota.values import Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, TSS2_CAR, RADAR_ACC_CAR, NO_DSU_CAR, \
-  MIN_ACC_SPEED, EPS_SCALE, EV_HYBRID_CAR, UNSUPPORTED_DSU_CAR, NO_STOP_TIMER_CAR, ANGLE_CONTROL_CAR
+                                        MIN_ACC_SPEED, EPS_SCALE, EV_HYBRID_CAR, UNSUPPORTED_DSU_CAR, NO_STOP_TIMER_CAR, ANGLE_CONTROL_CAR
 from selfdrive.car import STD_CARGO_KG, scale_tire_stiffness, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
-from common.params import Params
 
 EventName = car.CarEvent.EventName
 SteerControlType = car.CarParams.SteerControlType
@@ -45,7 +44,6 @@ class CarInterface(CarInterfaceBase):
 
     stop_and_go = False
 
-    params = Params()
     if candidate == CAR.PRIUS:
       stop_and_go = True
       ret.wheelbase = 2.70
@@ -53,14 +51,10 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.6371   # hand-tune
       ret.mass = 3045. * CV.LB_TO_KG + STD_CARGO_KG
       # Only give steer angle deadzone to for bad angle sensor prius
-      if params.get_bool("dp_toyota_prius_bad_angle_tune"):
-        ret.steerActuatorDelay = 0.25
-        CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning, steering_angle_deadzone_deg=0.2)
-      else:
-        for fw in car_fw:
-          if fw.ecu == "eps" and not fw.fwVersion == b'8965B47060\x00\x00\x00\x00\x00\x00':
-            ret.steerActuatorDelay = 0.25
-            CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning, steering_angle_deadzone_deg=0.2)
+      for fw in car_fw:
+        if fw.ecu == "eps" and not fw.fwVersion == b'8965B47060\x00\x00\x00\x00\x00\x00':
+          ret.steerActuatorDelay = 0.25
+          CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning, steering_angle_deadzone_deg=0.2)
 
     elif candidate == CAR.PRIUS_V:
       stop_and_go = True
@@ -206,9 +200,6 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.444
       ret.mass = 4305. * CV.LB_TO_KG + STD_CARGO_KG
 
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection, steering_angle_deadzone_deg = 0.0)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
-
     ret.centerToFront = ret.wheelbase * 0.44
 
     # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
@@ -247,12 +238,6 @@ class CarInterface(CarInterfaceBase):
     ret.openpilotLongitudinalControl = use_sdsu or ret.enableDsu or candidate in (TSS2_CAR - RADAR_ACC_CAR)
     ret.autoResumeSng = ret.openpilotLongitudinalControl and candidate in NO_STOP_TIMER_CAR
 
-    if int(Params().get("dp_atl").decode('utf-8')) == 1:
-      ret.openpilotLongitudinalControl = False
-
-    if candidate == CAR.CHR_TSS2:
-      ret.enableBsm = True
-
     if not ret.openpilotLongitudinalControl:
       ret.safetyConfigs[0].safetyParam |= Panda.FLAG_TOYOTA_STOCK_LONGITUDINAL
 
@@ -271,26 +256,18 @@ class CarInterface(CarInterfaceBase):
     if candidate in TSS2_CAR or ret.enableGasInterceptor:
       tune.kpBP = [0., 5., 20.]
       tune.kpV = [1.3, 1.0, 0.7]
-      #tune.kpBP = [0., 5., 20., 30.]
-      #tune.kpV = [1.3, 1.0, 0.7, 0.1]
-      tune.kiBP = [0.,   1.,    2.,    3.,   4.,   5.,    12.,  20.,  27., 40.]
-      tune.kiV = [.348, .3361, .3168, .2831, .2571, .226, .198, .17,  .10, .01]
+      tune.kiBP = [0., 5., 12., 20., 27.]
+      tune.kiV = [.35, .23, .20, .17, .1]
       if candidate in TSS2_CAR:
-        ret.vEgoStopping = 0.15  # car is near 0.1 to 0.2 when car starts requesting stopping accel
-        ret.vEgoStarting = 0.15 # needs to be > or == vEgoStopping
-        ret.stopAccel = -0.4  # Toyota requests -0.4 when stopped
-        ret.stoppingDecelRate = 0.05  # reach stopping target smoothly - seems to take 0.5 seconds to go from 0 to -0.4
-        #ret.longitudinalActuatorDelayLowerBound = 0.2
-        #ret.longitudinalActuatorDelayUpperBound = 0.2
-        ### stock ###
-        #ret.vEgoStopping = 0.25
-        #ret.vEgoStarting = 0.25
-        #ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
+        ret.vEgoStopping = 0.25
+        ret.vEgoStarting = 0.25
+        ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
     else:
       tune.kpBP = [0., 5., 35.]
       tune.kiBP = [0., 35.]
       tune.kpV = [3.6, 2.4, 1.5]
       tune.kiV = [0.54, 0.36]
+
     return ret
 
   # returns a car.CarState
@@ -326,4 +303,4 @@ class CarInterface(CarInterfaceBase):
   # pass in a car.CarControl
   # to be called @ 100hz
   def apply(self, c, now_nanos):
-    return self.CC.update(c, self.CS, now_nanos, self.dragonconf)
+    return self.CC.update(c, self.CS, now_nanos)

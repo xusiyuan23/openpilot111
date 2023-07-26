@@ -55,7 +55,7 @@ def _debug(msg):
 
 class GpxUploader():
   def __init__(self):
-    self._delete_after_upload = not Params().get_bool('dp_gpxd')
+    self._delete_after_upload = True #not Params().get_bool('dp_gpxd')
     self._car_model = "Unknown Vehicle"
 
   def _identify_vehicle(self):

@@ -7,7 +7,7 @@ from cereal import car, log
 from common.numpy_fast import clip
 from common.realtime import sec_since_boot, config_realtime_process, Priority, Ratekeeper, DT_CTRL
 from common.profiler import Profiler
-from common.params import Params, put_nonblocking
+from common.params import Params, put_nonblocking, put_bool_nonblocking
 import cereal.messaging as messaging
 from cereal.visionipc import VisionIpcClient, VisionStreamType
 from common.conversions import Conversions as CV
@@ -17,13 +17,12 @@ from system.version import is_release_branch, get_short_branch
 from selfdrive.boardd.boardd import can_list_to_can_capnp
 from selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
 from selfdrive.controls.lib.lateral_planner import CAMERA_OFFSET
-from selfdrive.controls.lib.drive_helpers import VCruiseHelper, get_lag_adjusted_curvature, V_CRUISE_UNSET
+from selfdrive.controls.lib.drive_helpers import VCruiseHelper, get_lag_adjusted_curvature
 from selfdrive.controls.lib.latcontrol import LatControl, MIN_LATERAL_CONTROL_SPEED
 from selfdrive.controls.lib.longcontrol import LongControl
 from selfdrive.controls.lib.latcontrol_pid import LatControlPID
 from selfdrive.controls.lib.latcontrol_angle import LatControlAngle, STEER_ANGLE_SATURATION_THRESHOLD
 from selfdrive.controls.lib.latcontrol_torque import LatControlTorque
-from selfdrive.controls.lib.latcontrol_lqr import LatControlLQR
 from selfdrive.controls.lib.events import Events, ET
 from selfdrive.controls.lib.alertmanager import AlertManager, set_offroad_alert
 from selfdrive.controls.lib.vehicle_model import VehicleModel
@@ -37,7 +36,7 @@ REPLAY = "REPLAY" in os.environ
 SIMULATION = "SIMULATION" in os.environ
 TESTING_CLOSET = "TESTING_CLOSET" in os.environ
 NOSENSOR = "NOSENSOR" in os.environ
-IGNORE_PROCESSES = {"loggerd", "encoderd", "statsd", "mapd", "gpxd", "gpxd_uploader"}
+IGNORE_PROCESSES = {"loggerd", "encoderd", "statsd", "mapd", "otisserv", "fileserv"}
 
 ThermalStatus = log.DeviceState.ThermalStatus
 State = log.ControlsState.OpenpilotState
@@ -63,14 +62,6 @@ class Controls:
     # Ensure the current branch is cached, otherwise the first iteration of controlsd lags
     self.branch = get_short_branch("")
 
-    # dp
-    self.params = Params()
-    self.dp_jetson = self.params.get_bool('dp_jetson')
-    try:
-      self.dp_lat_version = int(self.params.get('dp_lateral_version').decode('utf8'))
-    except:
-      self.dp_lat_version = 0
-
     # Setup sockets
     self.pm = pm
     if self.pm is None:
@@ -78,8 +69,6 @@ class Controls:
                                      'carControl', 'carEvents', 'carParams'])
 
     self.camera_packets = ["roadCameraState", "driverCameraState", "wideRoadCameraState"]
-    if self.dp_jetson:
-      self.camera_packets = ["roadCameraState", "wideRoadCameraState"]
 
     self.can_sock = can_sock
     if can_sock is None:
@@ -88,18 +77,18 @@ class Controls:
 
     self.log_sock = messaging.sub_sock('androidLog')
 
-    # self.params = Params()
+    self.params = Params()
+    self.dp_alka = self.params.get_bool("dp_alka")
+    self.dp_device_disable_temp_check = self.params.get_bool("dp_device_disable_temp_check")
     self.sm = sm
     if self.sm is None:
       ignore = ['testJoystick']
       if SIMULATION:
         ignore += ['driverCameraState', 'managerState']
-      if self.dp_jetson:
-        ignore += ['driverCameraState', 'driverMonitoringState']
       self.sm = messaging.SubMaster(['deviceState', 'pandaStates', 'peripheralState', 'modelV2', 'liveCalibration',
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
-                                     'managerState', 'liveParameters', 'radarState', 'liveTorqueParameters', 'testJoystick', 'dragonConf'] + self.camera_packets,
-                                    ignore_alive=ignore, ignore_avg_freq=['radarState', 'testJoystick', 'longitudinalPlan', 'dragonConf'])
+                                     'managerState', 'liveParameters', 'radarState', 'liveTorqueParameters', 'testJoystick'] + self.camera_packets,
+                                    ignore_alive=ignore, ignore_avg_freq=['radarState', 'testJoystick'])
 
     if CI is None:
       # wait for one pandaState and one CAN packet
@@ -120,22 +109,8 @@ class Controls:
     if not self.disengage_on_accelerator:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.DISABLE_DISENGAGE_ON_GAS
 
-    # dp
-    self.sm['dragonConf'].dpAtl = int(self.params.get('dp_atl', encoding='utf8'))
-    if self.sm['dragonConf'].dpAtl:
+    if self.dp_alka:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALKA
-    self.dp_temp_check = self.params.get_bool('dp_temp_check')
-    self.dp_lateral_road_edge_detected = False
-    # alt lat ctrl
-    self.sm['dragonConf'].dpLateralAlt = False
-    self.sm['dragonConf'].dpLateralAltCtrl = 0
-    self.sm['dragonConf'].dpLateralAltSpeed = 80
-    self.dp_lateral_alt_v_cruise_kph = 0
-    self.dp_lateral_alt_v_cruise_kph_prev = 0
-    self.dp_lateral_alt_active = False
-    self.local_trip_min_total = float(self.params.get("local_trip_min_total", encoding='utf8'))
-    self.local_trip_meter_total = float(self.params.get("local_trip_meter_total", encoding='utf8'))
-    self.local_trip_count_added = False
 
     # read params
     self.is_metric = self.params.get_bool("IsMetric")
@@ -182,11 +157,6 @@ class Controls:
       self.LaC = LatControlPID(self.CP, self.CI)
     elif self.CP.lateralTuning.which() == 'torque':
       self.LaC = LatControlTorque(self.CP, self.CI)
-    elif self.CP.lateralTuning.which() == 'lqr':
-      self.LaC = LatControlLQR(self.CP, self.CI)
-
-    # dp, keep the original LaC for alt lac ctrl
-    self.LaC_default = self.LaC
 
     self.initialized = False
     self.state = State.disabled
@@ -237,49 +207,12 @@ class Controls:
     self.rk = Ratekeeper(100, print_delay_threshold=None)
     self.prof = Profiler(False)  # off by default
 
-  def dp_update_lat_controller(self):
-    if self.sm['dragonConf'].dpLateralAlt:
-      self.dp_lateral_alt_v_cruise_kph = self.v_cruise_helper.v_cruise_kph
-      # when cruise set speed changed
-      if self.dp_lateral_alt_v_cruise_kph != self.dp_lateral_alt_v_cruise_kph_prev:
-        # when set speed below config speed or set speed equal unset speed, fallback to default
-        if self.dp_lateral_alt_v_cruise_kph == V_CRUISE_UNSET or self.dp_lateral_alt_v_cruise_kph < self.sm['dragonConf'].dpLateralAltSpeed:
-          self.dp_lateral_alt_active = False
-          if type(self.LaC) != type(self.LaC_default):
-            # set lateralTuning back
-            if isinstance(self.LaC_default, LatControlPID):
-              self.CP.lateralTuning.pid = self.CP.latTuneCollection.pid
-            elif isinstance(self.LaC_default, LatControlLQR):
-              self.CP.lateralTuning.lqr = self.CP.latTuneCollection.lqr
-            elif isinstance(self.LaC_default, LatControlTorque):
-              self.CP.lateralTuning.torque = self.CP.latTuneCollection.torque
-            # set LaC back
-            self.LaC = self.LaC_default
-            self.LaC.reset()
-        # when set speed >= config speed
-        else:
-          # save current status
-          if type(self.LaC) == type(self.LaC_default):
-            self.LaC_default =  self.LaC
-          self.dp_lateral_alt_active = True
-          if getattr(self.CP.latTuneCollection.pid, 'kpV') and self.sm['dragonConf'].dpLateralAltCtrl == 1 and not isinstance(self.LaC, LatControlPID):
-            self.CP.lateralTuning.pid = self.CP.latTuneCollection.pid
-            self.LaC = LatControlPID(self.CP, self.CI)
-          elif self.sm['dragonConf'].dpLateralAltCtrl == 2 and not isinstance(self.LaC, LatControlLQR):
-            self.CP.lateralTuning.lqr = self.CP.latTuneCollection.lqr
-            self.LaC = LatControlLQR(self.CP, self.CI)
-          elif self.sm['dragonConf'].dpLateralAltCtrl == 3 and not isinstance(self.LaC, LatControlTorque):
-            self.CP.lateralTuning.torque = self.CP.latTuneCollection.torque
-            self.LaC = LatControlTorque(self.CP, self.CI)
-          self.LaC.reset()
-      self.dp_lateral_alt_v_cruise_kph_prev = self.dp_lateral_alt_v_cruise_kph
-
   def set_initial_state(self):
     if REPLAY:
       controls_state = Params().get("ReplayControlsState")
       if controls_state is not None:
-        controls_state = log.ControlsState.from_bytes(controls_state)
-        self.v_cruise_helper.v_cruise_kph = controls_state.vCruise
+        with log.ControlsState.from_bytes(controls_state) as controls_state:
+          self.v_cruise_helper.v_cruise_kph = controls_state.vCruise
 
       if any(ps.controlsAllowed for ps in self.sm['pandaStates']):
         self.state = State.enabled
@@ -320,16 +253,15 @@ class Controls:
     if CS.gasPressed:
       self.events.add(EventName.gasPressedOverride)
 
-    if not self.CP.notCar and not self.dp_jetson:
+    if not self.CP.notCar:
       self.events.add_from_msg(self.sm['driverMonitoringState'].events)
-      self.events.add_from_msg(self.sm['longitudinalPlan'].eventsDEPRECATED)
 
     # Add car events, ignore if CAN isn't valid
     if CS.canValid:
       self.events.add_from_msg(CS.events)
 
     # Create events for temperature, disk space, and memory
-    if self.dp_temp_check and self.sm['deviceState'].thermalStatus >= ThermalStatus.red:
+    if not self.dp_device_disable_temp_check and self.sm['deviceState'].thermalStatus >= ThermalStatus.red:
       self.events.add(EventName.overheat)
     if self.sm['deviceState'].freeSpacePercent < 7 and not SIMULATION:
       # under 7% of space free no enable allowed
@@ -363,28 +295,13 @@ class Controls:
         self.events.add(EventName.calibrationRecalibrating)
       else:
         self.events.add(EventName.calibrationInvalid)
-    direction = self.sm['lateralPlan'].laneChangeDirection
+
     # Handle lane change
     if self.sm['lateralPlan'].laneChangeState == LaneChangeState.preLaneChange:
-      self.dp_lateral_road_edge_detected = self.sm['dragonConf'].dpLateralRoadEdgeDetected
-      #dp - moved it up L364
-      #direction = self.sm['lateralPlan'].laneChangeDirection
+      direction = self.sm['lateralPlan'].laneChangeDirection
       if (CS.leftBlindspot and direction == LaneChangeDirection.left) or \
          (CS.rightBlindspot and direction == LaneChangeDirection.right):
         self.events.add(EventName.laneChangeBlocked)
-      #dp
-      elif self.dp_lateral_road_edge_detected:
-        md = self.sm['modelV2']
-        left_road_edge = -md.roadEdges[0].y[0]
-        right_road_edge = md.roadEdges[1].y[0]
-        if (((left_road_edge < 3.5) and direction == LaneChangeDirection.left) or \
-            ((right_road_edge < 3.5) and direction == LaneChangeDirection.right)):
-            self.events.add(EventName.laneChangeBlocked)
-        else:
-          if direction == LaneChangeDirection.left:
-            self.events.add(EventName.preLaneChangeLeft)
-          else:
-            self.events.add(EventName.preLaneChangeRight)
       else:
         if direction == LaneChangeDirection.left:
           self.events.add(EventName.preLaneChangeLeft)
@@ -392,11 +309,7 @@ class Controls:
           self.events.add(EventName.preLaneChangeRight)
     elif self.sm['lateralPlan'].laneChangeState in (LaneChangeState.laneChangeStarting,
                                                     LaneChangeState.laneChangeFinishing):
-      if (CS.leftBlindspot and direction == LaneChangeDirection.left) or \
-         (CS.rightBlindspot and direction == LaneChangeDirection.right):
-        self.events.add(EventName.laneChangeBlocked)
-      else:
-        self.events.add(EventName.laneChange)
+      self.events.add(EventName.laneChange)
 
     for i, pandaState in enumerate(self.sm['pandaStates']):
       # All pandas must match the list of safetyConfigs, and if outside this list, must be silent or noOutput
@@ -465,7 +378,7 @@ class Controls:
     else:
       self.logged_comm_issue = None
 
-    if not self.sm['liveParameters'].valid and not TESTING_CLOSET and not SIMULATION:
+    if not self.sm['liveParameters'].valid and not TESTING_CLOSET and (not SIMULATION or REPLAY):
       self.events.add(EventName.vehicleModelInvalid)
     if not self.sm['lateralPlan'].mpcSolutionValid:
       self.events.add(EventName.plannerError)
@@ -503,7 +416,7 @@ class Controls:
         pass
 
     # TODO: fix simulator
-    if not SIMULATION:
+    if not SIMULATION or REPLAY:
       if not NOSENSOR:
         if not self.sm['liveLocationKalman'].gpsOK and self.sm['liveLocationKalman'].inputsOK and (self.distance_traveled > 1000):
           # Not show in first 1 km to allow for driving out of garage. This event shows after 5 minutes
@@ -519,7 +432,7 @@ class Controls:
 
     # Update carState from CAN
     can_strs = messaging.drain_sock_raw(self.can_sock, wait_for_one=True)
-    CS = self.CI.update(self.CC, can_strs, self.sm['dragonConf'])
+    CS = self.CI.update(self.CC, can_strs)
     if len(can_strs) and REPLAY:
       self.can_log_mono_time = messaging.log_from_bytes(can_strs[0]).logMonoTime
 
@@ -528,7 +441,7 @@ class Controls:
     if not self.initialized:
       all_valid = CS.canValid and self.sm.all_checks()
       timed_out = self.sm.frame * DT_CTRL > (6. if REPLAY else 3.5)
-      if all_valid or timed_out or SIMULATION:
+      if all_valid or timed_out or (SIMULATION and not REPLAY):
         available_streams = VisionIpcClient.available_streams("camerad", block=False)
         if VisionStreamType.VISION_STREAM_ROAD not in available_streams:
           self.sm.ignore_alive.append('roadCameraState')
@@ -540,7 +453,7 @@ class Controls:
 
         self.initialized = True
         self.set_initial_state()
-        Params().put_bool("ControlsReady", True)
+        put_bool_nonblocking("ControlsReady", True)
 
     # Check for CAN timeout
     if not can_strs:
@@ -562,26 +475,13 @@ class Controls:
       self.mismatch_counter += 1
 
     self.distance_traveled += CS.vEgo * DT_CTRL
-    # dp - local trip log
-    self.local_trip_meter_total += CS.vEgo * DT_CTRL
-    if not self.local_trip_count_added:
-      if self.local_trip_meter_total > 0:
-        put_nonblocking("local_trip_count_total", str(float(self.params.get("local_trip_count_total").decode('utf-8')) + 1))
-        self.local_trip_count_added = True
-    # every 30 secs
-    if self.local_trip_count_added and self.sm.frame % int(30. / DT_CTRL) == 0:
-      put_nonblocking("local_trip_meter_total", str(round(self.local_trip_meter_total, 2)))
-      put_nonblocking("local_trip_min_total", str(self.local_trip_min_total + 0.5))
 
     return CS
 
   def state_transition(self, CS):
     """Compute conditional state transitions and execute actions on state transitions"""
 
-    # dp - toyota speed override here
-    # dp - @todo may apply to other makes in the future?
-    dp_override_speed = self.sm['dragonConf'].dpToyotaCruiseOverrideSpeed if self.sm['dragonConf'].dpToyotaCruiseOverride else False
-    self.v_cruise_helper.update_v_cruise(CS, self.enabled, self.is_metric, dp_override_speed)
+    self.v_cruise_helper.update_v_cruise(CS, self.enabled, self.is_metric)
 
     # decrement the soft disable timer at every step, as it's reset on
     # entrance in SOFT_DISABLING state
@@ -673,7 +573,6 @@ class Controls:
     sr = max(lp.steerRatio, 0.1)
     self.VM.update_params(x, sr)
 
-    self.dp_update_lat_controller()
     # Update Torque Params
     if self.CP.lateralTuning.which() == 'torque':
       torque_params = self.sm['liveTorqueParameters']
@@ -686,20 +585,16 @@ class Controls:
     CC = car.CarControl.new_message()
     CC.enabled = self.enabled
 
-    # dp - keep the current lat controller type
-    CC.latController = self.CP.lateralTuning.which()
     # Check which actuators can be enabled
     standstill = CS.vEgo <= max(self.CP.minSteerSpeed, MIN_LATERAL_CONTROL_SPEED) or CS.standstill
     CC.latActive = self.active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and \
                    (not standstill or self.joystick_mode)
     CC.longActive = self.enabled and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
 
-    if not standstill and CS.cruiseState.available and self.sm['dragonConf'].dpAtl > 0:
+    if self.dp_alka and not standstill and CS.cruiseState.available:
       if self.sm['liveCalibration'].calStatus != log.LiveCalibrationData.Status.calibrated:
         pass
-      elif CS.steerFaultTemporary:
-        pass
-      elif CS.steerFaultPermanent:
+      elif CS.steerFaultTemporary or CS.steerFaultPermanent:
         pass
       elif CS.gearShifter == car.CarState.GearShifter.reverse:
         pass
@@ -716,18 +611,7 @@ class Controls:
 
     if CS.leftBlinker or CS.rightBlinker:
       self.last_blinker_frame = self.sm.frame
-      # dp - manual lane change
-      if self.sm['dragonConf'].dpLateralLcManual:
-        speed = CS.vEgo * CV.MS_TO_MPH
-        if self.sm['dragonConf'].dpLateralMode == 1 and speed >= self.sm['dragonConf'].dpLcMinMph:
-          pass
-        # we use "or" here in case dpLcAutoMinMph is smaller than dpLcMinMph
-        elif self.sm['dragonConf'].dpLateralMode == 2 and (speed >= self.sm['dragonConf'].dpLcMinMph or speed >= self.sm['dragonConf'].dpLcAutoMinMph):
-          pass
-        else:
-          if CC.latActive:
-            self.events.add(EventName.manualSteeringRequiredBlinkersOn)
-          CC.latActive = False
+
     # State specific actions
 
     if not CC.latActive:
@@ -745,7 +629,7 @@ class Controls:
       self.desired_curvature, self.desired_curvature_rate = get_lag_adjusted_curvature(self.CP, CS.vEgo,
                                                                                        lat_plan.psis,
                                                                                        lat_plan.curvatures,
-                                                                                       lat_plan.curvatureRates, self.dp_lat_version)
+                                                                                       lat_plan.curvatureRates)
       actuators.steer, actuators.steeringAngleDeg, lac_log = self.LaC.update(CC.latActive, CS, self.VM, lp,
                                                                              self.last_actuators, self.steer_limited, self.desired_curvature,
                                                                              self.desired_curvature_rate, self.sm['liveLocationKalman'])
@@ -771,7 +655,7 @@ class Controls:
     recent_steer_pressed = (self.sm.frame - self.last_steering_pressed_frame)*DT_CTRL < 2.0
 
     # Send a "steering required alert" if saturation count has reached the limit
-    if lac_log.active and not recent_steer_pressed:
+    if lac_log.active and not recent_steer_pressed and not self.CP.notCar:
       if self.CP.lateralTuning.which() == 'torque' and not self.joystick_mode:
         undershooting = abs(lac_log.desiredLateralAccel) / abs(1e-3 + lac_log.actualLateralAccel) > 1.2
         turning = abs(lac_log.desiredLateralAccel) > 1.0
@@ -930,8 +814,6 @@ class Controls:
     lat_tuning = self.CP.lateralTuning.which()
     if self.joystick_mode:
       controlsState.lateralControlState.debugState = lac_log
-    elif lat_tuning == 'lqr':
-      controlsState.lateralControlState.lqrState = lac_log
     elif self.CP.steerControlType == car.CarParams.SteerControlType.angle:
       controlsState.lateralControlState.angleState = lac_log
     elif lat_tuning == 'pid':
@@ -941,7 +823,6 @@ class Controls:
     elif lat_tuning == 'indi':
       controlsState.lateralControlState.indiState = lac_log
 
-    controlsState.dpLateralAltActive = self.dp_lateral_alt_active
     self.pm.send('controlsState', dat)
 
     # carState
@@ -979,11 +860,7 @@ class Controls:
     self.prof.checkpoint("Ratekeeper", ignore=True)
 
     self.is_metric = self.params.get_bool("IsMetric")
-    if self.CP.openpilotLongitudinalControl:
-      if self.sm['dragonConf'].dpE2EConditional:
-        self.experimental_mode = self.sm['longitudinalPlan'].dpE2EIsBlended
-      else:
-        self.experimental_mode = self.params.get_bool("ExperimentalMode")
+    self.experimental_mode = self.params.get_bool("ExperimentalMode") and self.CP.openpilotLongitudinalControl
 
     # Sample data from sockets and get a carState
     CS = self.data_sample()

@@ -47,7 +47,7 @@ procs = [
   NativeProcess("mapsd", "selfdrive/navd", ["./mapsd"]),
   NativeProcess("navmodeld", "selfdrive/modeld", ["./navmodeld"]),
   NativeProcess("sensord", "system/sensord", ["./sensord"], enabled=not PC),
-  NativeProcess("ui", "selfdrive/ui", ["./ui"], offroad=True, watchdog_max_dt=(5 if not PC else None), always_watchdog=True),
+  NativeProcess("ui", "selfdrive/ui", ["./ui"], offroad=True, watchdog_max_dt=(5 if not PC else None)),
   NativeProcess("soundd", "selfdrive/ui/soundd", ["./soundd"]),
   NativeProcess("locationd", "selfdrive/locationd", ["./locationd"]),
   NativeProcess("boardd", "selfdrive/boardd", ["./boardd"], enabled=False),
@@ -76,11 +76,12 @@ procs = [
   PythonProcess("webjoystick", "tools.joystick.web", onroad=False, callback=notcar),
 
   # dp
+  NativeProcess("otisserv", "selfdrive/dragonpilot", ['./otisserv'], offroad=True),
   PythonProcess("mapd", "selfdrive.mapd.mapd"),
-  PythonProcess("systemd", "selfdrive.dragonpilot.systemd", offroad=True),
+  # gpxd
   PythonProcess("gpxd", "selfdrive.dragonpilot.gpxd"),
   PythonProcess("gpx_uploader", "selfdrive.dragonpilot.gpx_uploader", offroad=True),
-  PythonProcess("otisserv", "selfdrive.dragonpilot.otisserv", offroad=True),
+  NativeProcess("fileserv", "selfdrive/dragonpilot", ['./fileserv'], offroad=True),
 ]
 
 managed_processes = {p.name: p for p in procs}

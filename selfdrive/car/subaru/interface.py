@@ -4,7 +4,6 @@ from panda import Panda
 from selfdrive.car import STD_CARGO_KG, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
 from selfdrive.car.subaru.values import CAR, GLOBAL_GEN2, PREGLOBAL_CARS, SubaruFlags
-from common.params import Params
 
 
 class CarInterface(CarInterfaceBase):
@@ -106,9 +105,6 @@ class CarInterface(CarInterfaceBase):
     else:
       raise ValueError(f"unknown car: {candidate}")
 
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
-    Params().put("dp_lateral_steer_rate_cost", "0.7")
     return ret
 
   # returns a car.CarState

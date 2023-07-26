@@ -3,43 +3,57 @@ import os
 import sys
 import errno
 import shutil
-import time
-from urllib.request import urlopen
-from glob import glob
 import subprocess
-import importlib.util
+from pathlib import Path
+from system.hardware import PC
 
 # NOTE: Do NOT import anything here that needs be built (e.g. params)
 from common.spinner import Spinner
 
+if not PC:
+  THIRD_PARTY_DIR = "/data/third_party_modules"
+else:
+  THIRD_PARTY_DIR = os.path.join(str(Path.home()), ".comma", "third_party_modules")
 
-OPSPLINE_SPEC = importlib.util.find_spec('scipy')
-OVERPY_SPEC = importlib.util.find_spec('overpy')
+sys.path.append(THIRD_PARTY_DIR)
 MAX_BUILD_PROGRESS = 100
+TOTAL_PIP_STEPS = 100
 TMP_DIR = '/data/tmp'
-PYEXTRA_DIR = '/data/openpilot/pyextra'
-DP_PYEXTRA_DIR = '/data/pyextra_community'
+PIP_TARGET = [f'--target={THIRD_PARTY_DIR}']
+SCIPY_VERSION = "1.11.1"
+OVERPY_VERSION = "0.6"
+
+def param_is_enabled(param="dp_mapd"):
+  try:
+    from common.params import Params
+    with open(Params().get_param_path() + f"/{param}", 'r') as f:
+      return f.read() == '1'
+  except Exception:
+    return False
 
 
-def wait_for_internet_connection(return_on_failure=False):
-  retries = 0
-  while True:
-    try:
-      _ = urlopen('https://www.google.com/', timeout=10)
-      return True
-    except Exception as e:
-      print(f'Wait for internet failed: {e}')
-      if return_on_failure and retries == 5:
-        return False
-      retries += 1
-      time.sleep(2)  # Wait for 2 seconds before retrying
+def scipy_is_valid():
+  try:
+    import scipy
+    if scipy.__version__ != SCIPY_VERSION:
+      return False
+    return True
+  except (ImportError, AttributeError) as e:
+    return False
 
+
+def overpy_is_valid():
+  try:
+    import overpy
+    if overpy.__version__ != OVERPY_VERSION:
+      return False
+    return True
+  except (ImportError, AttributeError) as e:
+    return False
+
+MAPD_ACTIVATED = param_is_enabled() and scipy_is_valid() and overpy_is_valid()
 
 def install_dep(spinner):
-  wait_for_internet_connection()
-
-  TOTAL_PIP_STEPS = 21
-
   try:
     os.makedirs(TMP_DIR)
   except OSError as e:
@@ -48,14 +62,13 @@ def install_dep(spinner):
   my_env = os.environ.copy()
   my_env['TMPDIR'] = TMP_DIR
 
-  pip_target = [f'--target={PYEXTRA_DIR}']
   packages = []
-  if OPSPLINE_SPEC is None:
-    packages.append('scipy==1.7.1')
-  if OVERPY_SPEC is None:
-    packages.append('overpy==0.6')
+  if not scipy_is_valid():
+    packages.append(f'scipy')
+  if not overpy_is_valid():
+    packages.append(f'overpy=={OVERPY_VERSION}')
 
-  pip = subprocess.Popen([sys.executable, "-m", "pip", "install", "-v"] + pip_target + packages,
+  pip = subprocess.Popen([sys.executable, "-m", "pip", "install", "-U", "--timeout", "10", "-v"] + PIP_TARGET + packages,
                           stdout=subprocess.PIPE, env=my_env)
 
   # Read progress from pip and update spinner
@@ -66,34 +79,16 @@ def install_dep(spinner):
       break
     if output:
       steps += 1
-      if steps == 21:
-        spinner.update(f"Downloaded {round(MAX_BUILD_PROGRESS * (steps / TOTAL_PIP_STEPS))}%")
-      else:
-        spinner.update(f"Downloading... {round(MAX_BUILD_PROGRESS * (steps / TOTAL_PIP_STEPS))}%")
+      spinner.update("Installing mapd dependencies: %s%%" % int(MAX_BUILD_PROGRESS * min(1., steps / TOTAL_PIP_STEPS)))
       print(output.decode('utf8', 'replace'))
 
   shutil.rmtree(TMP_DIR)
   os.unsetenv('TMPDIR')
 
-  # remove numpy installed to PYEXTRA_DIR since numpy is already present in the AGNOS image
-  if OPSPLINE_SPEC is None:
-    for directory in glob(f'{PYEXTRA_DIR}/numpy*'):
-      shutil.rmtree(directory)
-    if os.path.exists(f'{PYEXTRA_DIR}/bin'):
-      shutil.rmtree(f'{PYEXTRA_DIR}/bin')
 
-  dup = 'cp -rf /data/openpilot/pyextra /data/pyextra_community'
-  process_dup = subprocess.Popen(dup, stdout=subprocess.PIPE, shell=True)
-
-
-if __name__ == "__main__" and (OPSPLINE_SPEC is None or OVERPY_SPEC is None):
-  spinner = Spinner()
-  if os.path.exists(DP_PYEXTRA_DIR):
-    spinner.update("Loading dependencies")
-    command = 'rm -rf /data/openpilot/pyextra; cp -rf /data/pyextra_community /data/openpilot/pyextra'
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-    print("dp: Removed directory /data/openpilot/pyextra")
-    print("dp: Copied /data/pyextra_community to /data/openpilot/pyextra")
-  else:
-    spinner.update("Waiting for internet")
+if __name__ == "__main__":
+  if param_is_enabled() and (not scipy_is_valid() or not overpy_is_valid()):
+    spinner = Spinner()
+    spinner.update("Installing mapd dependencies (internet required)")
     install_dep(spinner)
+    spinner.close()

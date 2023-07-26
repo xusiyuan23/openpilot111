@@ -95,9 +95,10 @@ services = {
   "livestreamRoadEncodeData": (False, 20.),
   "livestreamDriverEncodeData": (False, 20.),
 
-  # dp
-  "dragonConf": (False, 1.),
-  "liveMapData": (True, 0.),
+  # mapd
+  "liveMapData": (False, 0.),
+  "longitudinalPlanExt": (True, 20., 5),
+  "lateralPlanExt": (True, 20., 5),
 }
 service_list = {name: Service(new_port(idx), *vals) for  # type: ignore
                 idx, (name, vals) in enumerate(services.items())}

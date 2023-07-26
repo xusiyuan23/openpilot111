@@ -4,7 +4,7 @@ from typing import Dict, List
 from cereal import car
 from common.params import Params
 from common.basedir import BASEDIR
-# from system.version import is_comma_remote, is_tested_branch
+from system.version import is_comma_remote, is_tested_branch
 from selfdrive.car.interfaces import get_interface_attr
 from selfdrive.car.fingerprints import eliminate_incompatible_cars, all_legacy_fingerprint_cars
 from selfdrive.car.vin import get_vin, is_valid_vin, VIN_UNKNOWN
@@ -12,11 +12,6 @@ from selfdrive.car.fw_versions import get_fw_versions_ordered, get_present_ecus,
 from system.swaglog import cloudlog
 import cereal.messaging as messaging
 from selfdrive.car import gen_empty_fingerprint
-
-import threading
-import requests
-import time
-import selfdrive.sentry as sentry
 
 EventName = car.CarEvent.EventName
 
@@ -90,18 +85,18 @@ def fingerprint(logcan, sendcan, num_pandas):
 
   dp_car_assigned = Params().get('dp_car_assigned', encoding='utf8')
   if not fixed_fingerprint and dp_car_assigned is not None:
-    car_selected = dp_car_assigned.strip()
-    fixed_fingerprint = car_selected
+    fixed_fingerprint = dp_car_assigned.strip()
+    skip_fw_query = True
 
-  if not fixed_fingerprint and not skip_fw_query:
+  if not skip_fw_query:
     # Vin query only reliably works through OBDII
     bus = 1
 
     cached_params = params.get("CarParamsCache")
     if cached_params is not None:
-      cached_params = car.CarParams.from_bytes(cached_params)
-      if cached_params.carName == "mock":
-        cached_params = None
+      with car.CarParams.from_bytes(cached_params) as cached_params:
+        if cached_params.carName == "mock":
+          cached_params = None
 
     if cached_params is not None and len(cached_params.carFw) > 0 and \
        cached_params.carVin is not VIN_UNKNOWN and not disable_fw_cache:
@@ -190,41 +185,6 @@ def fingerprint(logcan, sendcan, num_pandas):
                  fw_count=len(car_fw), ecu_responses=list(ecu_rx_addrs), vin_rx_addr=vin_rx_addr, error=True)
   return car_fingerprint, finger, vin, car_fw, source, exact_match
 
-#dp
-def is_connected_to_internet(timeout=5):
-  try:
-    requests.get("https://sentry.io", timeout=timeout)
-    return True
-  except Exception:
-    return False
-
-
-def crash_log(candidate):
-  no_internet = 0
-  while True:
-    if is_connected_to_internet():
-      sentry.capture_warning("fingerprinted %s" % candidate)
-      break
-    else:
-      no_internet += 1
-      if no_internet >= 2:
-        break
-      time.sleep(600)
-
-
-def crash_log2(fingerprints, fw):
-  no_internet = 0
-  while True:
-    if is_connected_to_internet():
-      sentry.capture_warning("car doesn't match any fingerprints: %s" % fingerprints)
-      sentry.capture_warning("car doesn't match any fw: %s" % fw)
-      break
-    else:
-      no_internet += 1
-      if no_internet >= 2:
-        break
-      time.sleep(600)
-
 
 def get_car(logcan, sendcan, experimental_long_allowed, num_pandas=1):
   candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(logcan, sendcan, num_pandas)
@@ -233,20 +193,11 @@ def get_car(logcan, sendcan, experimental_long_allowed, num_pandas=1):
     cloudlog.event("car doesn't match any fingerprints", fingerprints=fingerprints, error=True)
     candidate = "mock"
 
-    y = threading.Thread(target=crash_log2, args=(fingerprints,car_fw,))
-    y.start()
+  CarInterface, CarController, CarState = interfaces[candidate]
+  CP = CarInterface.get_params(candidate, fingerprints, car_fw, experimental_long_allowed, docs=False)
+  CP.carVin = vin
+  CP.carFw = car_fw
+  CP.fingerprintSource = source
+  CP.fuzzyFingerprint = not exact_match
 
-  x = threading.Thread(target=crash_log, args=(candidate,))
-  x.start()
-
-  try:
-    CarInterface, CarController, CarState = interfaces[candidate]
-    CP = CarInterface.get_params(candidate, fingerprints, car_fw, experimental_long_allowed, docs=False)
-    CP.carVin = vin
-    CP.carFw = car_fw
-    CP.fingerprintSource = source
-    CP.fuzzyFingerprint = not exact_match
-
-    return CarInterface(CP, CarController, CarState), CP
-  except KeyError:
-    return None, None
+  return CarInterface(CP, CarController, CarState), CP

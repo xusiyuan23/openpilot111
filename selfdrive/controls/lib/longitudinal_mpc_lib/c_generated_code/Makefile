@@ -154,7 +154,7 @@ ocp_cython_o: ocp_cython_c
 	-I $(INCLUDE_PATH)/blasfeo/include/ \
 	-I $(INCLUDE_PATH)/hpipm/include/ \
 	-I $(INCLUDE_PATH) \
-	-I /usr/local/pyenv/versions/3.8.10/lib/python3.8/site-packages/numpy/core/include \
+	-I /usr/local/pyenv/versions/3.11.4/lib/python3.11/site-packages/numpy/core/include \
 	acados_ocp_solver_pyx.c \
 
 ocp_cython: ocp_cython_o

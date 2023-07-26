@@ -9,7 +9,7 @@ def create_steer_command(packer, steer, steer_req):
   return packer.make_can_msg("STEERING_LKA", 0, values)
 
 
-def create_lta_steer_command(packer, steer_angle, steer_req, frame):
+def create_lta_steer_command(packer, steer_angle, steer_req, frame, setme_x64):
   """Creates a CAN message for the Toyota LTA Steer Command."""
 
   values = {
@@ -17,27 +17,27 @@ def create_lta_steer_command(packer, steer_angle, steer_req, frame):
     "SETME_X1": 1,
     "SETME_X3": 3,
     "PERCENTAGE": 100,
-    "SETME_X64": 0,
+    "SETME_X64": setme_x64,
     "ANGLE": 0,
     "STEER_ANGLE_CMD": steer_angle,
     "STEER_REQUEST": steer_req,
     "STEER_REQUEST_2": steer_req,
-    "BIT": 0,
+    "CLEAR_HOLD_STEERING_ALERT": 0,
   }
   return packer.make_can_msg("STEERING_LTA", 0, values)
 
 
-def create_accel_command(packer, accel, pcm_cancel, standstill_req, lead, acc_type, distance, dp_toyota_change5speed):
+def create_accel_command(packer, accel, pcm_cancel, standstill_req, lead, acc_type):
   # TODO: find the exact canceling bit that does not create a chime
   values = {
     "ACCEL_CMD": accel,
     "ACC_TYPE": acc_type,
-    "DISTANCE": distance,
+    "DISTANCE": 0,
     "MINI_CAR": lead,
     "PERMIT_BRAKING": 1,
     "RELEASE_STANDSTILL": not standstill_req,
     "CANCEL_REQ": pcm_cancel,
-    "ALLOW_LONG_PRESS": 2 if dp_toyota_change5speed else 1,
+    "ALLOW_LONG_PRESS": 1,
   }
   return packer.make_can_msg("ACC_CONTROL", 0, values)
 

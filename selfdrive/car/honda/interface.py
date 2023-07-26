@@ -7,7 +7,6 @@ from selfdrive.car.honda.values import CarControllerParams, CruiseButtons, Honda
 from selfdrive.car import STD_CARGO_KG, CivicParams, create_button_event, scale_tire_stiffness, get_safety_config
 from selfdrive.car.interfaces import CarInterfaceBase
 from selfdrive.car.disable_ecu import disable_ecu
-from common.params import Params
 
 
 ButtonType = car.CarState.ButtonEvent.Type
@@ -51,15 +50,7 @@ class CarInterface(CarInterfaceBase):
 
       ret.pcmCruise = not ret.enableGasInterceptor
 
-    # dp - attempt to disable op long
-    params = Params()
-    if int(params.get("dp_atl").decode('utf-8')) == 1:
-      ret.openpilotLongitudinalControl = False
-      # update pcmCruise again
-      if candidate in HONDA_BOSCH:
-        ret.pcmCruise = True
-
-    if candidate in (CAR.CRV_5G, CAR.CRV_HYBRID_BSM):
+    if candidate == CAR.CRV_5G:
       ret.enableBsm = 0x12f8bfa7 in fingerprint[0]
 
     # Detect Bosch cars with new HUD msgs
@@ -173,7 +164,7 @@ class CarInterface(CarInterfaceBase):
       tire_stiffness_factor = 0.677
       ret.wheelSpeedFactor = 1.025
 
-    elif candidate in (CAR.CRV_HYBRID, CAR.CRV_HYBRID_BSM):
+    elif candidate == CAR.CRV_HYBRID:
       ret.mass = 1667. + STD_CARGO_KG  # mean of 4 models in kg
       ret.wheelbase = 2.66
       ret.centerToFront = ret.wheelbase * 0.41
@@ -233,14 +224,14 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.2], [0.06]]
       tire_stiffness_factor = 0.677
 
-    elif candidate in (CAR.ODYSSEY, CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
+    elif candidate in (CAR.ODYSSEY, CAR.ODYSSEY_CHN):
       ret.mass = 1900. + STD_CARGO_KG
       ret.wheelbase = 3.00
       ret.centerToFront = ret.wheelbase * 0.41
       ret.steerRatio = 14.35  # as spec
       tire_stiffness_factor = 0.82
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.28], [0.08]]
-      if candidate in (CAR.ODYSSEY_CHN, CAR.ODYSSEY_HYBRID):
+      if candidate == CAR.ODYSSEY_CHN:
         ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 32767], [0, 32767]]  # TODO: determine if there is a dead zone at the top end
       else:
         ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 4096], [0, 4096]]  # TODO: determine if there is a dead zone at the top end
@@ -301,7 +292,7 @@ class CarInterface(CarInterfaceBase):
     # min speed to enable ACC. if car can do stop and go, then set enabling speed
     # to a negative value, so it won't matter. Otherwise, add 0.5 mph margin to not
     # conflict with PCM acc
-    ret.autoResumeSng = candidate in (HONDA_BOSCH | {CAR.CIVIC, CAR.ODYSSEY_HYBRID}) or ret.enableGasInterceptor
+    ret.autoResumeSng = candidate in (HONDA_BOSCH | {CAR.CIVIC}) or ret.enableGasInterceptor
     ret.minEnableSpeed = -1. if ret.autoResumeSng else 25.5 * CV.MPH_TO_MS
 
     # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
@@ -312,26 +303,6 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.1
     ret.steerLimitTimer = 0.8
 
-    params.put("dp_lateral_steer_rate_cost", "0.5")
-    if params.get_bool('dp_honda_eps_mod'):
-      if candidate == CAR.CIVIC:
-        # tuned by a-tao
-        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 4096, 8000], [0, 4096, 4096]]
-      elif candidate in (CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL):
-        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2564, 8000], [0, 2564, 3840]]
-        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.09]] #2.5 default mod #Tuned by TMG
-      elif candidate in (CAR.ACCORD, CAR.ACCORDH):
-        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.09]]
-      elif candidate == CAR.CRV_5G:
-        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2560, 10000], [0, 2560, 3840]] #tuned by Titanminer (8000)
-        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.21], [0.07]]
-      elif candidate in (CAR.CRV_HYBRID, CAR.CRV_HYBRID_BSM):
-        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0x0, 0xB5, 0x161, 0x2D6, 0x4C0, 0x70D, 0xC42, 0x1058, 0x2C00], [0x0, 0x160, 0x1F0, 0x2E0, 0x378, 0x4A0, 0x5F0, 0x804, 0xF00]]
-        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.21], [0.07]] #still needs to finish tuning for the new car
-        ret.lateralTuning.pid.kf = 0.00004
-
-    CarInterfaceBase.dp_lat_tune_collection(candidate, ret.latTuneCollection)
-    CarInterfaceBase.configure_dp_tune(ret.lateralTuning, ret.latTuneCollection)
     return ret
 
   @staticmethod
@@ -342,9 +313,6 @@ class CarInterface(CarInterfaceBase):
   # returns a car.CarState
   def _update(self, c):
     ret = self.CS.update(self.cp, self.cp_cam, self.cp_body)
-
-    #dp
-    ret.engineRpm = self.CS.engineRpm
 
     buttonEvents = []
 
@@ -358,8 +326,6 @@ class CarInterface(CarInterfaceBase):
 
     # events
     events = self.create_common_events(ret, pcm_enable=False)
-    #events = self.dp_atl_warning(ret, events)
-
     if self.CP.pcmCruise and ret.vEgo < self.CP.minEnableSpeed:
       events.add(EventName.belowEngageSpeed)
 
@@ -385,4 +351,4 @@ class CarInterface(CarInterfaceBase):
   # pass in a car.CarControl
   # to be called @ 100hz
   def apply(self, c, now_nanos):
-    return self.CC.update(c, self.CS, now_nanos, self.dragonconf)
+    return self.CC.update(c, self.CS, now_nanos)

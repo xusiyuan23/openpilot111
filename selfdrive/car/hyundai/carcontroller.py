@@ -61,8 +61,12 @@ class CarController:
     hud_control = CC.hudControl
 
     # steering torque
+    # rick - from taco
+    self.params = CarControllerParams(self.CP, CS.out.vEgoRaw)
     new_steer = int(round(actuators.steer * self.params.STEER_MAX))
     apply_steer = apply_driver_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
+    # rick - from taco
+    apply_steer = clip(apply_steer, -self.params.STEER_MAX, self.params.STEER_MAX)
 
     if not CC.latActive:
       apply_steer = 0
@@ -114,7 +118,7 @@ class CarController:
       hda2_long = hda2 and self.CP.openpilotLongitudinalControl
 
       # steering control
-      can_sends.extend(hyundaicanfd.create_steering_messages(self.packer, self.CP, self.CAN, CC.latActive, lat_active, apply_steer))
+      can_sends.extend(hyundaicanfd.create_steering_messages(self.packer, self.CP, self.CAN, CC.enabled, lat_active, apply_steer))
 
       # disable LFA on HDA2
       if self.frame % 5 == 0 and hda2:
@@ -122,7 +126,7 @@ class CarController:
 
       # LFA and HDA icons
       if self.frame % 5 == 0 and (not hda2 or hda2_long):
-        can_sends.append(hyundaicanfd.create_lfahda_cluster(self.packer, self.CAN, CC.latActive))
+        can_sends.append(hyundaicanfd.create_lfahda_cluster(self.packer, self.CAN, CC.enabled))
 
       # blinkers
       if hda2 and self.CP.flags & HyundaiFlags.ENABLE_BLINKERS:
@@ -141,7 +145,7 @@ class CarController:
           # cruise cancel
           if CC.cruiseControl.cancel:
             if self.CP.flags & HyundaiFlags.CANFD_ALT_BUTTONS:
-              can_sends.append(hyundaicanfd.create_acc_cancel(self.packer, self.CAN, CS.cruise_info))
+              can_sends.append(hyundaicanfd.create_acc_cancel(self.packer, self.CP, self.CAN, CS.cruise_info))
               self.last_button_frame = self.frame
             else:
               for _ in range(20):
@@ -159,7 +163,7 @@ class CarController:
               self.last_button_frame = self.frame
     else:
       can_sends.append(hyundaican.create_lkas11(self.packer, self.frame, self.car_fingerprint, apply_steer, lat_active,
-                                                torque_fault, CS.lkas11, sys_warning, sys_state, CC.latActive,
+                                                torque_fault, CS.lkas11, sys_warning, sys_state, CC.enabled,
                                                 hud_control.leftLaneVisible, hud_control.rightLaneVisible,
                                                 left_lane_warning, right_lane_warning))
 

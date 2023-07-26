@@ -14,8 +14,6 @@ from selfdrive.car import apply_hysteresis, gen_empty_fingerprint, scale_rot_ine
 from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, get_friction
 from selfdrive.controls.lib.events import Events
 from selfdrive.controls.lib.vehicle_model import VehicleModel
-from common.params import Params
-from selfdrive.car.lat_controller_helper import configure_pid_tune, configure_lqr_tune
 
 ButtonType = car.CarState.ButtonEvent.Type
 GearShifter = car.CarState.GearShifter
@@ -86,10 +84,6 @@ class CarInterfaceBase(ABC):
     if CarController is not None:
       self.CC = CarController(self.cp.dbc_name, CP, self.VM)
 
-    # dp
-    self.dp_last_cruise_actual_enabled = False
-    self.dragonconf = None
-
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
     return ACCEL_MIN, ACCEL_MAX
@@ -137,8 +131,7 @@ class CarInterfaceBase(ABC):
   def get_steer_feedforward_function(self):
     return self.get_steer_feedforward_default
 
-  @staticmethod
-  def torque_from_lateral_accel_linear(lateral_accel_value: float, torque_params: car.CarParams.LateralTorqueTuning,
+  def torque_from_lateral_accel_linear(self, lateral_accel_value: float, torque_params: car.CarParams.LateralTorqueTuning,
                                        lateral_accel_error: float, lateral_accel_deadzone: float, friction_compensation: bool) -> float:
     # The default is a linear relationship between torque and lateral acceleration (accounting for road roll and steering friction)
     friction = get_friction(lateral_accel_error, lateral_accel_deadzone, FRICTION_THRESHOLD, torque_params, friction_compensation)
@@ -198,53 +191,11 @@ class CarInterfaceBase(ABC):
     tune.torque.latAccelOffset = 0.0
     tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
 
-  @staticmethod
-  def configure_dp_tune(stock, collection):
-    try:
-      dp_lateral_tune = int(Params().get("dp_lateral_tune").decode('utf-8'))
-    except:
-      dp_lateral_tune = 0
-
-    stock_tune = 0
-    if stock.which() == 'pid':
-      stock_tune = 1
-      collection.pid = stock.pid
-    elif stock.which() == 'lqr':
-      stock_tune = 2
-      collection.lqr = stock.lqr
-    elif stock.which() == 'torque':
-      stock_tune = 3
-      collection.torque = stock.torque
-    elif stock.which() == 'indi':
-      stock_tune = 4
-
-    if dp_lateral_tune > 0 and dp_lateral_tune != stock_tune:
-      if dp_lateral_tune == 1 and collection.pid is not None:
-        stock.pid = collection.pid
-      elif dp_lateral_tune == 2 and collection.lqr is not None:
-        stock.lqr = collection.lqr
-      elif dp_lateral_tune == 3 and collection.torque is not None:
-        stock.torque = collection.torque
-
-  @staticmethod
-  def dp_lat_tune_collection(candidate, collection, steering_angle_deadzone_deg=0.0, use_steering_angle=True):
-    for i in range(1, 4):
-      # pid - car specific
-      if i == 1:
-        configure_pid_tune(candidate, collection)
-      # lqr - all uses RAV4 one
-      elif i == 2:
-        configure_lqr_tune(candidate, collection)
-      # torque - car specific as per lookup table
-      elif i == 3:
-        CarInterfaceBase.configure_torque_tune(candidate, collection, steering_angle_deadzone_deg, use_steering_angle)
-
   @abstractmethod
   def _update(self, c: car.CarControl) -> car.CarState:
     pass
 
-  def update(self, c: car.CarControl, can_strings: List[bytes], dragonconf) -> car.CarState:
-    self.dragonconf = dragonconf
+  def update(self, c: car.CarControl, can_strings: List[bytes]) -> car.CarState:
     # parse can
     for cp in self.can_parsers:
       if cp is not None:
@@ -302,7 +253,7 @@ class CarInterfaceBase(ABC):
       events.add(EventName.stockFcw)
     if cs_out.stockAeb:
       events.add(EventName.stockAeb)
-    if self.dragonconf.dpSpeedCheck and cs_out.vEgo > MAX_CTRL_SPEED:
+    if cs_out.vEgo > MAX_CTRL_SPEED:
       events.add(EventName.speedTooHigh)
     if cs_out.cruiseState.nonAdaptive:
       events.add(EventName.wrongCruiseMode)

@@ -9,6 +9,12 @@ source "$BASEDIR/launch_env.sh"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 function agnos_init {
+  # openpilot ssh key installer
+  if [ ! -f /data/params/d/GithubSshKeys ]; then
+    echo -n openpilot > /data/params/d/GithubUsername
+    cat /usr/comma/setup_keys > /data/params/d/GithubSshKeys
+  fi
+
   # wait longer for weston to come up
   if [ -f "$BASEDIR/prebuilt" ]; then
     sleep 3
@@ -74,14 +80,7 @@ function launch {
 
   # handle pythonpath
   ln -sfn $(pwd) /data/pythonpath
-  export PYTHONPATH="$PWD:$PWD/pyextra"
-
-  # dp - apply custom patch
-  if [ -f "/data/media/0/dp_patcher.py" ]; then
-    python /data/media/0/dp_patcher.py
-  fi
-  # dp - install default ssh key
-  python /data/openpilot/scripts/sshkey_installer.py
+  export PYTHONPATH="$PWD"
 
   # hardware specific init
   agnos_init
@@ -91,16 +90,7 @@ function launch {
 
   # start manager
   cd selfdrive/manager
-  if [ -f /data/params/d/OsmLocal ]; then
-    OSM_LOCAL=`cat /data/params/d/OsmLocal`
-  else
-    OSM_LOCAL="0"
-  fi
-  if [ $OSM_LOCAL = "1" ]; then
-    ./custom_dep.py && ./build.py && ./local_osm_install.py && ./manager.py
-  else
-    ./custom_dep.py && ./build.py && ./manager.py
-  fi
+  ./custom_dep.py && ./build.py && ./manager.py
 
   # if broken, keep on screen error
   while true; do sleep 1; done

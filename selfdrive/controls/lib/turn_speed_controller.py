@@ -1,11 +1,12 @@
 import numpy as np
 import time
 from common.params import Params
-from cereal import log
-from common.realtime import sec_since_boot
+from cereal import custom
+# from common.realtime import sec_since_boot
 from selfdrive.controls.lib.drive_helpers import LIMIT_ADAPT_ACC, LIMIT_MIN_SPEED, LIMIT_MAX_MAP_DATA_AGE, \
   LIMIT_SPEED_OFFSET_TH, CONTROL_N, LIMIT_MIN_ACC, LIMIT_MAX_ACC
 from selfdrive.modeld.constants import T_IDXS
+import cereal.messaging as messaging
 
 
 _ACTIVE_LIMIT_MIN_ACC = -0.5  # m/s^2 Maximum deceleration allowed while active.
@@ -14,7 +15,7 @@ _ACTIVE_LIMIT_MAX_ACC = 0.5   # m/s^2 Maximum acelration allowed while active.
 
 _DEBUG = False
 
-TurnSpeedControlState = log.LongitudinalPlan.SpeedLimitControlState
+TurnSpeedControlState = custom.LongitudinalPlanExt.SpeedLimitControlState
 
 
 def _debug(msg):
@@ -38,7 +39,7 @@ class TurnSpeedController():
   def __init__(self):
     self._params = Params()
     self._last_params_update = 0.
-    self._is_enabled = self._params.get_bool("TurnSpeedControl")
+    self._is_enabled = self._params.get_bool("dp_mapd_turn_speed_control")
     self._op_enabled = False
     self._v_ego = 0.
     self._a_ego = 0.
@@ -54,6 +55,8 @@ class TurnSpeedController():
     self._next_speed_limit_prev = 0.
 
     self._a_target = 0.
+    self._gas_pressed = False
+    self._sm = messaging.SubMaster(['liveMapData'])
 
   @property
   def a_target(self):
@@ -95,21 +98,18 @@ class TurnSpeedController():
   def turn_sign(self):
     return self._turn_sign
 
-  def _get_limit_from_map_data(self, sm):
+  def _get_limit_from_map_data(self):
     """Provides the speed limit, distance and turn sign to it for turns based on map data.
     """
     # Ignore if no live map data
-    sock = 'liveMapData'
-    if sm.logMonoTime[sock] is None:
+    # sock = 'liveMapData'
+    self._sm.update(0)
+    if self._sm.updated['liveMapData']:
       _debug('TS: No map data for turn speed limit')
       return 0., 0., 0
 
-    #if not sm.updated[sock]:
-    #  _debug('TS: not updated, mapd crashed?')
-    #  return 0., 0., 0
-
     # Load map_data and initialize
-    map_data = sm[sock]
+    map_data = self._sm['liveMapData']
     speed_limit = 0.
 
     # Calculate the age of the gps fix. Ignore if too old.
@@ -166,17 +166,17 @@ class TurnSpeedController():
     # Otherwise we just provide the calculated speed_limit
     return speed_limit, 0., turn_sign
 
-  def _update_params(self):
-    time = sec_since_boot()
-    if time > self._last_params_update + 5.0:
-      self._is_enabled = self._params.get_bool("TurnSpeedControl")
-      self._last_params_update = time
+  # def _update_params(self):
+  #   time = sec_since_boot()
+  #   if time > self._last_params_update + 5.0:
+  #     self._is_enabled = True #self._params.get_bool("TurnSpeedControl")
+  #     self._last_params_update = time
 
   def _update_calculations(self):
     # Update current velocity offset (error)
     self._v_offset = self.speed_limit - self._v_ego
 
-  def _state_transition(self, sm):
+  def _state_transition(self):
     # In any case, if op is disabled, or turn speed limit control is disabled
     # or the reported speed limit is 0, deactivate.
     if not self._op_enabled or not self._is_enabled or self.speed_limit == 0.:
@@ -185,7 +185,7 @@ class TurnSpeedController():
 
     # In any case, we deactivate the speed limit controller temporarily
     # if gas is pressed (to support gas override implementations).
-    if sm['carState'].gasPressed:
+    if self._gas_pressed:
       self.state = TurnSpeedControlState.tempInactive
       return
 
@@ -234,15 +234,16 @@ class TurnSpeedController():
     # update solution values.
     self._a_target = a_target
 
-  def update(self, enabled, v_ego, a_ego, sm):
+  def update(self, enabled, v_ego, a_ego, gas_pressed):
     self._op_enabled = enabled
     self._v_ego = v_ego
     self._a_ego = a_ego
+    self._gas_pressed = gas_pressed
 
     # Get the speed limit from Map Data
-    self._speed_limit, self._distance, self._turn_sign = self._get_limit_from_map_data(sm)
+    self._speed_limit, self._distance, self._turn_sign = self._get_limit_from_map_data()
 
-    self._update_params()
+    # self._update_params()
     self._update_calculations()
-    self._state_transition(sm)
+    self._state_transition()
     self._update_solution()

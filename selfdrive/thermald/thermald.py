@@ -103,6 +103,8 @@ def hw_state_thread(end_event, hw_queue):
   modem_version = None
   modem_nv = None
   modem_configured = False
+  modem_restarted = False
+  modem_missing_count = 0
 
   while not end_event.is_set():
     # these are expensive calls. update every 10s
@@ -120,6 +122,16 @@ def hw_state_thread(end_event, hw_queue):
 
           if (modem_version is not None) and (modem_nv is not None):
             cloudlog.event("modem version", version=modem_version, nv=modem_nv)
+          else:
+            if not modem_restarted:
+              # TODO: we may be able to remove this with a MM update
+              # ModemManager's probing on startup can fail
+              # rarely, restart the service to probe again.
+              modem_missing_count += 1
+              if modem_missing_count > 3:
+                modem_restarted = True
+                cloudlog.event("restarting ModemManager")
+                os.system("sudo systemctl restart --no-block ModemManager")
 
         tx, rx = HARDWARE.get_modem_data_usage()
 
@@ -193,6 +205,8 @@ def thermald_thread(end_event, hw_queue):
   thermal_config = HARDWARE.get_thermal_config()
 
   fan_controller = None
+
+  dp_device_disable_temp_check = params.get_bool("dp_device_disable_temp_check")
 
   while not end_event.is_set():
     sm.update(PANDA_STATES_TIMEOUT)
@@ -291,13 +305,14 @@ def thermald_thread(end_event, hw_queue):
     startup_conditions["not_taking_snapshot"] = not params.get_bool("IsTakingSnapshot")
 
     # must be at an engageable thermal band to go onroad
-    startup_conditions["device_temp_engageable"] = thermal_status < ThermalStatus.red
+    if not dp_device_disable_temp_check:
+      startup_conditions["device_temp_engageable"] = thermal_status < ThermalStatus.red
 
-    # if the temperature enters the danger zone, go offroad to cool down
-    onroad_conditions["device_temp_good"] = thermal_status < ThermalStatus.danger
-    extra_text = f"{offroad_comp_temp:.1f}C"
-    show_alert = (not onroad_conditions["device_temp_good"] or not startup_conditions["device_temp_engageable"]) and onroad_conditions["ignition"]
-    set_offroad_alert_if_changed("Offroad_TemperatureTooHigh", show_alert, extra_text=extra_text)
+      # if the temperature enters the danger zone, go offroad to cool down
+      onroad_conditions["device_temp_good"] = thermal_status < ThermalStatus.danger
+      extra_text = f"{offroad_comp_temp:.1f}C"
+      show_alert = (not onroad_conditions["device_temp_good"] or not startup_conditions["device_temp_engageable"]) and onroad_conditions["ignition"]
+      set_offroad_alert_if_changed("Offroad_TemperatureTooHigh", show_alert, extra_text=extra_text)
 
     # TODO: this should move to TICI.initialize_hardware, but we currently can't import params there
     if TICI:

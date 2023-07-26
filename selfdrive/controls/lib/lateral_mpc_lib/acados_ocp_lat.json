@@ -336,7 +336,7 @@
         "zu": [],
         "zu_e": []
     },
-    "cython_include_dirs": "/usr/local/pyenv/versions/3.8.10/lib/python3.8/site-packages/numpy/core/include",
+    "cython_include_dirs": "/usr/local/pyenv/versions/3.11.4/lib/python3.11/site-packages/numpy/core/include",
     "dims": {
         "N": 32,
         "nbu": 0,
