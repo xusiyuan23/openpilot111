@@ -77,16 +77,13 @@ interfaces = load_interfaces(interface_names)
 
 # **** for use live only ****
 def fingerprint(logcan, sendcan, num_pandas):
-  fixed_fingerprint = os.environ.get('FINGERPRINT', "")
+  if (dp_car_assigned := Params().get('dp_car_assigned', encoding='utf8')) is None:
+    dp_car_assigned = ""
+  fixed_fingerprint = os.environ.get('FINGERPRINT', dp_car_assigned.strip())
   skip_fw_query = os.environ.get('SKIP_FW_QUERY', False)
   disable_fw_cache = os.environ.get('DISABLE_FW_CACHE', False)
   ecu_rx_addrs = set()
   params = Params()
-
-  dp_car_assigned = Params().get('dp_car_assigned', encoding='utf8')
-  if not fixed_fingerprint and dp_car_assigned is not None:
-    fixed_fingerprint = dp_car_assigned.strip()
-    skip_fw_query = True
 
   if not skip_fw_query:
     # Vin query only reliably works through OBDII
