@@ -80,8 +80,8 @@ OBJ+= $(OCP_OBJ)
 EXTERNAL_DIR=
 EXTERNAL_LIB=
 
-INCLUDE_PATH = /data/openpilot/third_party/acados/include/acados/include
-LIB_PATH = /data/openpilot/third_party/acados/include/acados/lib
+INCLUDE_PATH = /data/openpilot/third_party/acados/include
+LIB_PATH = /data/openpilot/third_party/acados/lib
 
 # preprocessor flags for make's implicit rules
 CPPFLAGS+= -I$(INCLUDE_PATH)

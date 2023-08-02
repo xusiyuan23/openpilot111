@@ -50,8 +50,8 @@ def manager_init() -> None:
     ("dp_no_gps_ctrl", "0"),
     ("dp_no_fan_ctrl", "0"),
     ("dp_logging", "0"),
-    ("dp_alka", "1"),
-    ("dp_mapd", "1"),
+    ("dp_alka", "0"),
+    ("dp_mapd", "0"),
     ("dp_lat_lane_priority_mode", "0"),
     ("dp_0813", "0"),
     ("dp_device_auto_shutdown", "0"),
@@ -64,6 +64,13 @@ def manager_init() -> None:
     ("dp_device_disable_temp_check", "0"),
     ("dp_fileserv", "0"),
     ("dp_otisserv", "0"),
+    ("dp_car_dashcam_mode_removal", "0"),
+    ("dp_device_enable_comma_registration", "0"),
+    ("dp_long_accel_profile", "0"),
+    ("dp_long_use_df_tune", "0"),
+    ("dp_long_de2e", "0"),
+    ("dp_mapd_vision_turn_control", "0"),
+    ("dp_hkg_min_steer_speed_bypass", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

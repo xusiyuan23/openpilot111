@@ -49,7 +49,7 @@ services = {
   "carState": (True, 100., 10),
   "carControl": (True, 100., 10),
   "longitudinalPlan": (True, 20., 5),
-  "procLog": (True, 0.5),
+  "procLog": (True, 0.5, 15),
   "gpsLocationExternal": (True, 10., 10),
   "gpsLocation": (True, 1., 1),
   "ubloxGnss": (True, 10.),
@@ -91,12 +91,20 @@ services = {
   "driverEncodeData": (False, 20.),
   "wideRoadEncodeData": (False, 20.),
   "qRoadEncodeData": (False, 20.),
+  "livestreamWideRoadEncodeIdx": (False, 20.),
+  "livestreamRoadEncodeIdx": (False, 20.),
+  "livestreamDriverEncodeIdx": (False, 20.),
+  "livestreamWideRoadEncodeData": (False, 20.),
+  "livestreamRoadEncodeData": (False, 20.),
+  "livestreamDriverEncodeData": (False, 20.),
 
   # legacy
   "driverState": (True, 10, 5),
   "sensorEvents": (True, 100., 100),
   # mapd
-  "liveMapData": (True, 0.),
+  "liveMapData": (False, 0.),
+  "longitudinalPlanExt": (False, 20., 5),
+  "lateralPlanExt": (False, 20., 5),
 }
 service_list = {name: Service(new_port(idx), *vals) for  # type: ignore
                 idx, (name, vals) in enumerate(services.items())}
