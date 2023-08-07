@@ -12,13 +12,14 @@ supported_languages = {
 }
 
 def events():
-  locale = Params().get("LanguageSetting", encoding='utf8')
+  import sys
   try:
-    if locale is not None:
-      locale = supported_languages[locale.strip()]
+    if sys.argv[0] == "./manager.py":
+      lang = Params().get("LanguageSetting", encoding='utf8')
     else:
-      locale = "en-US"
-  except KeyError:
+      lang = "main_en"
+    locale = supported_languages[lang.strip()]
+  except:
     locale = "en-US"
   i18n = gettext.translation("events", localedir=locale_dir, fallback=True, languages=[locale])
   i18n.install()

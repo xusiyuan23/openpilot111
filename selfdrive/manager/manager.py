@@ -18,7 +18,7 @@ from system.hardware import HARDWARE, PC
 from selfdrive.manager.helpers import unblock_stdout, write_onroad_params
 from selfdrive.manager.process import ensure_running
 from selfdrive.manager.process_config import managed_processes
-from selfdrive.athena.registration import register, UNREGISTERED_DONGLE_ID
+from selfdrive.athena.registration import register, UNREGISTERED_DONGLE_ID, is_registered_device
 from system.swaglog import cloudlog, add_file_handler
 from system.version import is_dirty, get_commit, get_version, get_origin, get_short_branch, \
                            get_normalized_origin, terms_version, training_version, \
@@ -64,7 +64,7 @@ def manager_init() -> None:
     ("dp_toyota_enhanced_bsm", "0"),
     ("dp_lat_lane_priority_mode", "0"),
     ("dp_mapd", "0"),
-    ("dp_mapd_turn_vision_control", "0"),
+    ("dp_mapd_vision_turn_control", "0"),
     ("dp_mapd_speed_limit_control", "0"),
     ("dp_mapd_turn_speed_control", "0"),
     ("dp_fileserv", "0"),
@@ -72,6 +72,9 @@ def manager_init() -> None:
     ("dp_long_accel_profile", "0"),
     ("dp_long_use_df_tune", "0"),
     ("dp_long_de2e", "0"),
+    ("dp_device_dm_unavailable", "0"),
+    ("dp_long_taco", "0"),
+    ("dp_long_stock_mode", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -174,6 +177,11 @@ def manager_thread() -> None:
 
   if not params.get_bool("dp_otisserv"):
     ignore += ["otisserv"]
+
+  if not is_registered_device():
+    ignore += ["uploader"]
+    if params.get_bool("dp_device_dm_unavailable"):
+      ignore += ["dmonitoringd", "dmonitoringmodeld"]
 
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll=['deviceState'])
   pm = messaging.PubMaster(['managerState'])

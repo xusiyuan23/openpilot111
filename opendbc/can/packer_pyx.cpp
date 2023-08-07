@@ -2968,7 +2968,7 @@ static std::vector<uint8_t>  __pyx_f_7opendbc_3can_10packer_pyx_9CANPacker_pack(
  * 
  *   cpdef make_can_msg(self, name_or_addr, bus, values):             # <<<<<<<<<<<<<<
  *     cdef int addr
- *     if type(name_or_addr) == int:
+ *     if isinstance(name_or_addr, int):
  */
 
 static PyObject *__pyx_pw_7opendbc_3can_10packer_pyx_9CANPacker_3make_can_msg(PyObject *__pyx_v_self, 
@@ -3055,18 +3055,16 @@ static PyObject *__pyx_f_7opendbc_3can_10packer_pyx_9CANPacker_make_can_msg(stru
   /* "opendbc/can/packer_pyx.pyx":43
  *   cpdef make_can_msg(self, name_or_addr, bus, values):
  *     cdef int addr
- *     if type(name_or_addr) == int:             # <<<<<<<<<<<<<<
+ *     if isinstance(name_or_addr, int):             # <<<<<<<<<<<<<<
  *       addr = name_or_addr
  *     else:
  */
-  __pyx_t_1 = PyObject_RichCompare(((PyObject *)Py_TYPE(__pyx_v_name_or_addr)), ((PyObject *)(&PyInt_Type)), Py_EQ); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 43, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_6 = PyInt_Check(__pyx_v_name_or_addr); 
   if (__pyx_t_6) {
 
     /* "opendbc/can/packer_pyx.pyx":44
  *     cdef int addr
- *     if type(name_or_addr) == int:
+ *     if isinstance(name_or_addr, int):
  *       addr = name_or_addr             # <<<<<<<<<<<<<<
  *     else:
  *       addr = self.name_to_address[name_or_addr.encode("utf8")]
@@ -3077,7 +3075,7 @@ static PyObject *__pyx_f_7opendbc_3can_10packer_pyx_9CANPacker_make_can_msg(stru
     /* "opendbc/can/packer_pyx.pyx":43
  *   cpdef make_can_msg(self, name_or_addr, bus, values):
  *     cdef int addr
- *     if type(name_or_addr) == int:             # <<<<<<<<<<<<<<
+ *     if isinstance(name_or_addr, int):             # <<<<<<<<<<<<<<
  *       addr = name_or_addr
  *     else:
  */
@@ -3165,7 +3163,7 @@ static PyObject *__pyx_f_7opendbc_3can_10packer_pyx_9CANPacker_make_can_msg(stru
  * 
  *   cpdef make_can_msg(self, name_or_addr, bus, values):             # <<<<<<<<<<<<<<
  *     cdef int addr
- *     if type(name_or_addr) == int:
+ *     if isinstance(name_or_addr, int):
  */
 
   /* function exit code */
@@ -3702,7 +3700,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *   cpdef make_can_msg(self, name_or_addr, bus, values):             # <<<<<<<<<<<<<<
  *     cdef int addr
- *     if type(name_or_addr) == int:
+ *     if isinstance(name_or_addr, int):
  */
   __pyx_tuple_ = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_name_or_addr, __pyx_n_s_bus, __pyx_n_s_values); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
@@ -4136,7 +4134,7 @@ if (!__Pyx_RefNanny) {
  * 
  *   cpdef make_can_msg(self, name_or_addr, bus, values):             # <<<<<<<<<<<<<<
  *     cdef int addr
- *     if type(name_or_addr) == int:
+ *     if isinstance(name_or_addr, int):
  */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7opendbc_3can_10packer_pyx_9CANPacker_3make_can_msg, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_CANPacker_make_can_msg, NULL, __pyx_n_s_opendbc_can_packer_pyx, __pyx_d, ((PyObject *)__pyx_codeobj__2)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 41, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);

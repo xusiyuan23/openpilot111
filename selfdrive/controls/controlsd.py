@@ -32,11 +32,17 @@ SOFT_DISABLE_TIME = 3  # seconds
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
 
+dp_device_dm_unavailable = Params().get_bool("dp_device_dm_unavailable")
+
 REPLAY = "REPLAY" in os.environ
 SIMULATION = "SIMULATION" in os.environ
 TESTING_CLOSET = "TESTING_CLOSET" in os.environ
 NOSENSOR = "NOSENSOR" in os.environ
-IGNORE_PROCESSES = {"loggerd", "encoderd", "statsd", "mapd", "otisserv", "fileserv"}
+IGNORE_PROCESSES = {"loggerd", "encoderd", "statsd"}
+# dp related processes
+IGNORE_PROCESSES.update({"mapd", "otisserv", "fileserv", "gpxd", "gpx_uploader"})
+if dp_device_dm_unavailable:
+  IGNORE_PROCESSES.update({"dmonitoringd", "dmonitoringmodeld"})
 
 ThermalStatus = log.DeviceState.ThermalStatus
 State = log.ControlsState.OpenpilotState
@@ -66,9 +72,13 @@ class Controls:
     self.pm = pm
     if self.pm is None:
       self.pm = messaging.PubMaster(['sendcan', 'controlsState', 'carState',
-                                     'carControl', 'carEvents', 'carParams'])
+                                     'carControl', 'carEvents', 'carParams', 'controlsStateExt'])
 
     self.camera_packets = ["roadCameraState", "driverCameraState", "wideRoadCameraState"]
+    self.dp_device_dm_unavailable_once = False
+    if dp_device_dm_unavailable:
+      self.dp_device_dm_unavailable_once = True
+      self.camera_packets.remove("driverCameraState")
 
     self.can_sock = can_sock
     if can_sock is None:
@@ -78,16 +88,21 @@ class Controls:
     self.log_sock = messaging.sub_sock('androidLog')
 
     self.params = Params()
-    self.dp_alka = self.params.get_bool("dp_alka")
+    self._dp_alka = self.params.get_bool("dp_alka")
+    self._dp_alka_active = True
+    self._dp_alka_trigger_count = 0
+    self._dp_alka_btn_block_frame = 0
     self.dp_device_disable_temp_check = self.params.get_bool("dp_device_disable_temp_check")
     self.sm = sm
     if self.sm is None:
       ignore = ['testJoystick']
       if SIMULATION:
         ignore += ['driverCameraState', 'managerState']
+      if dp_device_dm_unavailable:
+        ignore += ['driverMonitoringState']
       self.sm = messaging.SubMaster(['deviceState', 'pandaStates', 'peripheralState', 'modelV2', 'liveCalibration',
                                      'driverMonitoringState', 'longitudinalPlan', 'lateralPlan', 'liveLocationKalman',
-                                     'managerState', 'liveParameters', 'radarState', 'liveTorqueParameters', 'testJoystick'] + self.camera_packets,
+                                     'managerState', 'liveParameters', 'radarState', 'liveTorqueParameters', 'testJoystick', 'longitudinalPlanExt'] + self.camera_packets,
                                     ignore_alive=ignore, ignore_avg_freq=['radarState', 'testJoystick'])
 
     if CI is None:
@@ -109,7 +124,7 @@ class Controls:
     if not self.disengage_on_accelerator:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.DISABLE_DISENGAGE_ON_GAS
 
-    if self.dp_alka:
+    if self._dp_alka:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALKA
 
     # read params
@@ -236,6 +251,25 @@ class Controls:
     if self.read_only:
       return
 
+    # ALKA combination
+    if self._dp_alka and CS.brakePressed:
+      # rick - allow ALKA to be enabled/disabled when brake + main pressed twice in 0.5 secs
+      if self.CP.pcmCruise and CS.cruiseState.available != self.CS_prev.cruiseState.available:
+        self._dp_alka_trigger_count += 1
+      if self._dp_alka_trigger_count == 2:
+        self._dp_alka_active = not self._dp_alka_active
+      if self.sm.frame % 50 == 0:
+        self._dp_alka_trigger_count = 0
+
+      # rick - allow ALKA to be enabled/disabled when brake + set is pressed
+      # some HKGs doesnt have main buttons like other cars (e.g. EV6)
+      if not self.CP.pcmCruise and self._dp_alka_btn_block_frame < self.sm.frame:
+        # set/- is pressed
+        if any(be.type in (ButtonType.decelCruise, ButtonType.setCruise) for be in CS.buttonEvents):
+          self._dp_alka_active = not self._dp_alka_active
+          # block activity for a sec
+          self._dp_alka_btn_block_frame = self.sm.frame + 100
+
     # Block resume if cruise never previously enabled
     resume_pressed = any(be.type in (ButtonType.accelCruise, ButtonType.resumeCruise) for be in CS.buttonEvents)
     if not self.CP.pcmCruise and not self.v_cruise_helper.v_cruise_initialized and resume_pressed:
@@ -253,7 +287,7 @@ class Controls:
     if CS.gasPressed:
       self.events.add(EventName.gasPressedOverride)
 
-    if not self.CP.notCar:
+    if not dp_device_dm_unavailable and not self.CP.notCar:
       self.events.add_from_msg(self.sm['driverMonitoringState'].events)
 
     # Add car events, ignore if CAN isn't valid
@@ -341,6 +375,9 @@ class Controls:
       if not SIMULATION and not self.rk.lagging:
         if not self.sm.all_alive(self.camera_packets):
           self.events.add(EventName.cameraMalfunction)
+          if not self.dp_device_dm_unavailable_once and not self.sm.all_alive(['driverCameraState']):
+            self.dp_device_dm_unavailable_once = True
+            self.params.put_bool("dp_device_dm_unavailable", True)
         elif not self.sm.all_freq_ok(self.camera_packets):
           self.events.add(EventName.cameraFrameRate)
     if not REPLAY and self.rk.lagging:
@@ -591,7 +628,7 @@ class Controls:
                    (not standstill or self.joystick_mode)
     CC.longActive = self.enabled and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
 
-    if self.dp_alka and not standstill and CS.cruiseState.available:
+    if self._dp_alka_active and not standstill and CS.cruiseState.available:
       if self.sm['liveCalibration'].calStatus != log.LiveCalibrationData.Status.calibrated:
         pass
       elif CS.steerFaultTemporary or CS.steerFaultPermanent:
@@ -767,7 +804,7 @@ class Controls:
       else:
         self.steer_limited = abs(CC.actuators.steer - CC.actuatorsOutput.steer) > 1e-2
 
-    force_decel = (self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
+    force_decel = (not dp_device_dm_unavailable and self.sm['driverMonitoringState'].awarenessStatus < 0.) or \
                   (self.state == State.softDisabling)
 
     # Curvature & Steering angle
@@ -825,6 +862,14 @@ class Controls:
 
     self.pm.send('controlsState', dat)
 
+    # controlsStateExt
+    dat = messaging.new_message('controlsStateExt')
+    dat.valid = CS.canValid
+    controlsStateExt = dat.controlsStateExt
+    controlsStateExt.alkaActive = self._dp_alka_active
+    controlsStateExt.alkaEnabled = self._dp_alka
+    self.pm.send('controlsStateExt', dat)
+
     # carState
     car_events = self.events.to_msg()
     cs_send = messaging.new_message('carState')
@@ -860,7 +905,12 @@ class Controls:
     self.prof.checkpoint("Ratekeeper", ignore=True)
 
     self.is_metric = self.params.get_bool("IsMetric")
-    self.experimental_mode = self.params.get_bool("ExperimentalMode") and self.CP.openpilotLongitudinalControl
+    self.dynamic_endtoend_controller = self.params.get_bool("dp_long_de2e")
+    if self.CP.openpilotLongitudinalControl:
+      if self.dynamic_endtoend_controller:
+        self.experimental_mode = self.sm['longitudinalPlanExt'].dpE2EIsBlended
+      else:
+        self.experimental_mode = self.params.get_bool("ExperimentalMode")
 
     # Sample data from sockets and get a carState
     CS = self.data_sample()

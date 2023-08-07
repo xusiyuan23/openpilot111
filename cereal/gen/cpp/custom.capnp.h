@@ -109,15 +109,15 @@ struct LateralPlanExt {
   };
 };
 
-struct CustomReserved3 {
-  CustomReserved3() = delete;
+struct ControlsStateExt {
+  ControlsStateExt() = delete;
 
   class Reader;
   class Builder;
   class Pipeline;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(da96579883444c35, 0, 0)
+    CAPNP_DECLARE_STRUCT_HEADER(da96579883444c35, 1, 0)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -457,6 +457,8 @@ public:
 
   inline  ::cereal::LongitudinalPlanExt::LongitudinalPlanExtSource getLongitudinalPlanExtSource() const;
 
+  inline bool getDe2eIsEnabled() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -529,6 +531,9 @@ public:
 
   inline  ::cereal::LongitudinalPlanExt::LongitudinalPlanExtSource getLongitudinalPlanExtSource();
   inline void setLongitudinalPlanExtSource( ::cereal::LongitudinalPlanExt::LongitudinalPlanExtSource value);
+
+  inline bool getDe2eIsEnabled();
+  inline void setDe2eIsEnabled(bool value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -649,9 +654,9 @@ private:
 };
 #endif  // !CAPNP_LITE
 
-class CustomReserved3::Reader {
+class ControlsStateExt::Reader {
 public:
-  typedef CustomReserved3 Reads;
+  typedef ControlsStateExt Reads;
 
   Reader() = default;
   inline explicit Reader(::capnp::_::StructReader base): _reader(base) {}
@@ -666,6 +671,10 @@ public:
   }
 #endif  // !CAPNP_LITE
 
+  inline bool getAlkaActive() const;
+
+  inline bool getAlkaEnabled() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -678,9 +687,9 @@ private:
   friend class ::capnp::Orphanage;
 };
 
-class CustomReserved3::Builder {
+class ControlsStateExt::Builder {
 public:
-  typedef CustomReserved3 Builds;
+  typedef ControlsStateExt Builds;
 
   Builder() = delete;  // Deleted to discourage incorrect usage.
                        // You can explicitly initialize to nullptr instead.
@@ -694,6 +703,12 @@ public:
   inline ::kj::StringTree toString() const { return asReader().toString(); }
 #endif  // !CAPNP_LITE
 
+  inline bool getAlkaActive();
+  inline void setAlkaActive(bool value);
+
+  inline bool getAlkaEnabled();
+  inline void setAlkaEnabled(bool value);
+
 private:
   ::capnp::_::StructBuilder _builder;
   template <typename, ::capnp::Kind>
@@ -704,9 +719,9 @@ private:
 };
 
 #if !CAPNP_LITE
-class CustomReserved3::Pipeline {
+class ControlsStateExt::Pipeline {
 public:
-  typedef CustomReserved3 Pipelines;
+  typedef ControlsStateExt Pipelines;
 
   inline Pipeline(decltype(nullptr)): _typeless(nullptr) {}
   inline explicit Pipeline(::capnp::AnyPointer::Pipeline&& typeless)
@@ -1730,6 +1745,20 @@ inline void LongitudinalPlanExt::Builder::setLongitudinalPlanExtSource( ::cereal
       ::capnp::bounded<19>() * ::capnp::ELEMENTS, value);
 }
 
+inline bool LongitudinalPlanExt::Reader::getDe2eIsEnabled() const {
+  return _reader.getDataField<bool>(
+      ::capnp::bounded<163>() * ::capnp::ELEMENTS);
+}
+
+inline bool LongitudinalPlanExt::Builder::getDe2eIsEnabled() {
+  return _builder.getDataField<bool>(
+      ::capnp::bounded<163>() * ::capnp::ELEMENTS);
+}
+inline void LongitudinalPlanExt::Builder::setDe2eIsEnabled(bool value) {
+  _builder.setDataField<bool>(
+      ::capnp::bounded<163>() * ::capnp::ELEMENTS, value);
+}
+
 inline bool LateralPlanExt::Reader::hasDPathWLinesX() const {
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
@@ -1804,6 +1833,34 @@ inline void LateralPlanExt::Builder::adoptDPathWLinesY(
 inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> LateralPlanExt::Builder::disownDPathWLinesY() {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
       ::capnp::bounded<1>() * ::capnp::POINTERS));
+}
+
+inline bool ControlsStateExt::Reader::getAlkaActive() const {
+  return _reader.getDataField<bool>(
+      ::capnp::bounded<0>() * ::capnp::ELEMENTS);
+}
+
+inline bool ControlsStateExt::Builder::getAlkaActive() {
+  return _builder.getDataField<bool>(
+      ::capnp::bounded<0>() * ::capnp::ELEMENTS);
+}
+inline void ControlsStateExt::Builder::setAlkaActive(bool value) {
+  _builder.setDataField<bool>(
+      ::capnp::bounded<0>() * ::capnp::ELEMENTS, value);
+}
+
+inline bool ControlsStateExt::Reader::getAlkaEnabled() const {
+  return _reader.getDataField<bool>(
+      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
+}
+
+inline bool ControlsStateExt::Builder::getAlkaEnabled() {
+  return _builder.getDataField<bool>(
+      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
+}
+inline void ControlsStateExt::Builder::setAlkaEnabled(bool value) {
+  _builder.setDataField<bool>(
+      ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
 }
 
 }  // namespace

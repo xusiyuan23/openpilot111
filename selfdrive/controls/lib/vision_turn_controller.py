@@ -2,7 +2,7 @@ import numpy as np
 import math
 from cereal import custom
 from common.numpy_fast import interp
-from common.params import Params
+# from common.params import Params
 # from common.realtime import sec_since_boot
 from common.conversions import Conversions as CV
 # from selfdrive.controls.lib.lane_planner import TRAJECTORY_SIZE
@@ -94,11 +94,11 @@ def _description_for_state(turn_controller_state):
 
 class VisionTurnController():
   def __init__(self, CP):
-    self._params = Params()
+    # self._params = Params()
     self._CP = CP
     self._op_enabled = False
     self._gas_pressed = False
-    self._is_enabled = self._params.get_bool("dp_mapd") and self._params.get_bool("dp_mapd_turn_vision_control")
+    self._is_enabled = False
     self._last_params_update = 0.
     self._v_cruise_setpoint = 0.
     self._v_ego = 0.
@@ -143,12 +143,6 @@ class VisionTurnController():
     self._max_pred_lat_acc = 0.
     self._v_overshoot_distance = 200.
     self._lat_acc_overshoot_ahead = False
-
-  # def _update_params(self):
-  #   time = sec_since_boot()
-  #   if time > self._last_params_update + 5.0:
-  #     self._is_enabled = True #self._params.get_bool("TurnVisionControl")
-  #     self._last_params_update = time
 
   def _update_calculations(self, sm):
     # Get path polynomial aproximation for curvature estimation from model data.
@@ -293,3 +287,6 @@ class VisionTurnController():
     self._update_calculations(sm)
     self._state_transition()
     self._update_solution()
+
+  def set_enabled(self, enabled):
+    self._is_enabled = enabled

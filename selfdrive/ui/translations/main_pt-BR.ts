@@ -298,6 +298,17 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enable TACO Tune</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use slow down for turns from taco2 branch.
+See https://github.com/commaai/openpilot/commit/7b97ddb3aacb222bfaf0b978c49cb5b756903ef7 for more information.
+This is tune for KIA EV6 and may not work on your vehicle.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Enable Dynamic Following</source>
         <translation type="unfinished"></translation>
     </message>
@@ -306,35 +317,25 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enable Dynamic End-to-End Longitudinal Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will dynamically change between End-to-End or ACC mode.
+Your vehicle must support openpilot longitudinal control.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Enable Turn Speed Control - Vision</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled, openpilot will use vision path predictions to estimate the appropriate speed to drive through turns ahead.
-Reboot required.</source>
+        <source>When enabled, openpilot will use path predictions from camera vision to estimate the appropriate speed to drive through turns ahead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled, openpilot will use move-fast&apos;s mapd module to control the vehicle speed.
+        <source>When enabled, openpilot will display current road name on the screen.
 Author: https://github.com/move-fast/
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Speed Control - Map Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use the curvature info from map data to define speed limits to take turns ahead.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Speed Control - Map Sign</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use the speed limit signs information from map data to adjust cruise speed.
 Reboot required.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -359,6 +360,15 @@ Reboot required.</source>
 ECO - Eco tune.
 NOR - Normal tune.
 SPT - Sport tune.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Stock Longitudinal Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will not handle longitudinal control.
+Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -670,11 +680,11 @@ SPT - Sport tune.</source>
     </message>
     <message>
         <source>Waiting for GPS</source>
-        <translation>Esperando por GPS</translation>
+        <translation>Aguardando GPS</translation>
     </message>
     <message>
         <source>Waiting for route</source>
-        <translation type="unfinished"></translation>
+        <translation>Aguardando rota</translation>
     </message>
 </context>
 <context>
@@ -1408,15 +1418,15 @@ Isso pode levar até um minuto.</translation>
     </message>
     <message>
         <source>End-to-End Longitudinal Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Controle Longitudinal de Ponta a Ponta</translation>
     </message>
     <message>
-        <source>When navigation has a destination, openpilot will input the map information into the model. This provides useful context for the model and allows openpilot to keep left or right appropriately at forks/exits. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected, particularly around exits/forks.These mistakes can include unintended laneline crossings, late exit taking, driving towards dividing barriers in the gore areas, etc.</source>
-        <translation type="unfinished"></translation>
+        <source>When navigation has a destination, openpilot will input the map information into the model. This provides useful context for the model and allows openpilot to keep left or right appropriately at forks/exits. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected, particularly around exits and forks. These mistakes can include unintended laneline crossings, late exit taking, driving towards dividing barriers in the gore areas, etc.</source>
+        <translation>Quando a navegação tem um destino, o openpilot insere as informações do mapa no modelo. Isso fornece contexto útil para o modelo e permite que o openpilot mantenha a esquerda ou a direita apropriadamente em bifurcações/saídas. O comportamento de mudança de faixa permanece inalterado e ainda é ativado somente pelo motorista. Este é um recurso de qualidade embrionária; erros devem ser esperados, principalmente em torno de saídas e bifurcações. Esses erros podem incluir travessias não intencionais na faixa de rodagem, saída tardia, condução em direção a barreiras divisórias nas áreas de marcas de canalização, etc.</translation>
     </message>
     <message>
-        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
-        <translation type="unfinished"></translation>
+        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
+        <translation>A visualização de condução fará a transição para a câmera grande angular voltada para a estrada em baixas velocidades para mostrar melhor algumas curvas. O logotipo do modo Experimental também será mostrado no canto superior direito. Quando um destino de navegação é definido e o modelo de condução o utiliza como entrada o caminho de condução no mapa fica verde.</translation>
     </message>
 </context>
 <context>
@@ -1470,11 +1480,11 @@ Isso pode levar até um minuto.</translation>
     </message>
     <message>
         <source>Ready to upload</source>
-        <translation type="unfinished"></translation>
+        <translation>Pronto para upload</translation>
     </message>
     <message>
         <source>Training data will be pulled periodically while your device is on Wi-Fi</source>
-        <translation type="unfinished"></translation>
+        <translation>Os dados de treinamento serão extraídos periodicamente enquanto o dispositivo estiver no Wi-Fi</translation>
     </message>
 </context>
 <context>

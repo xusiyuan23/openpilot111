@@ -163,6 +163,18 @@ def hw_state_thread(end_event, hw_queue):
     count += 1
     time.sleep(DT_TRML)
 
+def set_local_ip_addr():
+  import socket
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  try:
+    # doesn't even have to be reachable
+    s.connect(('10.255.255.255', 1))
+    ip = s.getsockname()[0]
+  except:
+    ip = ''
+  finally:
+    s.close()
+  Params().put('dp_device_ip_addr', ip)
 
 def thermald_thread(end_event, hw_queue):
   pm = messaging.PubMaster(['deviceState'])
@@ -209,10 +221,15 @@ def thermald_thread(end_event, hw_queue):
   dp_device_disable_temp_check = params.get_bool("dp_device_disable_temp_check")
 
   while not end_event.is_set():
+    # rick - update IP every 10s
+    if count % int(10. / DT_TRML) == 0:
+      set_local_ip_addr()
+
     sm.update(PANDA_STATES_TIMEOUT)
 
     pandaStates = sm['pandaStates']
     peripheralState = sm['peripheralState']
+    peripheral_panda_present = peripheralState.pandaType != log.PandaState.PandaType.unknown
 
     msg = read_thermal(thermal_config)
 
@@ -226,7 +243,7 @@ def thermald_thread(end_event, hw_queue):
       in_car = pandaState.harnessStatus != log.PandaState.HarnessStatus.notConnected
 
       # Setup fan handler on first connect to panda
-      if fan_controller is None and peripheralState.pandaType != log.PandaState.PandaType.unknown:
+      if fan_controller is None and peripheral_panda_present:
         if TICI:
           fan_controller = TiciFanController()
 
@@ -291,7 +308,7 @@ def thermald_thread(end_event, hw_queue):
     # Ensure date/time are valid
     now = datetime.datetime.utcnow()
     startup_conditions["time_valid"] = now > MIN_DATE
-    set_offroad_alert_if_changed("Offroad_InvalidTime", (not startup_conditions["time_valid"]))
+    set_offroad_alert_if_changed("Offroad_InvalidTime", (not startup_conditions["time_valid"]) and peripheral_panda_present)
 
     startup_conditions["up_to_date"] = params.get("Offroad_ConnectivityNeeded") is None or params.get_bool("DisableUpdates") or params.get_bool("SnoozeUpdate")
     startup_conditions["not_uninstalling"] = not params.get_bool("DoUninstall")

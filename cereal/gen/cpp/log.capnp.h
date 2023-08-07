@@ -479,6 +479,7 @@ enum class SpeedLimitSign_b66e0aa568d09c66: uint16_t {
   VIENNA,
 };
 CAPNP_DECLARE_ENUM(SpeedLimitSign, b66e0aa568d09c66);
+CAPNP_DECLARE_SCHEMA(b3ec4a1a6ce20a45);
 CAPNP_DECLARE_SCHEMA(a61452f6440d97d3);
 CAPNP_DECLARE_SCHEMA(c4c96f53ad1e7485);
 CAPNP_DECLARE_SCHEMA(a158dd2a4cfaa81b);
@@ -2147,9 +2148,10 @@ struct NavInstruction {
 
   typedef ::capnp::schemas::SpeedLimitSign_b66e0aa568d09c66 SpeedLimitSign;
 
+  struct Maneuver;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(c18216b27f8602af, 3, 5)
+    CAPNP_DECLARE_STRUCT_HEADER(c18216b27f8602af, 3, 6)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -2165,6 +2167,21 @@ struct NavInstruction::Lane {
 
   struct _capnpPrivate {
     CAPNP_DECLARE_STRUCT_HEADER(a4cd1689c0a439d9, 1, 1)
+    #if !CAPNP_LITE
+    static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
+    #endif  // !CAPNP_LITE
+  };
+};
+
+struct NavInstruction::Maneuver {
+  Maneuver() = delete;
+
+  class Reader;
+  class Builder;
+  class Pipeline;
+
+  struct _capnpPrivate {
+    CAPNP_DECLARE_STRUCT_HEADER(b3ec4a1a6ce20a45, 1, 2)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -2408,7 +2425,7 @@ struct Event {
     LIVE_MAP_DATA,
     LONGITUDINAL_PLAN_EXT,
     LATERAL_PLAN_EXT,
-    CUSTOM_RESERVED3,
+    CONTROLS_STATE_EXT,
     CUSTOM_RESERVED4,
     CUSTOM_RESERVED5,
     CUSTOM_RESERVED6,
@@ -6158,6 +6175,8 @@ public:
 
   inline bool getRadar() const;
 
+  inline  ::int32_t getRadarTrackId() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -6230,6 +6249,9 @@ public:
 
   inline bool getRadar();
   inline void setRadar(bool value);
+
+  inline  ::int32_t getRadarTrackId();
+  inline void setRadarTrackId( ::int32_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -17274,6 +17296,9 @@ public:
 
   inline  ::cereal::NavInstruction::SpeedLimitSign getSpeedLimitSign() const;
 
+  inline bool hasAllManeuvers() const;
+  inline  ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>::Reader getAllManeuvers() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -17357,6 +17382,13 @@ public:
 
   inline  ::cereal::NavInstruction::SpeedLimitSign getSpeedLimitSign();
   inline void setSpeedLimitSign( ::cereal::NavInstruction::SpeedLimitSign value);
+
+  inline bool hasAllManeuvers();
+  inline  ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>::Builder getAllManeuvers();
+  inline void setAllManeuvers( ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>::Reader value);
+  inline  ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>::Builder initAllManeuvers(unsigned int size);
+  inline void adoptAllManeuvers(::capnp::Orphan< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>>&& value);
+  inline ::capnp::Orphan< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>> disownAllManeuvers();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -17463,6 +17495,102 @@ private:
 class NavInstruction::Lane::Pipeline {
 public:
   typedef Lane Pipelines;
+
+  inline Pipeline(decltype(nullptr)): _typeless(nullptr) {}
+  inline explicit Pipeline(::capnp::AnyPointer::Pipeline&& typeless)
+      : _typeless(kj::mv(typeless)) {}
+
+private:
+  ::capnp::AnyPointer::Pipeline _typeless;
+  friend class ::capnp::PipelineHook;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+};
+#endif  // !CAPNP_LITE
+
+class NavInstruction::Maneuver::Reader {
+public:
+  typedef Maneuver Reads;
+
+  Reader() = default;
+  inline explicit Reader(::capnp::_::StructReader base): _reader(base) {}
+
+  inline ::capnp::MessageSize totalSize() const {
+    return _reader.totalSize().asPublic();
+  }
+
+#if !CAPNP_LITE
+  inline ::kj::StringTree toString() const {
+    return ::capnp::_::structString(_reader, *_capnpPrivate::brand());
+  }
+#endif  // !CAPNP_LITE
+
+  inline float getDistance() const;
+
+  inline bool hasType() const;
+  inline  ::capnp::Text::Reader getType() const;
+
+  inline bool hasModifier() const;
+  inline  ::capnp::Text::Reader getModifier() const;
+
+private:
+  ::capnp::_::StructReader _reader;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::_::PointerHelpers;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::List;
+  friend class ::capnp::MessageBuilder;
+  friend class ::capnp::Orphanage;
+};
+
+class NavInstruction::Maneuver::Builder {
+public:
+  typedef Maneuver Builds;
+
+  Builder() = delete;  // Deleted to discourage incorrect usage.
+                       // You can explicitly initialize to nullptr instead.
+  inline Builder(decltype(nullptr)) {}
+  inline explicit Builder(::capnp::_::StructBuilder base): _builder(base) {}
+  inline operator Reader() const { return Reader(_builder.asReader()); }
+  inline Reader asReader() const { return *this; }
+
+  inline ::capnp::MessageSize totalSize() const { return asReader().totalSize(); }
+#if !CAPNP_LITE
+  inline ::kj::StringTree toString() const { return asReader().toString(); }
+#endif  // !CAPNP_LITE
+
+  inline float getDistance();
+  inline void setDistance(float value);
+
+  inline bool hasType();
+  inline  ::capnp::Text::Builder getType();
+  inline void setType( ::capnp::Text::Reader value);
+  inline  ::capnp::Text::Builder initType(unsigned int size);
+  inline void adoptType(::capnp::Orphan< ::capnp::Text>&& value);
+  inline ::capnp::Orphan< ::capnp::Text> disownType();
+
+  inline bool hasModifier();
+  inline  ::capnp::Text::Builder getModifier();
+  inline void setModifier( ::capnp::Text::Reader value);
+  inline  ::capnp::Text::Builder initModifier(unsigned int size);
+  inline void adoptModifier(::capnp::Orphan< ::capnp::Text>&& value);
+  inline ::capnp::Orphan< ::capnp::Text> disownModifier();
+
+private:
+  ::capnp::_::StructBuilder _builder;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+  friend class ::capnp::Orphanage;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::_::PointerHelpers;
+};
+
+#if !CAPNP_LITE
+class NavInstruction::Maneuver::Pipeline {
+public:
+  typedef Maneuver Pipelines;
 
   inline Pipeline(decltype(nullptr)): _typeless(nullptr) {}
   inline explicit Pipeline(::capnp::AnyPointer::Pipeline&& typeless)
@@ -18686,9 +18814,9 @@ public:
   inline bool hasLateralPlanExt() const;
   inline  ::cereal::LateralPlanExt::Reader getLateralPlanExt() const;
 
-  inline bool isCustomReserved3() const;
-  inline bool hasCustomReserved3() const;
-  inline  ::cereal::CustomReserved3::Reader getCustomReserved3() const;
+  inline bool isControlsStateExt() const;
+  inline bool hasControlsStateExt() const;
+  inline  ::cereal::ControlsStateExt::Reader getControlsStateExt() const;
 
   inline bool isCustomReserved4() const;
   inline bool hasCustomReserved4() const;
@@ -19637,13 +19765,13 @@ public:
   inline void adoptLateralPlanExt(::capnp::Orphan< ::cereal::LateralPlanExt>&& value);
   inline ::capnp::Orphan< ::cereal::LateralPlanExt> disownLateralPlanExt();
 
-  inline bool isCustomReserved3();
-  inline bool hasCustomReserved3();
-  inline  ::cereal::CustomReserved3::Builder getCustomReserved3();
-  inline void setCustomReserved3( ::cereal::CustomReserved3::Reader value);
-  inline  ::cereal::CustomReserved3::Builder initCustomReserved3();
-  inline void adoptCustomReserved3(::capnp::Orphan< ::cereal::CustomReserved3>&& value);
-  inline ::capnp::Orphan< ::cereal::CustomReserved3> disownCustomReserved3();
+  inline bool isControlsStateExt();
+  inline bool hasControlsStateExt();
+  inline  ::cereal::ControlsStateExt::Builder getControlsStateExt();
+  inline void setControlsStateExt( ::cereal::ControlsStateExt::Reader value);
+  inline  ::cereal::ControlsStateExt::Builder initControlsStateExt();
+  inline void adoptControlsStateExt(::capnp::Orphan< ::cereal::ControlsStateExt>&& value);
+  inline ::capnp::Orphan< ::cereal::ControlsStateExt> disownControlsStateExt();
 
   inline bool isCustomReserved4();
   inline bool hasCustomReserved4();
@@ -26288,6 +26416,20 @@ inline bool RadarState::LeadData::Builder::getRadar() {
 inline void RadarState::LeadData::Builder::setRadar(bool value) {
   _builder.setDataField<bool>(
       ::capnp::bounded<322>() * ::capnp::ELEMENTS, value);
+}
+
+inline  ::int32_t RadarState::LeadData::Reader::getRadarTrackId() const {
+  return _reader.getDataField< ::int32_t>(
+      ::capnp::bounded<13>() * ::capnp::ELEMENTS, -1);
+}
+
+inline  ::int32_t RadarState::LeadData::Builder::getRadarTrackId() {
+  return _builder.getDataField< ::int32_t>(
+      ::capnp::bounded<13>() * ::capnp::ELEMENTS, -1);
+}
+inline void RadarState::LeadData::Builder::setRadarTrackId( ::int32_t value) {
+  _builder.setDataField< ::int32_t>(
+      ::capnp::bounded<13>() * ::capnp::ELEMENTS, value, -1);
 }
 
 inline bool LiveCalibrationData::Reader::hasWarpMatrixDEPRECATED() const {
@@ -44491,6 +44633,40 @@ inline void NavInstruction::Builder::setSpeedLimitSign( ::cereal::NavInstruction
       ::capnp::bounded<9>() * ::capnp::ELEMENTS, value);
 }
 
+inline bool NavInstruction::Reader::hasAllManeuvers() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS).isNull();
+}
+inline bool NavInstruction::Builder::hasAllManeuvers() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>::Reader NavInstruction::Reader::getAllManeuvers() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>>::get(_reader.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>::Builder NavInstruction::Builder::getAllManeuvers() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>>::get(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS));
+}
+inline void NavInstruction::Builder::setAllManeuvers( ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>>::set(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>::Builder NavInstruction::Builder::initAllManeuvers(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>>::init(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS), size);
+}
+inline void NavInstruction::Builder::adoptAllManeuvers(
+    ::capnp::Orphan< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>> NavInstruction::Builder::disownAllManeuvers() {
+  return ::capnp::_::PointerHelpers< ::capnp::List< ::cereal::NavInstruction::Maneuver,  ::capnp::Kind::STRUCT>>::disown(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS));
+}
+
 inline bool NavInstruction::Lane::Reader::hasDirections() const {
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
@@ -44555,6 +44731,88 @@ inline  ::cereal::NavInstruction::Direction NavInstruction::Lane::Builder::getAc
 inline void NavInstruction::Lane::Builder::setActiveDirection( ::cereal::NavInstruction::Direction value) {
   _builder.setDataField< ::cereal::NavInstruction::Direction>(
       ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
+}
+
+inline float NavInstruction::Maneuver::Reader::getDistance() const {
+  return _reader.getDataField<float>(
+      ::capnp::bounded<0>() * ::capnp::ELEMENTS);
+}
+
+inline float NavInstruction::Maneuver::Builder::getDistance() {
+  return _builder.getDataField<float>(
+      ::capnp::bounded<0>() * ::capnp::ELEMENTS);
+}
+inline void NavInstruction::Maneuver::Builder::setDistance(float value) {
+  _builder.setDataField<float>(
+      ::capnp::bounded<0>() * ::capnp::ELEMENTS, value);
+}
+
+inline bool NavInstruction::Maneuver::Reader::hasType() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline bool NavInstruction::Maneuver::Builder::hasType() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::Text::Reader NavInstruction::Maneuver::Reader::getType() const {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline  ::capnp::Text::Builder NavInstruction::Maneuver::Builder::getType() {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void NavInstruction::Maneuver::Builder::setType( ::capnp::Text::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::Text>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::Text::Builder NavInstruction::Maneuver::Builder::initType(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::init(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), size);
+}
+inline void NavInstruction::Maneuver::Builder::adoptType(
+    ::capnp::Orphan< ::capnp::Text>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::Text>::adopt(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::Text> NavInstruction::Maneuver::Builder::disownType() {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::disown(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+
+inline bool NavInstruction::Maneuver::Reader::hasModifier() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS).isNull();
+}
+inline bool NavInstruction::Maneuver::Builder::hasModifier() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::Text::Reader NavInstruction::Maneuver::Reader::getModifier() const {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_reader.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS));
+}
+inline  ::capnp::Text::Builder NavInstruction::Maneuver::Builder::getModifier() {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS));
+}
+inline void NavInstruction::Maneuver::Builder::setModifier( ::capnp::Text::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::Text>::set(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::Text::Builder NavInstruction::Maneuver::Builder::initModifier(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::init(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS), size);
+}
+inline void NavInstruction::Maneuver::Builder::adoptModifier(
+    ::capnp::Orphan< ::capnp::Text>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::Text>::adopt(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::Text> NavInstruction::Maneuver::Builder::disownModifier() {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::disown(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS));
 }
 
 inline bool NavRoute::Reader::hasCoordinates() const {
@@ -51030,57 +51288,57 @@ inline ::capnp::Orphan< ::cereal::LateralPlanExt> Event::Builder::disownLateralP
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 
-inline bool Event::Reader::isCustomReserved3() const {
-  return which() == Event::CUSTOM_RESERVED3;
+inline bool Event::Reader::isControlsStateExt() const {
+  return which() == Event::CONTROLS_STATE_EXT;
 }
-inline bool Event::Builder::isCustomReserved3() {
-  return which() == Event::CUSTOM_RESERVED3;
+inline bool Event::Builder::isControlsStateExt() {
+  return which() == Event::CONTROLS_STATE_EXT;
 }
-inline bool Event::Reader::hasCustomReserved3() const {
-  if (which() != Event::CUSTOM_RESERVED3) return false;
+inline bool Event::Reader::hasControlsStateExt() const {
+  if (which() != Event::CONTROLS_STATE_EXT) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline bool Event::Builder::hasCustomReserved3() {
-  if (which() != Event::CUSTOM_RESERVED3) return false;
+inline bool Event::Builder::hasControlsStateExt() {
+  if (which() != Event::CONTROLS_STATE_EXT) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::CustomReserved3::Reader Event::Reader::getCustomReserved3() const {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED3),
+inline  ::cereal::ControlsStateExt::Reader Event::Reader::getControlsStateExt() const {
+  KJ_IREQUIRE((which() == Event::CONTROLS_STATE_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved3>::get(_reader.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::ControlsStateExt>::get(_reader.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline  ::cereal::CustomReserved3::Builder Event::Builder::getCustomReserved3() {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED3),
+inline  ::cereal::ControlsStateExt::Builder Event::Builder::getControlsStateExt() {
+  KJ_IREQUIRE((which() == Event::CONTROLS_STATE_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved3>::get(_builder.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::ControlsStateExt>::get(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::setCustomReserved3( ::cereal::CustomReserved3::Reader value) {
+inline void Event::Builder::setControlsStateExt( ::cereal::ControlsStateExt::Reader value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED3);
-  ::capnp::_::PointerHelpers< ::cereal::CustomReserved3>::set(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CONTROLS_STATE_EXT);
+  ::capnp::_::PointerHelpers< ::cereal::ControlsStateExt>::set(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::CustomReserved3::Builder Event::Builder::initCustomReserved3() {
+inline  ::cereal::ControlsStateExt::Builder Event::Builder::initControlsStateExt() {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED3);
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved3>::init(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CONTROLS_STATE_EXT);
+  return ::capnp::_::PointerHelpers< ::cereal::ControlsStateExt>::init(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
-inline void Event::Builder::adoptCustomReserved3(
-    ::capnp::Orphan< ::cereal::CustomReserved3>&& value) {
+inline void Event::Builder::adoptControlsStateExt(
+    ::capnp::Orphan< ::cereal::ControlsStateExt>&& value) {
   _builder.setDataField<Event::Which>(
-      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED3);
-  ::capnp::_::PointerHelpers< ::cereal::CustomReserved3>::adopt(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CONTROLS_STATE_EXT);
+  ::capnp::_::PointerHelpers< ::cereal::ControlsStateExt>::adopt(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::CustomReserved3> Event::Builder::disownCustomReserved3() {
-  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED3),
+inline ::capnp::Orphan< ::cereal::ControlsStateExt> Event::Builder::disownControlsStateExt() {
+  KJ_IREQUIRE((which() == Event::CONTROLS_STATE_EXT),
               "Must check which() before get()ing a union member.");
-  return ::capnp::_::PointerHelpers< ::cereal::CustomReserved3>::disown(_builder.getPointerField(
+  return ::capnp::_::PointerHelpers< ::cereal::ControlsStateExt>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 

@@ -49,6 +49,7 @@ struct LongitudinalPlanExt @0xaedffd8f31e7b55d {
 
   dpE2EIsBlended @13 :Bool;
   longitudinalPlanExtSource @14 :LongitudinalPlanExtSource;
+  de2eIsEnabled @15 :Bool;
 
   enum LongitudinalPlanExtSource {
     cruise @0;
@@ -81,7 +82,9 @@ struct LateralPlanExt @0xf35cc4560bbf6ec2 {
   dPathWLinesY @1 :List(Float32);
 }
 
-struct CustomReserved3 @0xda96579883444c35 {
+struct ControlsStateExt @0xda96579883444c35 {
+  alkaActive @0 :Bool;
+  alkaEnabled @1 :Bool;
 }
 
 struct CustomReserved4 @0x80ae746ee2596b11 {

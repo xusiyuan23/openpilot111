@@ -1,5 +1,4 @@
 from common.numpy_fast import interp
-from common.params import Params
 
 DP_ACCEL_STOCK = 0
 DP_ACCEL_ECO = 1
@@ -23,20 +22,20 @@ _DP_CRUISE_MAX_BP =      [0.,  3,   6.,  8.,  11.,  15.,  20., 25., 30., 55.]
 class AccelController:
 
   def __init__(self):
-    self._params = Params()
-    self._dp_long_accel_profile = DP_ACCEL_STOCK
+    # self._params = Params()
+    self._profile = DP_ACCEL_STOCK
 
-  def read_params(self):
+  def set_profile(self, profile):
     try:
-      self._dp_long_accel_profile = int(self._params.get("dp_long_accel_profile", encoding='utf-8'))
-    except (KeyError, TypeError, ValueError):
-      self._dp_long_accel_profile = DP_ACCEL_STOCK
+      self._profile = int(profile) if int(profile) in [DP_ACCEL_STOCK, DP_ACCEL_ECO, DP_ACCEL_NORMAL, DP_ACCEL_SPORT] else DP_ACCEL_STOCK
+    except:
+      self._profile = DP_ACCEL_STOCK
 
   def _dp_calc_cruise_accel_limits(self, v_ego):
-    if self._dp_long_accel_profile == DP_ACCEL_ECO:
+    if self._profile == DP_ACCEL_ECO:
       a_cruise_min = interp(v_ego, _DP_CRUISE_MIN_BP, _DP_CRUISE_MIN_V_ECO)
       a_cruise_max = interp(v_ego, _DP_CRUISE_MAX_BP, _DP_CRUISE_MAX_V_ECO)
-    elif self._dp_long_accel_profile == DP_ACCEL_SPORT:
+    elif self._profile == DP_ACCEL_SPORT:
       a_cruise_min = interp(v_ego, _DP_CRUISE_MIN_BP, _DP_CRUISE_MIN_V_SPORT)
       a_cruise_max = interp(v_ego, _DP_CRUISE_MAX_BP, _DP_CRUISE_MAX_V_SPORT)
     else:
@@ -45,4 +44,4 @@ class AccelController:
     return a_cruise_min, a_cruise_max
 
   def get_accel_limits(self, v_ego, accel_limits):
-    return accel_limits if self._dp_long_accel_profile == DP_ACCEL_STOCK else self._dp_calc_cruise_accel_limits(v_ego)
+    return accel_limits if self._profile == DP_ACCEL_STOCK else self._dp_calc_cruise_accel_limits(v_ego)

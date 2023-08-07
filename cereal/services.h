@@ -75,8 +75,9 @@ static struct service services[] = {
   { "livestreamRoadEncodeData", 8071, false, 20, -1 },
   { "livestreamDriverEncodeData", 8072, false, 20, -1 },
   { "liveMapData", 8073, false, 0, -1 },
-  { "longitudinalPlanExt", 8074, true, 20, 5 },
-  { "lateralPlanExt", 8075, true, 20, 5 },
+  { "longitudinalPlanExt", 8074, false, 20, 5 },
+  { "lateralPlanExt", 8075, false, 20, 5 },
+  { "controlsStateExt", 8076, false, 100, 10 },
 };
 #endif
 

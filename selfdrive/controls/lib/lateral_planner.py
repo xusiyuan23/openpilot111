@@ -37,7 +37,7 @@ class LateralPlanner:
     self._dp_lat_lane_priority_mode_active_prev = False
     self.LP = LanePlanner()
     # dp // mapd - for vision turn controller
-    self.d_path_w_lines_xyz = np.zeros((TRAJECTORY_SIZE, 3))
+    self._d_path_w_lines_xyz = np.zeros((TRAJECTORY_SIZE, 3))
 
     # Vehicle model parameters used to calculate lateral movement of car
     self.factor1 = CP.wheelbase - CP.centerToFront
@@ -97,7 +97,7 @@ class LateralPlanner:
     self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob)
 
     path_xyz = self._get_laneless_laneline_d_path_xyz() if self._dp_lat_lane_priority_mode else self.path_xyz
-    self.d_path_w_lines_xyz = path_xyz
+    self._d_path_w_lines_xyz = path_xyz
 
     self.lat_mpc.set_weights(PATH_COST, LATERAL_MOTION_COST,
                              LATERAL_ACCEL_COST, LATERAL_JERK_COST,
@@ -171,8 +171,8 @@ class LateralPlanner:
     plan_ext_send = messaging.new_message('lateralPlanExt')
 
     lateralPlanExt = plan_ext_send.lateralPlanExt
-    lateralPlanExt.dPathWLinesX = [float(x) for x in self.d_path_w_lines_xyz[:, 0]]
-    lateralPlanExt.dPathWLinesY = [float(y) for y in self.d_path_w_lines_xyz[:, 1]]
+    lateralPlanExt.dPathWLinesX = [float(x) for x in self._d_path_w_lines_xyz[:, 0]]
+    lateralPlanExt.dPathWLinesY = [float(y) for y in self._d_path_w_lines_xyz[:, 1]]
 
     pm.send('lateralPlanExt', plan_ext_send)
 

@@ -11,8 +11,8 @@ _DP_E2E_STOP_DIST = [10, 30., 50., 70., 80., 90., 120.]
 _DP_E2E_STOP_COUNT = 3
 
 _DP_E2E_SNG_COUNT = 3
-_DP_E2E_SNG_ACC_COUNT = 5
-_DP_E2E_SWAP_COUNT = 10
+_DP_E2E_SNG_ACC_COUNT = 3
+_DP_E2E_SWAP_COUNT = 5
 
 _DP_E2E_TF_COUNT = 5
 
@@ -21,8 +21,8 @@ class DynamicEndtoEndController:
 
   def __init__(self):
     self._params = Params()
-    self._dp_long_de2e = False
-    self._mode = 'blended'
+    self._is_enabled = False
+    self._mode = 'acc'
 
     # conditional e2e
     self.dp_e2e_has_lead = False
@@ -35,11 +35,6 @@ class DynamicEndtoEndController:
     self.dp_e2e_stop_count = 0
     self.dp_e2e_tf_count = 0
     pass
-
-  def read_params(self):
-    self._dp_long_de2e = self._params.get_bool('dp_long_de2e')
-    pass
-
 
   def _set_dp_e2e_mode(self, mode, force=False):
     if force:
@@ -56,7 +51,6 @@ class DynamicEndtoEndController:
 
       if self.dp_e2e_swap_count >= _DP_E2E_SWAP_COUNT:
         self._mode = mode
-
 
   def _process_conditional_e2e(self, radar_unavailable, car_state, lead_one, md):
     v_ego_kph = car_state.vEgo * 3.6
@@ -91,20 +85,16 @@ class DynamicEndtoEndController:
     # when we see a lead
     # voacc cars only
     if radar_unavailable and self.dp_e2e_has_lead:
-      ttc = lead_one.dRel / lead_one.vRel
-      if ttc <= interp(car_state.vEgo, [0., 22.2, 25.], [.85, 1., 1.22]):
+      if lead_one.dRel <= car_state.vEgo * 1.22:
         self.dp_e2e_tf_count += 1
       else:
         self.dp_e2e_tf_count = 0
       if self.dp_e2e_tf_count > _DP_E2E_TF_COUNT:
         return self._set_dp_e2e_mode('blended', True)
 
-    # stop sign detection
-    if abs(car_state.steeringAngleDeg) <= 60 and len(md.orientation.x) == len(md.position.x) == TRAJECTORY_SIZE:
-      if md.position.x[TRAJECTORY_SIZE - 1] < interp(v_ego_kph, _DP_E2E_STOP_BP, _DP_E2E_STOP_DIST):
-        self.dp_e2e_stop_count += 1
-      else:
-        self.dp_e2e_stop_count = 0
+    # slow down detection
+    if len(md.orientation.x) == len(md.position.x) == TRAJECTORY_SIZE and md.position.x[TRAJECTORY_SIZE - 1] < interp(v_ego_kph, _DP_E2E_STOP_BP, _DP_E2E_STOP_DIST):
+      self.dp_e2e_stop_count += 1
     else:
       self.dp_e2e_stop_count = 0
 
@@ -113,11 +103,15 @@ class DynamicEndtoEndController:
 
     return self._set_dp_e2e_mode('acc')
 
-  def set_mpc_mode(self, mode, radar_unavailable, car_state, lead_one, md):
-    if not self._dp_long_de2e:
-      return 'blended'
-
+  def get_mpc_mode(self, mode, radar_unavailable, car_state, lead_one, md):
     self._mode = mode
-    self._process_conditional_e2e(radar_unavailable, car_state, lead_one, md)
+    if self._is_enabled:
+      self._process_conditional_e2e(radar_unavailable, car_state, lead_one, md)
+
     return self._mode
 
+  def set_enabled(self, enabled):
+    self._is_enabled = enabled
+
+  def is_enabled(self):
+    return self._is_enabled
