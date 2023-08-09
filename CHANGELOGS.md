@@ -1,4 +1,4 @@
-dragonpilot beta3 2023.08.07
+dragonpilot beta3 2023.08.09
 =======================
 * openpilot master branch on 2023.07.21.
 

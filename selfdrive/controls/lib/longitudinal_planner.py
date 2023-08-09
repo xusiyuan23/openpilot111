@@ -83,10 +83,10 @@ class LongitudinalPlanner:
   def read_param(self):
     try:
       self.personality = int(self.params.get('LongitudinalPersonality'))
-      self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
     except (ValueError, TypeError):
       self.personality = log.LongitudinalPersonality.standard
-      self.dp_long_use_df_tune = False
+
+    self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
 
   @staticmethod
   def parse_model(model_msg, model_error, v_ego, taco=False):
@@ -115,10 +115,10 @@ class LongitudinalPlanner:
     if self.param_read_counter % 50 == 0:
       self.read_param()
 
-      if self.param_read_counter % 300 == 0:
-        self.accel_controller.set_profile(self.params.get("dp_long_accel_profile", encoding='utf-8'))
-        self.vision_turn_controller.set_enabled(self.params.get_bool("dp_mapd_vision_turn_control"))
-        self.dynamic_endtoend_controller.set_enabled(self.params.get_bool("dp_long_de2e"))
+    if self.param_read_counter % 100 == 0:
+      self.accel_controller.set_profile(self.params.get("dp_long_accel_profile", encoding='utf-8'))
+      self.vision_turn_controller.set_enabled(self.params.get_bool("dp_mapd_vision_turn_control"))
+      self.dynamic_endtoend_controller.set_enabled(self.params.get_bool("dp_long_de2e"))
 
     self.param_read_counter += 1
     if self.dynamic_endtoend_controller.is_enabled():
@@ -148,7 +148,20 @@ class LongitudinalPlanner:
       accel_limits_turns = [ACCEL_MIN, ACCEL_MAX]
 
     # dp - override accel using dp_long_accel_profile
-    accel_limits = self.accel_controller.get_accel_limits(v_ego, accel_limits)
+    if self.accel_controller.is_enabled():
+      # get min, max from accel controller
+      min_limit, max_limit = self.accel_controller.get_accel_limits(v_ego, accel_limits)
+      if self.mpc.mode == 'acc':
+        # voacc car, just give it max min (-1.2) so I can brake harder
+        if self.CP.radarUnavailable:
+          accel_limits = [A_CRUISE_MIN, max_limit]
+        else:
+          accel_limits = [min_limit, max_limit]
+        # recalculate limit turn according to the new min, max
+        accel_limits_turns = limit_accel_in_turns(v_ego, sm['carState'].steeringAngleDeg, accel_limits, self.CP)
+      else:
+        # blended, just give it max min (-3.5) and max from accel controller
+        accel_limits = accel_limits_turns = [ACCEL_MIN, max_limit]
 
     if reset_state:
       self.v_desired_filter.x = v_ego

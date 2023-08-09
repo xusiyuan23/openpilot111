@@ -442,7 +442,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.steerTempUnavailableSilent: {
-    ET.PERMANENT: Alert(
+    ET.WARNING: Alert(
       _("Steering Temporarily Unavailable"),
       "",
       AlertStatus.userPrompt, AlertSize.small,
@@ -518,7 +518,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.preLaneChangeLeft: {
-    ET.PERMANENT: Alert(
+    ET.WARNING: Alert(
       _("Steer Left to Start Lane Change Once Safe"),
       "",
       AlertStatus.normal, AlertSize.small,
@@ -526,7 +526,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.preLaneChangeRight: {
-    ET.PERMANENT: Alert(
+    ET.WARNING: Alert(
       _("Steer Right to Start Lane Change Once Safe"),
       "",
       AlertStatus.normal, AlertSize.small,
@@ -534,7 +534,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.laneChangeBlocked: {
-    ET.PERMANENT: Alert(
+    ET.WARNING: Alert(
       _("Car Detected in Blindspot"),
       "",
       AlertStatus.userPrompt, AlertSize.small,
@@ -542,7 +542,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.laneChange: {
-    ET.PERMANENT: Alert(
+    ET.WARNING: Alert(
       _("Changing Lanes"),
       "",
       AlertStatus.normal, AlertSize.small,
@@ -550,7 +550,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   },
 
   EventName.steerSaturated: {
-    ET.PERMANENT: Alert(
+    ET.WARNING: Alert(
       _("Take Control"),
       _("Turn Exceeds Steering Limit"),
       AlertStatus.userPrompt, AlertSize.mid,
