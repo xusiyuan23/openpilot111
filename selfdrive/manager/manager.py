@@ -75,6 +75,7 @@ def manager_init() -> None:
     ("dp_device_dm_unavailable", "0"),
     ("dp_long_taco", "0"),
     ("dp_long_stock_mode", "0"),
+    ("dp_long_missing_lead_warning", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

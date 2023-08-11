@@ -371,6 +371,14 @@ SPT - Sport tune.</source>
 Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>*β* Enable Otisserv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DeclinePage</name>

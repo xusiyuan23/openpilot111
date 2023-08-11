@@ -16,6 +16,7 @@ _DP_E2E_SWAP_COUNT = 5
 
 _DP_E2E_TF_COUNT = 5
 
+_DP_E2E_BLINKER_COUNT = 5
 
 class DynamicEndtoEndController:
 
@@ -34,6 +35,8 @@ class DynamicEndtoEndController:
     self.dp_e2e_swap_count = 0
     self.dp_e2e_stop_count = 0
     self.dp_e2e_tf_count = 0
+
+    self.dp_e2e_blinker_count = 0
     pass
 
   def _set_dp_e2e_mode(self, mode, force=False):
@@ -54,6 +57,15 @@ class DynamicEndtoEndController:
 
   def _process_conditional_e2e(self, radar_unavailable, car_state, lead_one, md):
     v_ego_kph = car_state.vEgo * 3.6
+
+    # when blinker is on, use blended
+    if car_state.leftBlinker or car_state.rightBlinker:
+      self.dp_e2e_blinker_count += 1
+    else:
+      self.dp_e2e_blinker_count = 0
+
+    if self.dp_e2e_blinker_count > _DP_E2E_BLINKER_COUNT:
+      return self._set_dp_e2e_mode('blended', True)
 
     # make sure it see lead enough time
     if lead_one.status != self.dp_e2e_lead_last:
@@ -83,14 +95,18 @@ class DynamicEndtoEndController:
       return self._set_dp_e2e_mode('blended')
 
     # when we see a lead
-    # voacc cars only
-    if radar_unavailable and self.dp_e2e_has_lead:
-      if lead_one.dRel <= car_state.vEgo * 1.22:
-        self.dp_e2e_tf_count += 1
+    if self.dp_e2e_has_lead:
+      # radar unavailable car, use blended first when distance is too close
+      if radar_unavailable:
+        if lead_one.dRel <= car_state.vEgo * 1.22:
+          self.dp_e2e_tf_count += 1
+        else:
+          self.dp_e2e_tf_count = 0
+        if self.dp_e2e_tf_count > _DP_E2E_TF_COUNT:
+          return self._set_dp_e2e_mode('blended', True)
+      # always use acc
       else:
-        self.dp_e2e_tf_count = 0
-      if self.dp_e2e_tf_count > _DP_E2E_TF_COUNT:
-        return self._set_dp_e2e_mode('blended', True)
+        return self._set_dp_e2e_mode('acc', True)
 
     # slow down detection
     if len(md.orientation.x) == len(md.position.x) == TRAJECTORY_SIZE and md.position.x[TRAJECTORY_SIZE - 1] < interp(v_ego_kph, _DP_E2E_STOP_BP, _DP_E2E_STOP_DIST):

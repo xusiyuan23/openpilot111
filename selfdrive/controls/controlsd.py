@@ -33,6 +33,8 @@ LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
 
 dp_device_dm_unavailable = Params().get_bool("dp_device_dm_unavailable")
+DP_LONG_MISSING_LEAD_COUNT = 2. / DT_CTRL
+DP_LONG_MISSING_LEAD_SPEED = 22.22 # 80 kph
 
 REPLAY = "REPLAY" in os.environ
 SIMULATION = "SIMULATION" in os.environ
@@ -92,6 +94,9 @@ class Controls:
     self._dp_alka_active = True
     self._dp_alka_trigger_count = 0
     self._dp_alka_btn_block_frame = 0
+    self._dp_long_missing_lead_warning = self.params.get_bool("dp_long_missing_lead_warning")
+    self._dp_long_missing_lead_count = 0
+    self._dp_long_missing_lead_prev = False
     self.dp_device_disable_temp_check = self.params.get_bool("dp_device_disable_temp_check")
     self.sm = sm
     if self.sm is None:
@@ -250,6 +255,18 @@ class Controls:
     # no more events while in dashcam mode
     if self.read_only:
       return
+
+    # lead missing alert
+    # when driving on highway and the lead car suddenly gone missing, hazard ahead?
+    if self._dp_long_missing_lead_warning and CS.vEgo > DP_LONG_MISSING_LEAD_SPEED:
+      _dp_long_missing_lead = not self.sm['longitudinalPlan'].hasLead
+      if not self._dp_long_missing_lead_prev and _dp_long_missing_lead:
+        self._dp_long_missing_lead_count = DP_LONG_MISSING_LEAD_COUNT
+      if _dp_long_missing_lead:
+        self._dp_long_missing_lead_count -= 1
+        if self._dp_long_missing_lead_count == 0:
+          self.events.add(EventName.driverDistracted)
+      self._dp_long_missing_lead_prev = _dp_long_missing_lead
 
     # ALKA combination
     if self._dp_alka and CS.brakePressed:
@@ -614,7 +631,8 @@ class Controls:
     if self.CP.lateralTuning.which() == 'torque':
       torque_params = self.sm['liveTorqueParameters']
       if self.sm.all_checks(['liveTorqueParameters']) and torque_params.useParams:
-        self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
+        self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered,
+                                           torque_params.frictionCoefficientFiltered)
 
     lat_plan = self.sm['lateralPlan']
     long_plan = self.sm['longitudinalPlan']
