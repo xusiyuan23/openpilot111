@@ -363,20 +363,20 @@ SPT - Sport tune.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>*β* Enable Otisserv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Enable Stock Longitudinal Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>When enabled, openpilot will not handle longitudinal control.
 Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*β* Enable Otisserv</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

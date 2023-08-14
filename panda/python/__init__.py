@@ -7,6 +7,7 @@ import struct
 import hashlib
 import binascii
 import datetime
+import warnings
 import logging
 from functools import wraps
 from typing import Optional
@@ -424,10 +425,10 @@ class Panda:
           if device.getVendorID() == 0xbbaa and device.getProductID() in cls.USB_PIDS:
             try:
               serial = device.getSerialNumber()
-              if len(serial) == 24 or serial == "pedal":
+              if len(serial) == 24:
                 ret.append(serial)
               else:
-                logging.warning(f"found device with panda descriptors but invalid serial: {serial}", RuntimeWarning)
+                warnings.warn(f"found device with panda descriptors but invalid serial: {serial}", RuntimeWarning)
             except Exception:
               continue
     except Exception:
@@ -473,7 +474,11 @@ class Panda:
         success = True
         break
       except Exception:
-        pass
+        try:
+          dfu = PandaDFU(self.get_dfu_serial())
+          dfu.recover()
+        except Exception:
+          pass
       time.sleep(0.1)
     if not success:
       raise Exception("reconnect failed")
@@ -766,6 +771,13 @@ class Panda:
 
   def enable_deepsleep(self):
     self._handle.controlWrite(Panda.REQUEST_OUT, 0xfb, 0, 0, b'')
+
+  def set_esp_power(self, on):
+    self._handle.controlWrite(Panda.REQUEST_OUT, 0xd9, int(on), 0, b'')
+
+  def esp_reset(self, bootmode=0):
+    self._handle.controlWrite(Panda.REQUEST_OUT, 0xda, int(bootmode), 0, b'')
+    time.sleep(0.2)
 
   def set_safety_mode(self, mode=SAFETY_SILENT, param=0):
     self._handle.controlWrite(Panda.REQUEST_OUT, 0xdc, mode, param, b'')
