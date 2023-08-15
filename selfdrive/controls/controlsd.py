@@ -269,7 +269,7 @@ class Controls:
       self._dp_long_missing_lead_prev = _dp_long_missing_lead
 
     # ALKA combination
-    if self._dp_alka and CS.brakePressed:
+    if not self.read_only and self.initialized and self._dp_alka and CS.brakePressed:
       # rick - allow ALKA to be enabled/disabled when brake + main pressed twice in 0.5 secs
       if self.CP.pcmCruise and CS.cruiseState.available != self.CS_prev.cruiseState.available:
         self._dp_alka_trigger_count += 1
@@ -646,7 +646,7 @@ class Controls:
                    (not standstill or self.joystick_mode)
     CC.longActive = self.enabled and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
 
-    if not self.read_only and self.initialized and self._dp_alka_active and not standstill and CS.cruiseState.available:
+    if not self.read_only and self.initialized and self._dp_alka and self._dp_alka_active and not standstill and CS.cruiseState.available:
       if self.sm['liveCalibration'].calStatus != log.LiveCalibrationData.Status.calibrated:
         pass
       elif CS.steerFaultTemporary or CS.steerFaultPermanent:
