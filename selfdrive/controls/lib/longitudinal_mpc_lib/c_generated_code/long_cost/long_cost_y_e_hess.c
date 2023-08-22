@@ -60,10 +60,10 @@ static const casadi_int casadi_s2[9] = {5, 1, 0, 5, 0, 1, 2, 3, 4};
 static const casadi_int casadi_s3[10] = {6, 1, 0, 6, 0, 1, 2, 3, 4, 5};
 static const casadi_int casadi_s4[9] = {3, 3, 0, 1, 3, 3, 1, 0, 1};
 
-/* long_cost_y_e_hess:(i0[3],i1[],i2[5],i3[6])->(o0[3x3,3nz]) */
+/* long_cost_y_e_hess:(i0[3],i1[],i2[],i3[5],i4[6])->(o0[3x3,3nz]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a10, a2, a3, a4, a5, a6, a7, a8, a9;
-  a0=arg[2]? arg[2][0] : 0;
+  a0=arg[3]? arg[3][0] : 0;
   a1=arg[0]? arg[0][1] : 0;
   a2=10.;
   a2=(a1+a2);
@@ -77,10 +77,10 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   a5=2.0000000000000001e-01;
   a6=(a1+a1);
   a6=(a5*a6);
-  a7=arg[3]? arg[3][4] : 0;
+  a7=arg[4]? arg[4][4] : 0;
   a6=(a6+a7);
   a6=(a6/a2);
-  a8=arg[3]? arg[3][2] : 0;
+  a8=arg[4]? arg[4][2] : 0;
   a9=arg[0]? arg[0][0] : 0;
   a8=(a8-a9);
   a9=casadi_sq(a1);
@@ -141,7 +141,7 @@ CASADI_SYMBOL_EXPORT void long_cost_y_e_hess_incref(void) {
 CASADI_SYMBOL_EXPORT void long_cost_y_e_hess_decref(void) {
 }
 
-CASADI_SYMBOL_EXPORT casadi_int long_cost_y_e_hess_n_in(void) { return 4;}
+CASADI_SYMBOL_EXPORT casadi_int long_cost_y_e_hess_n_in(void) { return 5;}
 
 CASADI_SYMBOL_EXPORT casadi_int long_cost_y_e_hess_n_out(void) { return 1;}
 
@@ -157,6 +157,7 @@ CASADI_SYMBOL_EXPORT const char* long_cost_y_e_hess_name_in(casadi_int i) {
     case 1: return "i1";
     case 2: return "i2";
     case 3: return "i3";
+    case 4: return "i4";
     default: return 0;
   }
 }
@@ -172,8 +173,9 @@ CASADI_SYMBOL_EXPORT const casadi_int* long_cost_y_e_hess_sparsity_in(casadi_int
   switch (i) {
     case 0: return casadi_s0;
     case 1: return casadi_s1;
-    case 2: return casadi_s2;
-    case 3: return casadi_s3;
+    case 2: return casadi_s1;
+    case 3: return casadi_s2;
+    case 4: return casadi_s3;
     default: return 0;
   }
 }
@@ -186,7 +188,7 @@ CASADI_SYMBOL_EXPORT const casadi_int* long_cost_y_e_hess_sparsity_out(casadi_in
 }
 
 CASADI_SYMBOL_EXPORT int long_cost_y_e_hess_work(casadi_int *sz_arg, casadi_int* sz_res, casadi_int *sz_iw, casadi_int *sz_w) {
-  if (sz_arg) *sz_arg = 4;
+  if (sz_arg) *sz_arg = 5;
   if (sz_res) *sz_res = 1;
   if (sz_iw) *sz_iw = 0;
   if (sz_w) *sz_w = 0;

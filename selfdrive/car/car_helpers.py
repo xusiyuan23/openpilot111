@@ -12,9 +12,14 @@ from selfdrive.car.fw_versions import get_fw_versions_ordered, get_present_ecus,
 from system.swaglog import cloudlog
 import cereal.messaging as messaging
 from selfdrive.car import gen_empty_fingerprint
+import threading
+import requests
+import time
+import selfdrive.sentry as sentry
+
+FRAME_FINGERPRINT = 100  # 1s
 
 EventName = car.CarEvent.EventName
-
 
 def get_startup_event(car_recognized, controller_available, fw_seen):
   if True: #is_comma_remote() and is_tested_branch():  # pylint: disable=abstract-class-instantiated
@@ -128,7 +133,6 @@ def fingerprint(logcan, sendcan, num_pandas):
   finger = gen_empty_fingerprint()
   candidate_cars = {i: all_legacy_fingerprint_cars() for i in [0, 1]}  # attempt fingerprint on both bus 0 and 1
   frame = 0
-  frame_fingerprint = 100  # 1s
   car_fingerprint = None
   done = False
 
@@ -154,12 +158,12 @@ def fingerprint(logcan, sendcan, num_pandas):
     # if we only have one car choice and the time since we got our first
     # message has elapsed, exit
     for b in candidate_cars:
-      if len(candidate_cars[b]) == 1 and frame > frame_fingerprint:
+      if len(candidate_cars[b]) == 1 and frame > FRAME_FINGERPRINT:
         # fingerprint done
         car_fingerprint = candidate_cars[b][0]
 
     # bail if no cars left or we've been waiting for more than 2s
-    failed = (all(len(cc) == 0 for cc in candidate_cars.values()) and frame > frame_fingerprint) or frame > 200
+    failed = (all(len(cc) == 0 for cc in candidate_cars.values()) and frame > FRAME_FINGERPRINT) or frame > 200
     succeeded = car_fingerprint is not None
     done = failed or succeeded
 
@@ -183,6 +187,36 @@ def fingerprint(logcan, sendcan, num_pandas):
                  error=True)
   return car_fingerprint, finger, vin, car_fw, source, exact_match
 
+#dp
+def is_connected_to_internet(timeout=5):
+  try:
+    requests.get("https://sentry.io", timeout=timeout)
+    return True
+  except Exception:
+    return False
+def crash_log(candidate):
+  no_internet = 0
+  while True:
+    if is_connected_to_internet():
+      sentry.capture_warning("fingerprinted %s" % candidate)
+      break
+    else:
+      no_internet += 1
+      if no_internet >= 2:
+        break
+      time.sleep(600)
+def crash_log2(fingerprints, fw):
+  no_internet = 0
+  while True:
+    if is_connected_to_internet():
+      sentry.capture_warning("car doesn't match any fingerprints: %s" % fingerprints)
+      sentry.capture_warning("car doesn't match any fw: %s" % fw)
+      break
+    else:
+      no_internet += 1
+      if no_internet >= 2:
+        break
+      time.sleep(600)
 
 def get_car(logcan, sendcan, experimental_long_allowed, num_pandas=1):
   candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(logcan, sendcan, num_pandas)
@@ -191,11 +225,17 @@ def get_car(logcan, sendcan, experimental_long_allowed, num_pandas=1):
     cloudlog.event("car doesn't match any fingerprints", fingerprints=fingerprints, error=True)
     candidate = "mock"
 
-  CarInterface, CarController, CarState = interfaces[candidate]
-  CP = CarInterface.get_params(candidate, fingerprints, car_fw, experimental_long_allowed, docs=False)
-  CP.carVin = vin
-  CP.carFw = car_fw
-  CP.fingerprintSource = source
-  CP.fuzzyFingerprint = not exact_match
-
-  return CarInterface(CP, CarController, CarState), CP
+    y = threading.Thread(target=crash_log2, args=(fingerprints,car_fw,))
+    y.start()
+  x = threading.Thread(target=crash_log, args=(candidate,))
+  x.start()
+  try:
+    CarInterface, CarController, CarState = interfaces[candidate]
+    CP = CarInterface.get_params(candidate, fingerprints, car_fw, experimental_long_allowed, docs=False)
+    CP.carVin = vin
+    CP.carFw = car_fw
+    CP.fingerprintSource = source
+    CP.fuzzyFingerprint = not exact_match
+    return CarInterface(CP, CarController, CarState), CP
+  except KeyError:
+    return None, None

@@ -57,7 +57,7 @@ static const casadi_int casadi_s2[7] = {3, 1, 0, 3, 0, 1, 2};
 static const casadi_int casadi_s3[6] = {2, 1, 0, 2, 0, 1};
 static const casadi_int casadi_s4[7] = {4, 4, 0, 0, 0, 0, 0};
 
-/* lat_cost_y_e_hess:(i0[4],i1[],i2[3],i3[2])->(o0[4x4,0nz]) */
+/* lat_cost_y_e_hess:(i0[4],i1[],i2[],i3[3],i4[2])->(o0[4x4,0nz]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   return 0;
 }
@@ -90,7 +90,7 @@ CASADI_SYMBOL_EXPORT void lat_cost_y_e_hess_incref(void) {
 CASADI_SYMBOL_EXPORT void lat_cost_y_e_hess_decref(void) {
 }
 
-CASADI_SYMBOL_EXPORT casadi_int lat_cost_y_e_hess_n_in(void) { return 4;}
+CASADI_SYMBOL_EXPORT casadi_int lat_cost_y_e_hess_n_in(void) { return 5;}
 
 CASADI_SYMBOL_EXPORT casadi_int lat_cost_y_e_hess_n_out(void) { return 1;}
 
@@ -106,6 +106,7 @@ CASADI_SYMBOL_EXPORT const char* lat_cost_y_e_hess_name_in(casadi_int i) {
     case 1: return "i1";
     case 2: return "i2";
     case 3: return "i3";
+    case 4: return "i4";
     default: return 0;
   }
 }
@@ -121,8 +122,9 @@ CASADI_SYMBOL_EXPORT const casadi_int* lat_cost_y_e_hess_sparsity_in(casadi_int 
   switch (i) {
     case 0: return casadi_s0;
     case 1: return casadi_s1;
-    case 2: return casadi_s2;
-    case 3: return casadi_s3;
+    case 2: return casadi_s1;
+    case 3: return casadi_s2;
+    case 4: return casadi_s3;
     default: return 0;
   }
 }
@@ -135,7 +137,7 @@ CASADI_SYMBOL_EXPORT const casadi_int* lat_cost_y_e_hess_sparsity_out(casadi_int
 }
 
 CASADI_SYMBOL_EXPORT int lat_cost_y_e_hess_work(casadi_int *sz_arg, casadi_int* sz_res, casadi_int *sz_iw, casadi_int *sz_w) {
-  if (sz_arg) *sz_arg = 4;
+  if (sz_arg) *sz_arg = 5;
   if (sz_res) *sz_res = 1;
   if (sz_iw) *sz_iw = 0;
   if (sz_w) *sz_w = 0;

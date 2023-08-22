@@ -91,19 +91,35 @@
     </message>
     <message>
         <source> km</source>
-        <translation type="unfinished"> ｷﾛﾒｰﾄﾙ</translation>
+        <translation type="obsolete"> ｷﾛﾒｰﾄﾙ</translation>
     </message>
     <message>
         <source> m</source>
-        <translation type="unfinished"> ﾒｰﾄﾙ</translation>
+        <translation type="obsolete"> ﾒｰﾄﾙ</translation>
     </message>
     <message>
         <source> mi</source>
-        <translation type="unfinished"> ﾏｲﾙ</translation>
+        <translation type="obsolete"> ﾏｲﾙ</translation>
     </message>
     <message>
         <source> ft</source>
-        <translation type="unfinished"> ﾌｨｰﾄ</translation>
+        <translation type="obsolete"> ﾌｨｰﾄ</translation>
+    </message>
+    <message>
+        <source>km</source>
+        <translation type="unfinished">ｷﾛﾒｰﾄﾙ</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>mi</source>
+        <translation type="unfinished">ﾏｲﾙ</translation>
+    </message>
+    <message>
+        <source>ft</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -298,6 +314,15 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Road Edge Detection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will block lane change if road edge is detected.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Enable TACO Tune</source>
         <translation type="unfinished"></translation>
     </message>
@@ -363,10 +388,6 @@ SPT - Sport tune.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>*β* Enable Otisserv</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -377,6 +398,18 @@ SPT - Sport tune.</source>
     <message>
         <source>When enabled, openpilot will not handle longitudinal control.
 Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*α* Enable Otisserv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*α* Enable NOO Voice Guidance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

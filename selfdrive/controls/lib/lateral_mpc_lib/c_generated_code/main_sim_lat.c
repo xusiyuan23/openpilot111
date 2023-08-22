@@ -1,8 +1,5 @@
 /*
- * Copyright 2019 Gianluca Frison, Dimitris Kouzoupis, Robin Verschueren,
- * Andrea Zanelli, Niels van Duijkeren, Jonathan Frey, Tommaso Sartor,
- * Branimir Novoselnik, Rien Quirynen, Rezart Qelibari, Dang Doan,
- * Jonas Koenemann, Yutao Chen, Tobias Schöls, Jonas Schlagenhauf, Moritz Diehl
+ * Copyright (c) The acados authors.
  *
  * This file is part of acados.
  *
@@ -72,10 +69,10 @@ int main()
     x_current[3] = 0.0;
 
   
-    x_current[0] = 0;
-    x_current[1] = 0;
-    x_current[2] = 0;
-    x_current[3] = 0;
+    x_current[0] = 0.0;
+    x_current[1] = 0.0;
+    x_current[2] = 0.0;
+    x_current[3] = 0.0;
     
   
 
@@ -85,8 +82,8 @@ int main()
     u0[0] = 0.0;
     // set parameters
     double p[NP];
-    p[0] = 0;
-    p[1] = 0;
+    p[0] = 0.0;
+    p[1] = 0.0;
 
     lat_acados_sim_update_params(capsule, p, NP);
   

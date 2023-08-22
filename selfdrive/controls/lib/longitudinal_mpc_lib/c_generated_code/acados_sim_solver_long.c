@@ -1,8 +1,5 @@
 /*
- * Copyright 2019 Gianluca Frison, Dimitris Kouzoupis, Robin Verschueren,
- * Andrea Zanelli, Niels van Duijkeren, Jonathan Frey, Tommaso Sartor,
- * Branimir Novoselnik, Rien Quirynen, Rezart Qelibari, Dang Doan,
- * Jonas Koenemann, Yutao Chen, Tobias Schöls, Jonas Schlagenhauf, Moritz Diehl
+ * Copyright (c) The acados authors.
  *
  * This file is part of acados.
  *
@@ -82,6 +79,7 @@ int long_acados_sim_create(sim_solver_capsule * capsule)
     
     // explicit ode
     capsule->sim_forw_vde_casadi = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi));
+    capsule->sim_vde_adj_casadi = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi));
     capsule->sim_expl_ode_fun_casadi = (external_function_param_casadi *) malloc(sizeof(external_function_param_casadi));
 
     capsule->sim_forw_vde_casadi->casadi_fun = &long_expl_vde_forw;
@@ -91,6 +89,14 @@ int long_acados_sim_create(sim_solver_capsule * capsule)
     capsule->sim_forw_vde_casadi->casadi_sparsity_out = &long_expl_vde_forw_sparsity_out;
     capsule->sim_forw_vde_casadi->casadi_work = &long_expl_vde_forw_work;
     external_function_param_casadi_create(capsule->sim_forw_vde_casadi, np);
+
+    capsule->sim_vde_adj_casadi->casadi_fun = &long_expl_vde_adj;
+    capsule->sim_vde_adj_casadi->casadi_n_in = &long_expl_vde_adj_n_in;
+    capsule->sim_vde_adj_casadi->casadi_n_out = &long_expl_vde_adj_n_out;
+    capsule->sim_vde_adj_casadi->casadi_sparsity_in = &long_expl_vde_adj_sparsity_in;
+    capsule->sim_vde_adj_casadi->casadi_sparsity_out = &long_expl_vde_adj_sparsity_out;
+    capsule->sim_vde_adj_casadi->casadi_work = &long_expl_vde_adj_work;
+    external_function_param_casadi_create(capsule->sim_vde_adj_casadi, np);
 
     capsule->sim_expl_ode_fun_casadi->casadi_fun = &long_expl_ode_fun;
     capsule->sim_expl_ode_fun_casadi->casadi_n_in = &long_expl_ode_fun_n_in;
@@ -123,6 +129,8 @@ int long_acados_sim_create(sim_solver_capsule * capsule)
     capsule->acados_sim_opts = long_sim_opts;
     int tmp_int = 3;
     sim_opts_set(long_sim_config, long_sim_opts, "newton_iter", &tmp_int);
+    double tmp_double = 0.0;
+    sim_opts_set(long_sim_config, long_sim_opts, "newton_tol", &tmp_double);
     sim_collocation_type collocation_type = GAUSS_LEGENDRE;
     sim_opts_set(long_sim_config, long_sim_opts, "collocation_type", &collocation_type);
 
@@ -146,7 +154,9 @@ int long_acados_sim_create(sim_solver_capsule * capsule)
 
     // model functions
     long_sim_config->model_set(long_sim_in->model,
-                 "expl_vde_for", capsule->sim_forw_vde_casadi);
+                 "expl_vde_forw", capsule->sim_forw_vde_casadi);
+    long_sim_config->model_set(long_sim_in->model,
+                 "expl_vde_adj", capsule->sim_vde_adj_casadi);
     long_sim_config->model_set(long_sim_in->model,
                  "expl_ode_fun", capsule->sim_expl_ode_fun_casadi);
 
@@ -227,6 +237,7 @@ int long_acados_sim_free(sim_solver_capsule *capsule)
 
     // free external function
     external_function_param_casadi_free(capsule->sim_forw_vde_casadi);
+    external_function_param_casadi_free(capsule->sim_vde_adj_casadi);
     external_function_param_casadi_free(capsule->sim_expl_ode_fun_casadi);
 
     return 0;
@@ -244,6 +255,7 @@ int long_acados_sim_update_params(sim_solver_capsule *capsule, double *p, int np
         exit(1);
     }
     capsule->sim_forw_vde_casadi[0].set_param(capsule->sim_forw_vde_casadi, p);
+    capsule->sim_vde_adj_casadi[0].set_param(capsule->sim_vde_adj_casadi, p);
     capsule->sim_expl_ode_fun_casadi[0].set_param(capsule->sim_expl_ode_fun_casadi, p);
 
     return status;

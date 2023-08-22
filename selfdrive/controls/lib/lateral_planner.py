@@ -10,6 +10,7 @@ import cereal.messaging as messaging
 from cereal import log
 from selfdrive.controls.lib.lane_planner import LanePlanner
 from common.params import Params
+from selfdrive.controls.lib.road_edge_detector import RoadEdgeDetector
 
 TRAJECTORY_SIZE = 33
 CAMERA_OFFSET = 0.04
@@ -30,9 +31,12 @@ class LateralPlanner:
   def __init__(self, CP, debug=False):
     self.DH = DesireHelper()
 
+    self.RED = RoadEdgeDetector()
+
     # dp - lanefull
     params = Params()
     self._dp_lat_lane_priority_mode = params.get_bool("dp_lat_lane_priority_mode")
+    self.RED.set_enabled(params.get_bool("dp_lateral_road_edge_detection"))
     self._dp_lat_lane_priority_mode_active = False
     self._dp_lat_lane_priority_mode_active_prev = False
     self.LP = LanePlanner()
@@ -61,7 +65,9 @@ class LateralPlanner:
     self.lat_mpc = LateralMpc()
     self.reset_mpc(np.zeros(4))
 
-  def reset_mpc(self, x0=np.zeros(4)):
+  def reset_mpc(self, x0=None):
+    if x0 is None:
+      x0 = np.zeros(4)
     self.x0 = x0
     self.lat_mpc.reset(x0=self.x0)
 
@@ -94,7 +100,8 @@ class LateralPlanner:
     else:
       lane_change_prob = self.l_lane_change_prob + self.r_lane_change_prob
 
-    self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob)
+    edge_detected_left, edge_detected_right = self.RED.get_road_edge_detected(md.roadEdgeStds, md.laneLineProbs, sm['carState'].leftBlinker, sm['carState'].rightBlinker)
+    self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob, edge_detected_left, edge_detected_right)
 
     path_xyz = self._get_laneless_laneline_d_path_xyz() if self._dp_lat_lane_priority_mode else self.path_xyz
     self._d_path_w_lines_xyz = path_xyz

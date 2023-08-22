@@ -1,8 +1,5 @@
 /*
- * Copyright 2019 Gianluca Frison, Dimitris Kouzoupis, Robin Verschueren,
- * Andrea Zanelli, Niels van Duijkeren, Jonathan Frey, Tommaso Sartor,
- * Branimir Novoselnik, Rien Quirynen, Rezart Qelibari, Dang Doan,
- * Jonas Koenemann, Yutao Chen, Tobias Schöls, Jonas Schlagenhauf, Moritz Diehl
+ * Copyright (c) The acados authors.
  *
  * This file is part of acados.
  *
@@ -42,13 +39,11 @@
 
 // example specific
 #include "lat_model/lat_model.h"
+#include "lat_constraints/lat_constraints.h"
+#include "lat_cost/lat_cost.h"
 
 
 
-
-#include "lat_cost/lat_cost_y_fun.h"
-#include "lat_cost/lat_cost_y_0_fun.h"
-#include "lat_cost/lat_cost_y_e_fun.h"
 
 #include "acados_solver_lat.h"
 
@@ -289,7 +284,6 @@ return nlp_dims;
 void lat_acados_create_3_create_and_set_functions(lat_solver_capsule* capsule)
 {
     const int N = capsule->nlp_solver_plan->N;
-    ocp_nlp_config* nlp_config = capsule->nlp_config;
 
     /************************************************
     *  external functions
@@ -434,28 +428,38 @@ void lat_acados_create_5_set_nlp_in(lat_solver_capsule* capsule, const int N, do
     }
 
     /**** Cost ****/
-    double* W_0 = calloc(NY0*NY0, sizeof(double));
-    // change only the non-zero elements:
-    ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
-    free(W_0);
-
     double* yref_0 = calloc(NY0, sizeof(double));
     // change only the non-zero elements:
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "yref", yref_0);
     free(yref_0);
-    double* W = calloc(NY*NY, sizeof(double));
-    // change only the non-zero elements:
-
     double* yref = calloc(NY, sizeof(double));
     // change only the non-zero elements:
 
     for (int i = 1; i < N; i++)
     {
-        ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "W", W);
         ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "yref", yref);
     }
-    free(W);
     free(yref);
+    double* yref_e = calloc(NYN, sizeof(double));
+    // change only the non-zero elements:
+    ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "yref", yref_e);
+    free(yref_e);
+   double* W_0 = calloc(NY0*NY0, sizeof(double));
+    // change only the non-zero elements:
+    ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
+    free(W_0);
+    double* W = calloc(NY*NY, sizeof(double));
+    // change only the non-zero elements:
+
+    for (int i = 1; i < N; i++)
+    {
+        ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "W", W);
+    }
+    free(W);
+    double* W_e = calloc(NYN*NYN, sizeof(double));
+    // change only the non-zero elements:
+    ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
+    free(W_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "nls_y_fun", &capsule->cost_y_0_fun);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "nls_y_fun_jac", &capsule->cost_y_0_fun_jac_ut_xt);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "nls_y_hess", &capsule->cost_y_0_hess);
@@ -465,17 +469,6 @@ void lat_acados_create_5_set_nlp_in(lat_solver_capsule* capsule, const int N, do
         ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "nls_y_fun_jac", &capsule->cost_y_fun_jac_ut_xt[i-1]);
         ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, i, "nls_y_hess", &capsule->cost_y_hess[i-1]);
     }
-
-    // terminal cost
-    double* yref_e = calloc(NYN, sizeof(double));
-    // change only the non-zero elements:
-    ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "yref", yref_e);
-    free(yref_e);
-
-    double* W_e = calloc(NYN*NYN, sizeof(double));
-    // change only the non-zero elements:
-    ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "W", W_e);
-    free(W_e);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "nls_y_fun", &capsule->cost_y_e_fun);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "nls_y_fun_jac", &capsule->cost_y_e_fun_jac_ut_xt);
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, N, "nls_y_hess", &capsule->cost_y_e_hess);
@@ -576,7 +569,6 @@ void lat_acados_create_6_set_opts(lat_solver_capsule* capsule)
 {
     const int N = capsule->nlp_solver_plan->N;
     ocp_nlp_config* nlp_config = capsule->nlp_config;
-    ocp_nlp_dims* nlp_dims = capsule->nlp_dims;
     void *nlp_opts = capsule->nlp_opts;
 
     /************************************************
@@ -614,10 +606,10 @@ void lat_acados_create_6_set_opts(lat_solver_capsule* capsule)
     for (int i = 0; i < N; i++)
         ocp_nlp_solver_opts_set_at_stage(nlp_config, nlp_opts, i, "dynamics_jac_reuse", &tmp_bool);
 
-    double nlp_solver_step_length = 1;
+    double nlp_solver_step_length = 1.0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "step_length", &nlp_solver_step_length);
 
-    double levenberg_marquardt = 0;
+    double levenberg_marquardt = 0.0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "levenberg_marquardt", &levenberg_marquardt);
 
     /* options QP solver */
@@ -626,6 +618,9 @@ void lat_acados_create_6_set_opts(lat_solver_capsule* capsule)
     const int qp_solver_cond_N_ori = 1;
     qp_solver_cond_N = N < qp_solver_cond_N_ori ? N : qp_solver_cond_N_ori; // use the minimum value here
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_cond_N", &qp_solver_cond_N);
+
+    int nlp_solver_ext_qp_res = 0;
+    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "ext_qp_res", &nlp_solver_ext_qp_res);
     // set HPIPM mode: should be done before setting other QP solver options
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_hpipm_mode", "BALANCE");
 
@@ -636,6 +631,11 @@ void lat_acados_create_6_set_opts(lat_solver_capsule* capsule)
 
 int print_level = 0;
     ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "print_level", &print_level);
+    int qp_solver_cond_ric_alg = 1;
+    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_cond_ric_alg", &qp_solver_cond_ric_alg);
+
+    int qp_solver_ric_alg = 1;
+    ocp_nlp_solver_opts_set(nlp_config, nlp_opts, "qp_ric_alg", &qp_solver_ric_alg);
 
 
     int ext_cost_num_hess = 0;
@@ -744,6 +744,7 @@ int lat_acados_create_with_discretization(lat_solver_capsule* capsule, int N, do
 
     // 9) do precomputations
     int status = lat_acados_create_9_precompute(capsule);
+
     return status;
 }
 
@@ -771,7 +772,7 @@ int lat_acados_update_qp_solver_cond_N(lat_solver_capsule* capsule, int qp_solve
 }
 
 
-int lat_acados_reset(lat_solver_capsule* capsule)
+int lat_acados_reset(lat_solver_capsule* capsule, int reset_qp_solver_mem)
 {
 
     // set initialization to all zeros
@@ -782,8 +783,6 @@ int lat_acados_reset(lat_solver_capsule* capsule)
     ocp_nlp_out* nlp_out = capsule->nlp_out;
     ocp_nlp_in* nlp_in = capsule->nlp_in;
     ocp_nlp_solver* nlp_solver = capsule->nlp_solver;
-
-    int nx, nu, nv, ns, nz, ni, dim;
 
     double* buffer = calloc(NX+NU+NZ+2*NS+2*NSN+NBX+NBU+NG+NH+NPHI+NBX0+NBXN+NHN+NPHIN+NGN, sizeof(double));
 
@@ -804,7 +803,7 @@ int lat_acados_reset(lat_solver_capsule* capsule)
     // get qp_status: if NaN -> reset memory
     int qp_status;
     ocp_nlp_get(capsule->nlp_config, capsule->nlp_solver, "qp_status", &qp_status);
-    if (qp_status == 3)
+    if (reset_qp_solver_mem || (qp_status == 3))
     {
         // printf("\nin reset qp_status %d -> resetting QP memory\n", qp_status);
         ocp_nlp_solver_reset_qp_memory(nlp_solver, nlp_in, nlp_out);
@@ -827,6 +826,7 @@ int lat_acados_update_params(lat_solver_capsule* capsule, int stage, double *p, 
             " External function has %i parameters. Exiting.\n", np, casadi_np);
         exit(1);
     }
+
     const int N = capsule->nlp_solver_plan->N;
     if (stage < N && stage >= 0)
     {
@@ -863,15 +863,72 @@ int lat_acados_update_params(lat_solver_capsule* capsule, int stage, double *p, 
     
     }
 
-
     return solver_status;
 }
 
 
+int lat_acados_update_params_sparse(lat_solver_capsule * capsule, int stage, int *idx, double *p, int n_update)
+{
+    int solver_status = 0;
+
+    int casadi_np = 2;
+    if (casadi_np < n_update) {
+        printf("lat_acados_update_params_sparse: trying to set %d parameters for external functions."
+            " External function has %d parameters. Exiting.\n", n_update, casadi_np);
+        exit(1);
+    }
+    // for (int i = 0; i < n_update; i++)
+    // {
+    //     if (idx[i] > casadi_np) {
+    //         printf("lat_acados_update_params_sparse: attempt to set parameters with index %d, while"
+    //             " external functions only has %d parameters. Exiting.\n", idx[i], casadi_np);
+    //         exit(1);
+    //     }
+    //     printf("param %d value %e\n", idx[i], p[i]);
+    // }
+    const int N = capsule->nlp_solver_plan->N;
+    if (stage < N && stage >= 0)
+    {
+        capsule->forw_vde_casadi[stage].set_param_sparse(capsule->forw_vde_casadi+stage, n_update, idx, p);
+        capsule->expl_ode_fun[stage].set_param_sparse(capsule->expl_ode_fun+stage, n_update, idx, p);
+    
+
+        // constraints
+    
+
+        // cost
+        if (stage == 0)
+        {
+            capsule->cost_y_0_fun.set_param_sparse(&capsule->cost_y_0_fun, n_update, idx, p);
+            capsule->cost_y_0_fun_jac_ut_xt.set_param_sparse(&capsule->cost_y_0_fun_jac_ut_xt, n_update, idx, p);
+            capsule->cost_y_0_hess.set_param_sparse(&capsule->cost_y_0_hess, n_update, idx, p);
+        }
+        else // 0 < stage < N
+        {
+            capsule->cost_y_fun[stage-1].set_param_sparse(capsule->cost_y_fun+stage-1, n_update, idx, p);
+            capsule->cost_y_fun_jac_ut_xt[stage-1].set_param_sparse(capsule->cost_y_fun_jac_ut_xt+stage-1, n_update, idx, p);
+            capsule->cost_y_hess[stage-1].set_param_sparse(capsule->cost_y_hess+stage-1, n_update, idx, p);
+        }
+    }
+
+    else // stage == N
+    {
+        // terminal shooting node has no dynamics
+        // cost
+        capsule->cost_y_e_fun.set_param_sparse(&capsule->cost_y_e_fun, n_update, idx, p);
+        capsule->cost_y_e_fun_jac_ut_xt.set_param_sparse(&capsule->cost_y_e_fun_jac_ut_xt, n_update, idx, p);
+        capsule->cost_y_e_hess.set_param_sparse(&capsule->cost_y_e_hess, n_update, idx, p);
+        // constraints
+    
+    }
+
+
+    return solver_status;
+}
 
 int lat_acados_solve(lat_solver_capsule* capsule)
 {
-    // solve NLP 
+    // solve NLP
     int solver_status = ocp_nlp_solve(capsule->nlp_solver, capsule->nlp_in, capsule->nlp_out);
 
     return solver_status;
@@ -924,15 +981,6 @@ int lat_acados_free(lat_solver_capsule* capsule)
     return 0;
 }
 
-ocp_nlp_in *lat_acados_get_nlp_in(lat_solver_capsule* capsule) { return capsule->nlp_in; }
-ocp_nlp_out *lat_acados_get_nlp_out(lat_solver_capsule* capsule) { return capsule->nlp_out; }
-ocp_nlp_out *lat_acados_get_sens_out(lat_solver_capsule* capsule) { return capsule->sens_out; }
-ocp_nlp_solver *lat_acados_get_nlp_solver(lat_solver_capsule* capsule) { return capsule->nlp_solver; }
-ocp_nlp_config *lat_acados_get_nlp_config(lat_solver_capsule* capsule) { return capsule->nlp_config; }
-void *lat_acados_get_nlp_opts(lat_solver_capsule* capsule) { return capsule->nlp_opts; }
-ocp_nlp_dims *lat_acados_get_nlp_dims(lat_solver_capsule* capsule) { return capsule->nlp_dims; }
-ocp_nlp_plan_t *lat_acados_get_nlp_plan(lat_solver_capsule* capsule) { return capsule->nlp_solver_plan; }
-
 
 void lat_acados_print_stats(lat_solver_capsule* capsule)
 {
@@ -946,6 +994,11 @@ void lat_acados_print_stats(lat_solver_capsule* capsule)
     ocp_nlp_get(capsule->nlp_config, capsule->nlp_solver, "statistics", stat);
 
     int nrow = sqp_iter+1 < stat_m ? sqp_iter+1 : stat_m;
+
+    printf("iter\tres_stat\tres_eq\t\tres_ineq\tres_comp\tqp_stat\tqp_iter\talpha");
+    if (stat_n > 8)
+        printf("\t\tqp_res_stat\tqp_res_eq\tqp_res_ineq\tqp_res_comp");
+    printf("\n");
     printf("iter\tqp_stat\tqp_iter\n");
     for (int i = 0; i < nrow; i++)
     {
@@ -958,3 +1011,24 @@ void lat_acados_print_stats(lat_solver_capsule* capsule)
     }
 }
 
+int lat_acados_custom_update(lat_solver_capsule* capsule, double* data, int data_len)
+{
+    (void)capsule;
+    (void)data;
+    (void)data_len;
+    printf("\ndummy function that can be called in between solver calls to update parameters or numerical data efficiently in C.\n");
+    printf("nothing set yet..\n");
+    return 1;
+
+}
+
+
+
+ocp_nlp_in *lat_acados_get_nlp_in(lat_solver_capsule* capsule) { return capsule->nlp_in; }
+ocp_nlp_out *lat_acados_get_nlp_out(lat_solver_capsule* capsule) { return capsule->nlp_out; }
+ocp_nlp_out *lat_acados_get_sens_out(lat_solver_capsule* capsule) { return capsule->sens_out; }
+ocp_nlp_solver *lat_acados_get_nlp_solver(lat_solver_capsule* capsule) { return capsule->nlp_solver; }
+ocp_nlp_config *lat_acados_get_nlp_config(lat_solver_capsule* capsule) { return capsule->nlp_config; }
+void *lat_acados_get_nlp_opts(lat_solver_capsule* capsule) { return capsule->nlp_opts; }
+ocp_nlp_dims *lat_acados_get_nlp_dims(lat_solver_capsule* capsule) { return capsule->nlp_dims; }
+ocp_nlp_plan_t *lat_acados_get_nlp_plan(lat_solver_capsule* capsule) { return capsule->nlp_solver_plan; }

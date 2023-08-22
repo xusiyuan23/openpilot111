@@ -1,8 +1,5 @@
 /*
- * Copyright 2019 Gianluca Frison, Dimitris Kouzoupis, Robin Verschueren,
- * Andrea Zanelli, Niels van Duijkeren, Jonathan Frey, Tommaso Sartor,
- * Branimir Novoselnik, Rien Quirynen, Rezart Qelibari, Dang Doan,
- * Jonas Koenemann, Yutao Chen, Tobias Schöls, Jonas Schlagenhauf, Moritz Diehl
+ * Copyright (c) The acados authors.
  *
  * This file is part of acados.
  *
@@ -41,6 +38,9 @@
 #include "acados_c/ocp_nlp_interface.h"
 #include "acados_c/external_function_interface.h"
 #include "acados_solver_long.h"
+
+// blasfeo
+#include "blasfeo/include/blasfeo_d_aux_ext_dep.h"
 
 #define NX     LONG_NX
 #define NZ     LONG_NZ
@@ -104,12 +104,12 @@ int main()
 
     double lbx0[NBX0];
     double ubx0[NBX0];
-    lbx0[0] = 0;
-    ubx0[0] = 0;
-    lbx0[1] = 0;
-    ubx0[1] = 0;
-    lbx0[2] = 0;
-    ubx0[2] = 0;
+    lbx0[0] = 0.0;
+    ubx0[0] = 0.0;
+    lbx0[1] = 0.0;
+    ubx0[1] = 0.0;
+    lbx0[2] = 0.0;
+    ubx0[2] = 0.0;
 
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "idxbx", idxbx0);
     ocp_nlp_constraints_model_set(nlp_config, nlp_dims, nlp_in, 0, "lbx", lbx0);
@@ -128,8 +128,8 @@ int main()
     double p[NP];
     p[0] = -1.2;
     p[1] = 1.2;
-    p[2] = 0;
-    p[3] = 0;
+    p[2] = 0.0;
+    p[3] = 0.0;
     p[4] = 1.45;
     p[5] = 0.75;
 

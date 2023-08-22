@@ -1405,7 +1405,7 @@ static const char *__pyx_f[] = {
 /*--- Type declarations ---*/
 struct __pyx_obj_7opendbc_3can_10packer_pyx_CANPacker;
 
-/* "common.pxd":10
+/* "common.pxd":11
  * 
  * 
  * ctypedef unsigned int (*calc_checksum_type)(uint32_t, const Signal&, const vector[uint8_t] &)             # <<<<<<<<<<<<<<
@@ -2112,6 +2112,8 @@ static PyObject *__pyx_f_7opendbc_3can_10packer_pyx_9CANPacker_make_can_msg(stru
 
 /* Module declarations from "libcpp" */
 
+/* Module declarations from "libcpp.pair" */
+
 /* Module declarations from "opendbc.can.common" */
 
 /* Module declarations from "opendbc.can.packer_pyx" */
@@ -2200,6 +2202,8 @@ typedef struct {
   #endif
   #ifdef __Pyx_Coroutine_USED
   PyTypeObject *__pyx_CoroutineType;
+  #endif
+  #if CYTHON_USE_MODULE_STATE
   #endif
   #if CYTHON_USE_MODULE_STATE
   #endif
@@ -2455,6 +2459,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #endif
 #ifdef __Pyx_Coroutine_USED
 #define __pyx_CoroutineType __pyx_mstate_global->__pyx_CoroutineType
+#endif
+#if CYTHON_USE_MODULE_STATE
 #endif
 #if CYTHON_USE_MODULE_STATE
 #endif

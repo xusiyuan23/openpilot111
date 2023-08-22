@@ -256,6 +256,7 @@ enum class SafetyModel_95551e5b1edaf451: uint16_t {
   HONGQI,
   BODY,
   HYUNDAI_CANFD,
+  VOLKSWAGEN_MQB_EVO,
 };
 CAPNP_DECLARE_ENUM(SafetyModel, 95551e5b1edaf451);
 CAPNP_DECLARE_SCHEMA(d661512be2def77f);
@@ -2340,6 +2341,8 @@ public:
 
   inline bool getExperimentalLongitudinalAvailable() const;
 
+  inline float getTireStiffnessFactor() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -2632,6 +2635,9 @@ public:
 
   inline bool getExperimentalLongitudinalAvailable();
   inline void setExperimentalLongitudinalAvailable(bool value);
+
+  inline float getTireStiffnessFactor();
+  inline void setTireStiffnessFactor(float value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -7135,6 +7141,20 @@ inline bool CarParams::Builder::getExperimentalLongitudinalAvailable() {
 inline void CarParams::Builder::setExperimentalLongitudinalAvailable(bool value) {
   _builder.setDataField<bool>(
       ::capnp::bounded<995>() * ::capnp::ELEMENTS, value);
+}
+
+inline float CarParams::Reader::getTireStiffnessFactor() const {
+  return _reader.getDataField<float>(
+      ::capnp::bounded<33>() * ::capnp::ELEMENTS);
+}
+
+inline float CarParams::Builder::getTireStiffnessFactor() {
+  return _builder.getDataField<float>(
+      ::capnp::bounded<33>() * ::capnp::ELEMENTS);
+}
+inline void CarParams::Builder::setTireStiffnessFactor(float value) {
+  _builder.setDataField<float>(
+      ::capnp::bounded<33>() * ::capnp::ELEMENTS, value);
 }
 
 inline  ::cereal::CarParams::SafetyModel CarParams::SafetyConfig::Reader::getSafetyModel() const {

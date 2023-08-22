@@ -76,6 +76,8 @@ def manager_init() -> None:
     ("dp_long_taco", "0"),
     ("dp_long_stock_mode", "0"),
     ("dp_long_missing_lead_warning", "0"),
+    ("dp_lateral_road_edge_detection", "0"),
+    ("dp_nav_voice_guidance", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -179,10 +181,14 @@ def manager_thread() -> None:
   if not params.get_bool("dp_otisserv"):
     ignore += ["otisserv"]
 
+  dpdmonitoringd_ignored = True
   if not is_registered_device():
     ignore += ["uploader"]
     if params.get_bool("dp_device_dm_unavailable"):
       ignore += ["dmonitoringd", "dmonitoringmodeld"]
+      dpdmonitoringd_ignored = False
+  if dpdmonitoringd_ignored:
+    ignore += ["dpdmonitoringd"]
 
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll=['deviceState'])
   pm = messaging.PubMaster(['managerState'])

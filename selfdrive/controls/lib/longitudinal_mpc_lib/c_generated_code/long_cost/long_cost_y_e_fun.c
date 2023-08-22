@@ -58,17 +58,17 @@ static const casadi_int casadi_s1[3] = {0, 0, 0};
 static const casadi_int casadi_s2[10] = {6, 1, 0, 6, 0, 1, 2, 3, 4, 5};
 static const casadi_int casadi_s3[9] = {5, 1, 0, 5, 0, 1, 2, 3, 4};
 
-/* long_cost_y_e_fun:(i0[3],i1[],i2[6])->(o0[5]) */
+/* long_cost_y_e_fun:(i0[3],i1[],i2[],i3[6])->(o0[5]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2, a3, a4;
-  a0=arg[2]? arg[2][2] : 0;
+  a0=arg[3]? arg[3][2] : 0;
   a1=arg[0]? arg[0][0] : 0;
   a0=(a0-a1);
   a2=arg[0]? arg[0][1] : 0;
   a3=casadi_sq(a2);
   a4=5.;
   a3=(a3/a4);
-  a4=arg[2]? arg[2][4] : 0;
+  a4=arg[3]? arg[3][4] : 0;
   a4=(a4*a2);
   a3=(a3+a4);
   a4=6.;
@@ -82,7 +82,7 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   if (res[0]!=0) res[0][2]=a2;
   a2=arg[0]? arg[0][2] : 0;
   if (res[0]!=0) res[0][3]=a2;
-  a1=arg[2]? arg[2][3] : 0;
+  a1=arg[3]? arg[3][3] : 0;
   a2=(a2-a1);
   if (res[0]!=0) res[0][4]=a2;
   return 0;
@@ -116,7 +116,7 @@ CASADI_SYMBOL_EXPORT void long_cost_y_e_fun_incref(void) {
 CASADI_SYMBOL_EXPORT void long_cost_y_e_fun_decref(void) {
 }
 
-CASADI_SYMBOL_EXPORT casadi_int long_cost_y_e_fun_n_in(void) { return 3;}
+CASADI_SYMBOL_EXPORT casadi_int long_cost_y_e_fun_n_in(void) { return 4;}
 
 CASADI_SYMBOL_EXPORT casadi_int long_cost_y_e_fun_n_out(void) { return 1;}
 
@@ -131,6 +131,7 @@ CASADI_SYMBOL_EXPORT const char* long_cost_y_e_fun_name_in(casadi_int i) {
     case 0: return "i0";
     case 1: return "i1";
     case 2: return "i2";
+    case 3: return "i3";
     default: return 0;
   }
 }
@@ -146,7 +147,8 @@ CASADI_SYMBOL_EXPORT const casadi_int* long_cost_y_e_fun_sparsity_in(casadi_int 
   switch (i) {
     case 0: return casadi_s0;
     case 1: return casadi_s1;
-    case 2: return casadi_s2;
+    case 2: return casadi_s1;
+    case 3: return casadi_s2;
     default: return 0;
   }
 }
@@ -159,7 +161,7 @@ CASADI_SYMBOL_EXPORT const casadi_int* long_cost_y_e_fun_sparsity_out(casadi_int
 }
 
 CASADI_SYMBOL_EXPORT int long_cost_y_e_fun_work(casadi_int *sz_arg, casadi_int* sz_res, casadi_int *sz_iw, casadi_int *sz_w) {
-  if (sz_arg) *sz_arg = 3;
+  if (sz_arg) *sz_arg = 4;
   if (sz_res) *sz_res = 1;
   if (sz_iw) *sz_iw = 0;
   if (sz_w) *sz_w = 0;
