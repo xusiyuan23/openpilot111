@@ -263,13 +263,7 @@ class CarState(CarStateBase):
       messages.append(("BSM", 1))
 
     if dp_toyota_enhanced_bsm:
-        signals +=[
-         ("BLINDSPOT", "DEBUG"),
-         ("BLINDSPOTSIDE", "DEBUG"),
-         ("BLINDSPOTD1", "DEBUG"),
-         ("BLINDSPOTD2", "DEBUG"),
-        ]
-        checks.append(("DEBUG", 65))
+      messages.append(("DEBUG", 65))
 
     if CP.carFingerprint in RADAR_ACC_CAR:
       if not CP.flags & ToyotaFlags.SMART_DSU.value:
