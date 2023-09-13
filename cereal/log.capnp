@@ -587,6 +587,7 @@ struct RadarState @0x9a185389d6fdd05f {
     aLeadTau @12 :Float32;
     modelProb @13 :Float32;
     radar @14 :Bool;
+    radarTrackId @15 :Int32 = -1;
 
     aLeadDEPRECATED @5 :Float32;
   }
@@ -2084,6 +2085,8 @@ struct NavInstruction {
   speedLimit @10 :Float32; # m/s
   speedLimitSign @11 :SpeedLimitSign;
 
+  allManeuvers @12 :List(Maneuver);
+
   struct Lane {
     directions @0 :List(Direction);
     active @1 :Bool;
@@ -2095,12 +2098,20 @@ struct NavInstruction {
     left @1;
     right @2;
     straight @3;
+    slightLeft @4;
+    slightRight @5;
   }
 
   enum SpeedLimitSign {
     mutcd @0; # US Style
     vienna @1; # EU Style
-    }
+  }
+
+  struct Maneuver {
+    distance @0 :Float32;
+    type @1 :Text;
+    modifier @2 :Text;
+  }
 }
 
 struct NavRoute {
@@ -2179,6 +2190,7 @@ struct Event {
     magnetometer @95 :SensorEventData;
     lightSensor @96 :SensorEventData;
     temperatureSensor @97 :SensorEventData;
+    temperatureSensor2 @123 :SensorEventData;
     pandaStates @81 :List(PandaState);
     peripheralState @80 :PeripheralState;
     radarState @13 :RadarState;
@@ -2259,7 +2271,7 @@ struct Event {
     liveMapData @107 :Custom.LiveMapData;
     longitudinalPlanExt @108 :Custom.LongitudinalPlanExt;
     lateralPlanExt @109 :Custom.LateralPlanExt;
-    customReserved3 @110 :Custom.CustomReserved3;
+    controlsStateExt @110 :Custom.ControlsStateExt;
     customReserved4 @111 :Custom.CustomReserved4;
     customReserved5 @112 :Custom.CustomReserved5;
     customReserved6 @113 :Custom.CustomReserved6;

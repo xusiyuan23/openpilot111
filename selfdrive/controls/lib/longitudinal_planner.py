@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
 import math
 import numpy as np
-from common.numpy_fast import clip, interp
-from common.params import Params
+from openpilot.common.numpy_fast import clip, interp
+from openpilot.common.params import Params
 from cereal import log
 
 import cereal.messaging as messaging
-from common.conversions import Conversions as CV
-from common.filter_simple import FirstOrderFilter
-from common.realtime import DT_MDL
-from selfdrive.hybrid_modeld.constants import T_IDXS
-from selfdrive.controls.lib.longcontrol import LongCtrlState
-from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc, MIN_ACCEL, MAX_ACCEL
-from selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
-from selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N, get_speed_error
-from system.swaglog import cloudlog
-from selfdrive.controls.lib.vision_turn_controller import VisionTurnController
-from selfdrive.controls.lib.accel_controller import AccelController
-from selfdrive.controls.lib.dynamic_endtoend_controller import DynamicEndtoEndController
+from openpilot.common.conversions import Conversions as CV
+from openpilot.common.filter_simple import FirstOrderFilter
+from openpilot.common.realtime import DT_MDL
+from openpilot.selfdrive.hybrid_modeld.constants import T_IDXS
+from openpilot.selfdrive.car.interfaces import ACCEL_MIN, ACCEL_MAX
+from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
+from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc
+from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
+from openpilot.selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N, get_speed_error
+from openpilot.system.swaglog import cloudlog
+
+from openpilot.selfdrive.controls.lib.vision_turn_controller import VisionTurnController
+from openpilot.selfdrive.controls.lib.accel_controller import AccelController
+from openpilot.selfdrive.controls.lib.dynamic_endtoend_controller import DynamicEndtoEndController
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MIN = -1.2
@@ -75,15 +77,11 @@ class LongitudinalPlanner:
     self.dp_long_use_df_tune = False
 
   def read_param(self):
-    try:
-      self.personality = int(self.params.get('LongitudinalPersonality'))
-      self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
-    except (ValueError, TypeError):
-      self.personality = log.LongitudinalPersonality.standard
-      self.dp_long_use_df_tune = False
+    self.personality = int(self.params.get('LongitudinalPersonality'))
+    self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
 
   @staticmethod
-  def parse_model(model_msg, model_error):
+  def parse_model(model_msg, model_error, v_ego, taco=False):
     if (len(model_msg.position.x) == 33 and
        len(model_msg.velocity.x) == 33 and
        len(model_msg.acceleration.x) == 33):
@@ -96,26 +94,32 @@ class LongitudinalPlanner:
       v = np.zeros(len(T_IDXS_MPC))
       a = np.zeros(len(T_IDXS_MPC))
       j = np.zeros(len(T_IDXS_MPC))
+
+    # rick - taco tune
+    if taco:
+      max_lat_accel = interp(v_ego, [5, 10, 20], [1.5, 2.0, 3.0])
+      curvatures = np.interp(T_IDXS_MPC, T_IDXS, model_msg.orientationRate.z) / np.clip(v, 0.3, 100.0)
+      max_v = np.sqrt(max_lat_accel / (np.abs(curvatures) + 1e-3)) - 2.0
+      v = np.minimum(max_v, v)
     return x, v, a, j
 
   def update(self, sm):
     if self.param_read_counter % 50 == 0:
       self.read_param()
 
-      if self.param_read_counter % 300 == 0:
-        self.accel_controller.set_profile(self.params.get("dp_long_accel_profile", encoding='utf-8'))
-        self.vision_turn_controller.set_enabled(self.params.get_bool("dp_mapd_vision_turn_control"))
-        self.dynamic_endtoend_controller.set_enabled(self.params.get_bool("dp_long_de2e"))
+    if self.param_read_counter % 100 == 0:
+      self.accel_controller.set_profile(self.params.get("dp_long_accel_profile", encoding='utf-8'))
+      self.vision_turn_controller.set_enabled(self.params.get_bool("dp_mapd_vision_turn_control"))
+      self.dynamic_endtoend_controller.set_enabled(self.params.get_bool("dp_long_de2e"))
 
     self.param_read_counter += 1
     if self.dynamic_endtoend_controller.is_enabled():
-      self.mpc.mode = self.dynamic_endtoend_controller.get_mpc_mode(self.mpc.mode, self.CP.radarUnavailable, sm['carState'], sm['radarState'].leadOne, sm['modelV2'])
+      self.mpc.mode = self.dynamic_endtoend_controller.get_mpc_mode(self.CP.radarUnavailable, sm['carState'], sm['radarState'].leadOne, sm['modelV2'], sm['controlsState'])
     else:
       self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
 
     v_ego = sm['carState'].vEgo
-    v_cruise_kph = sm['controlsState'].vCruise
-    v_cruise_kph = min(v_cruise_kph, V_CRUISE_MAX)
+    v_cruise_kph = min(sm['controlsState'].vCruise, V_CRUISE_MAX)
     v_cruise = v_cruise_kph * CV.KPH_TO_MS
 
     long_control_off = sm['controlsState'].longControlState == LongCtrlState.off
@@ -131,8 +135,8 @@ class LongitudinalPlanner:
       accel_limits = [A_CRUISE_MIN, get_max_accel(v_ego)]
       accel_limits_turns = limit_accel_in_turns(v_ego, sm['carState'].steeringAngleDeg, accel_limits, self.CP)
     else:
-      accel_limits = [MIN_ACCEL, MAX_ACCEL]
-      accel_limits_turns = [MIN_ACCEL, MAX_ACCEL]
+      accel_limits = [ACCEL_MIN, ACCEL_MAX]
+      accel_limits_turns = [ACCEL_MIN, ACCEL_MAX]
 
     # dp - override accel using dp_long_accel_profile
     accel_limits = self.accel_controller.get_accel_limits(v_ego, accel_limits)
@@ -159,7 +163,7 @@ class LongitudinalPlanner:
     self.mpc.set_weights(prev_accel_constraint, personality=self.personality)
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
-    x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
+    x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error, v_ego, taco=True)
     self.mpc.update(sm['radarState'], v_cruise_sol, x, v, a, j, personality=self.personality, use_df_tune=self.dp_long_use_df_tune)
 
     self.v_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.v_solution)

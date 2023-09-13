@@ -1,32 +1,33 @@
 #!/usr/bin/env python3
 import os
 import math
+import time
 from typing import SupportsFloat
 
 from cereal import car, log
-from common.numpy_fast import clip
-from common.realtime import sec_since_boot, config_realtime_process, Priority, Ratekeeper, DT_CTRL
-from common.profiler import Profiler
-from common.params import Params, put_nonblocking, put_bool_nonblocking
+from openpilot.common.numpy_fast import clip
+from openpilot.common.realtime import config_realtime_process, Priority, Ratekeeper, DT_CTRL
+from openpilot.common.profiler import Profiler
+from openpilot.common.params import Params, put_nonblocking, put_bool_nonblocking
 import cereal.messaging as messaging
 from cereal.visionipc import VisionIpcClient, VisionStreamType
-from common.conversions import Conversions as CV
+from openpilot.common.conversions import Conversions as CV
 from panda import ALTERNATIVE_EXPERIENCE
-from system.swaglog import cloudlog
-from system.version import is_release_branch, get_short_branch
-from selfdrive.boardd.boardd import can_list_to_can_capnp
-from selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
-from selfdrive.controls.lib.lateral_planner import CAMERA_OFFSET
-from selfdrive.controls.lib.drive_helpers import VCruiseHelper, get_lag_adjusted_curvature
-from selfdrive.controls.lib.latcontrol import LatControl, MIN_LATERAL_CONTROL_SPEED
-from selfdrive.controls.lib.longcontrol import LongControl
-from selfdrive.controls.lib.latcontrol_pid import LatControlPID
-from selfdrive.controls.lib.latcontrol_angle import LatControlAngle, STEER_ANGLE_SATURATION_THRESHOLD
-from selfdrive.controls.lib.latcontrol_torque import LatControlTorque
-from selfdrive.controls.lib.events import Events, ET
-from selfdrive.controls.lib.alertmanager import AlertManager, set_offroad_alert
-from selfdrive.controls.lib.vehicle_model import VehicleModel
-from system.hardware import HARDWARE, TICI
+from openpilot.system.swaglog import cloudlog
+from openpilot.system.version import is_release_branch, get_short_branch
+from openpilot.selfdrive.boardd.boardd import can_list_to_can_capnp
+from openpilot.selfdrive.car.car_helpers import get_car, get_startup_event, get_one_can
+from openpilot.selfdrive.controls.lib.lateral_planner import CAMERA_OFFSET
+from openpilot.selfdrive.controls.lib.drive_helpers import VCruiseHelper, get_lag_adjusted_curvature
+from openpilot.selfdrive.controls.lib.latcontrol import LatControl, MIN_LATERAL_CONTROL_SPEED
+from openpilot.selfdrive.controls.lib.longcontrol import LongControl
+from openpilot.selfdrive.controls.lib.latcontrol_pid import LatControlPID
+from openpilot.selfdrive.controls.lib.latcontrol_angle import LatControlAngle, STEER_ANGLE_SATURATION_THRESHOLD
+from openpilot.selfdrive.controls.lib.latcontrol_torque import LatControlTorque
+from openpilot.selfdrive.controls.lib.events import Events, ET
+from openpilot.selfdrive.controls.lib.alertmanager import AlertManager, set_offroad_alert
+from openpilot.selfdrive.controls.lib.vehicle_model import VehicleModel
+from openpilot.system.hardware import HARDWARE, TICI
 
 SOFT_DISABLE_TIME = 3  # seconds
 LDW_MIN_SPEED = 31 * CV.MPH_TO_MS
@@ -72,7 +73,7 @@ class Controls:
     self.pm = pm
     if self.pm is None:
       self.pm = messaging.PubMaster(['sendcan', 'controlsState', 'carState',
-                                     'carControl', 'carEvents', 'carParams'])
+                                     'carControl', 'carEvents', 'carParams', 'controlsStateExt'])
 
     if NO_IR_CTRL:
       self.camera_packets = ["roadCameraState"]
@@ -89,7 +90,11 @@ class Controls:
     self.params = Params()
     self.dp_no_gps_ctrl = self.params.get_bool("dp_no_gps_ctrl")
     self.dp_no_fan_ctrl = self.params.get_bool("dp_no_fan_ctrl")
-    self.dp_alka = self.params.get_bool("dp_alka")
+    self.params = Params()
+    self._dp_alka = self.params.get_bool("dp_alka")
+    self._dp_alka_active = True
+    self._dp_alka_trigger_count = 0
+    self._dp_alka_btn_block_frame = 0
     self.dp_0813 = self.params.get_bool("dp_0813")
     self.dp_device_disable_temp_check = self.params.get_bool("dp_device_disable_temp_check")
     self.sm = sm
@@ -123,7 +128,7 @@ class Controls:
     if not self.disengage_on_accelerator:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.DISABLE_DISENGAGE_ON_GAS
 
-    if self.dp_alka:
+    if self._dp_alka:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALKA
 
     # read params
@@ -251,6 +256,25 @@ class Controls:
     if self.read_only:
       return
 
+    # ALKA combination
+    if self._dp_alka and CS.brakePressed:
+      # rick - allow ALKA to be enabled/disabled when brake + main pressed twice in 0.5 secs
+      if self.CP.pcmCruise and CS.cruiseState.available != self.CS_prev.cruiseState.available:
+        self._dp_alka_trigger_count += 1
+      if self._dp_alka_trigger_count == 2:
+        self._dp_alka_active = not self._dp_alka_active
+      if self.sm.frame % 50 == 0:
+        self._dp_alka_trigger_count = 0
+
+      # rick - allow ALKA to be enabled/disabled when brake + set is pressed
+      # some HKGs doesnt have main buttons like other cars (e.g. EV6)
+      if not self.CP.pcmCruise and self._dp_alka_btn_block_frame < self.sm.frame:
+        # set/- is pressed
+        if any(be.type in (ButtonType.decelCruise, ButtonType.setCruise) for be in CS.buttonEvents):
+          self._dp_alka_active = not self._dp_alka_active
+          # block activity for a sec
+          self._dp_alka_btn_block_frame = self.sm.frame + 100
+
     # Block resume if cruise never previously enabled
     resume_pressed = any(be.type in (ButtonType.accelCruise, ButtonType.resumeCruise) for be in CS.buttonEvents)
     if not self.CP.pcmCruise and not self.v_cruise_helper.v_cruise_initialized and resume_pressed:
@@ -358,8 +382,8 @@ class Controls:
           self.events.add(EventName.cameraMalfunction)
         elif not self.sm.all_freq_ok(self.camera_packets):
           self.events.add(EventName.cameraFrameRate)
-    if not REPLAY and self.rk.lagging:
-      self.events.add(EventName.controlsdLagging)
+    # if not REPLAY and self.rk.lagging:
+    #   self.events.add(EventName.controlsdLagging)
     if len(self.sm['radarState'].radarErrors) or (not self.rk.lagging and not self.sm.all_checks(['radarState'])):
       self.events.add(EventName.radarFault)
     if not self.sm.valid['pandaStates']:
@@ -371,7 +395,7 @@ class Controls:
 
     # generic catch-all. ideally, a more specific event should be added above instead
     can_rcv_timeout = self.can_rcv_timeout_counter >= 5
-    has_disable_events = self.events.any(ET.NO_ENTRY) and (self.events.any(ET.SOFT_DISABLE) or self.events.any(ET.IMMEDIATE_DISABLE))
+    has_disable_events = self.events.contains(ET.NO_ENTRY) and (self.events.contains(ET.SOFT_DISABLE) or self.events.contains(ET.IMMEDIATE_DISABLE))
     no_system_errors = (not has_disable_events) or (len(self.events) == num_events)
     if (not self.sm.all_checks() or can_rcv_timeout) and no_system_errors:
       if not self.sm.all_alive():
@@ -510,29 +534,29 @@ class Controls:
     # ENABLED, SOFT DISABLING, PRE ENABLING, OVERRIDING
     if self.state != State.disabled:
       # user and immediate disable always have priority in a non-disabled state
-      if self.events.any(ET.USER_DISABLE):
+      if self.events.contains(ET.USER_DISABLE):
         self.state = State.disabled
         self.current_alert_types.append(ET.USER_DISABLE)
 
-      elif self.events.any(ET.IMMEDIATE_DISABLE):
+      elif self.events.contains(ET.IMMEDIATE_DISABLE):
         self.state = State.disabled
         self.current_alert_types.append(ET.IMMEDIATE_DISABLE)
 
       else:
         # ENABLED
         if self.state == State.enabled:
-          if self.events.any(ET.SOFT_DISABLE):
+          if self.events.contains(ET.SOFT_DISABLE):
             self.state = State.softDisabling
             self.soft_disable_timer = int(SOFT_DISABLE_TIME / DT_CTRL)
             self.current_alert_types.append(ET.SOFT_DISABLE)
 
-          elif self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL):
+          elif self.events.contains(ET.OVERRIDE_LATERAL) or self.events.contains(ET.OVERRIDE_LONGITUDINAL):
             self.state = State.overriding
             self.current_alert_types += [ET.OVERRIDE_LATERAL, ET.OVERRIDE_LONGITUDINAL]
 
         # SOFT DISABLING
         elif self.state == State.softDisabling:
-          if not self.events.any(ET.SOFT_DISABLE):
+          if not self.events.contains(ET.SOFT_DISABLE):
             # no more soft disabling condition, so go back to ENABLED
             self.state = State.enabled
 
@@ -544,32 +568,32 @@ class Controls:
 
         # PRE ENABLING
         elif self.state == State.preEnabled:
-          if not self.events.any(ET.PRE_ENABLE):
+          if not self.events.contains(ET.PRE_ENABLE):
             self.state = State.enabled
           else:
             self.current_alert_types.append(ET.PRE_ENABLE)
 
         # OVERRIDING
         elif self.state == State.overriding:
-          if self.events.any(ET.SOFT_DISABLE):
+          if self.events.contains(ET.SOFT_DISABLE):
             self.state = State.softDisabling
             self.soft_disable_timer = int(SOFT_DISABLE_TIME / DT_CTRL)
             self.current_alert_types.append(ET.SOFT_DISABLE)
-          elif not (self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL)):
+          elif not (self.events.contains(ET.OVERRIDE_LATERAL) or self.events.contains(ET.OVERRIDE_LONGITUDINAL)):
             self.state = State.enabled
           else:
             self.current_alert_types += [ET.OVERRIDE_LATERAL, ET.OVERRIDE_LONGITUDINAL]
 
     # DISABLED
     elif self.state == State.disabled:
-      if self.events.any(ET.ENABLE):
-        if self.events.any(ET.NO_ENTRY):
+      if self.events.contains(ET.ENABLE):
+        if self.events.contains(ET.NO_ENTRY):
           self.current_alert_types.append(ET.NO_ENTRY)
 
         else:
-          if self.events.any(ET.PRE_ENABLE):
+          if self.events.contains(ET.PRE_ENABLE):
             self.state = State.preEnabled
-          elif self.events.any(ET.OVERRIDE_LATERAL) or self.events.any(ET.OVERRIDE_LONGITUDINAL):
+          elif self.events.contains(ET.OVERRIDE_LATERAL) or self.events.contains(ET.OVERRIDE_LONGITUDINAL):
             self.state = State.overriding
           else:
             self.state = State.enabled
@@ -579,7 +603,7 @@ class Controls:
     # Check if openpilot is engaged and actuators are enabled
     self.enabled = self.state in ENABLED_STATES
     self.active = self.state in ACTIVE_STATES
-    if self.active:
+    if self.active or self._dp_alka_active:
       self.current_alert_types.append(ET.WARNING)
 
   def state_control(self, CS):
@@ -595,7 +619,8 @@ class Controls:
     if self.CP.lateralTuning.which() == 'torque':
       torque_params = self.sm['liveTorqueParameters']
       if self.sm.all_checks(['liveTorqueParameters']) and torque_params.useParams:
-        self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered, torque_params.frictionCoefficientFiltered)
+        self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered,
+                                           torque_params.frictionCoefficientFiltered)
 
     lat_plan = self.sm['lateralPlan']
     long_plan = self.sm['longitudinalPlan']
@@ -607,9 +632,9 @@ class Controls:
     standstill = CS.vEgo <= max(self.CP.minSteerSpeed, MIN_LATERAL_CONTROL_SPEED) or CS.standstill
     CC.latActive = self.active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and \
                    (not standstill or self.joystick_mode)
-    CC.longActive = self.enabled and not self.events.any(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
+    CC.longActive = self.enabled and not self.events.contains(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
 
-    if self.dp_alka and not standstill and CS.cruiseState.available:
+    if self._dp_alka_active and not standstill and CS.cruiseState.available:
       if self.sm['liveCalibration'].calStatus != log.LiveCalibrationData.Status.calibrated:
         pass
       elif CS.steerFaultTemporary or CS.steerFaultPermanent:
@@ -673,7 +698,7 @@ class Controls:
     recent_steer_pressed = (self.sm.frame - self.last_steering_pressed_frame)*DT_CTRL < 2.0
 
     # Send a "steering required alert" if saturation count has reached the limit
-    if lac_log.active and not recent_steer_pressed:
+    if lac_log.active and not recent_steer_pressed and not self.CP.notCar:
       if self.CP.lateralTuning.which() == 'torque' and not self.joystick_mode:
         undershooting = abs(lac_log.desiredLateralAccel) / abs(1e-3 + lac_log.actualLateralAccel) > 1.2
         turning = abs(lac_log.desiredLateralAccel) > 1.0
@@ -775,7 +800,7 @@ class Controls:
 
     if not self.read_only and self.initialized:
       # send car controls over can
-      now_nanos = self.can_log_mono_time if REPLAY else int(sec_since_boot() * 1e9)
+      now_nanos = self.can_log_mono_time if REPLAY else int(time.monotonic() * 1e9)
       self.last_actuators, can_sends = self.CI.apply(CC, now_nanos)
       self.pm.send('sendcan', can_list_to_can_capnp(can_sends, msgtype='sendcan', valid=CS.canValid))
       CC.actuatorsOutput = self.last_actuators
@@ -814,7 +839,7 @@ class Controls:
     controlsState.desiredCurvature = self.desired_curvature
     controlsState.desiredCurvatureRate = self.desired_curvature_rate
     controlsState.state = self.state
-    controlsState.engageable = not self.events.any(ET.NO_ENTRY)
+    controlsState.engageable = not self.events.contains(ET.NO_ENTRY)
     controlsState.longControlState = self.LoC.long_control_state
     controlsState.vPid = float(self.LoC.v_pid)
     controlsState.vCruise = float(self.v_cruise_helper.v_cruise_kph)
@@ -841,6 +866,13 @@ class Controls:
       controlsState.lateralControlState.indiState = lac_log
 
     self.pm.send('controlsState', dat)
+
+    # controlsState
+    dat = messaging.new_message('controlsStateExt')
+    dat.valid = CS.canValid
+    controlsStateExt = dat.controlsStateExt
+    controlsStateExt.alkaActive = CC.latActive and self._dp_alka_active
+    self.pm.send('controlsStateExt', dat)
 
     # carState
     car_events = self.events.to_msg()
@@ -873,7 +905,7 @@ class Controls:
     self.CC = CC
 
   def step(self):
-    start_time = sec_since_boot()
+    start_time = time.monotonic()
     self.prof.checkpoint("Ratekeeper", ignore=True)
 
     self.is_metric = self.params.get_bool("IsMetric")
