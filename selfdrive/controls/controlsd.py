@@ -37,7 +37,7 @@ REPLAY = "REPLAY" in os.environ
 SIMULATION = "SIMULATION" in os.environ
 TESTING_CLOSET = "TESTING_CLOSET" in os.environ
 NOSENSOR = "NOSENSOR" in os.environ
-IGNORE_PROCESSES = {"loggerd", "encoderd", "statsd", "mapd"}
+IGNORE_PROCESSES = {"loggerd", "encoderd", "statsd", "mapd", "gpxd"}
 
 NO_IR_CTRL = Params().get_bool("dp_device_no_ir_ctrl")
 if NO_IR_CTRL:
@@ -871,7 +871,8 @@ class Controls:
     dat = messaging.new_message('controlsStateExt')
     dat.valid = CS.canValid
     controlsStateExt = dat.controlsStateExt
-    controlsStateExt.alkaActive = CC.latActive and (self._dp_alka and self._dp_alka_active)
+    controlsStateExt.alkaActive = self._dp_alka_active
+    controlsStateExt.alkaEnabled = self._dp_alka
     self.pm.send('controlsStateExt', dat)
 
     # carState
