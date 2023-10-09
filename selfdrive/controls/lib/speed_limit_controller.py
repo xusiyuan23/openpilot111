@@ -1,14 +1,14 @@
 import numpy as np
 import time
-from common.numpy_fast import interp
+from openpilot.common.numpy_fast import interp
 from enum import IntEnum
 from cereal import custom, car
-from common.params import Params
-from common.realtime import sec_since_boot
-from selfdrive.controls.lib.drive_helpers import LIMIT_ADAPT_ACC, LIMIT_MIN_ACC, LIMIT_MAX_ACC, LIMIT_SPEED_OFFSET_TH, \
+from openpilot.common.params import Params
+#from openpilot.common.realtime import time.monotonic()
+from openpilot.selfdrive.controls.lib.drive_helpers import LIMIT_ADAPT_ACC, LIMIT_MIN_ACC, LIMIT_MAX_ACC, LIMIT_SPEED_OFFSET_TH, \
   LIMIT_MAX_MAP_DATA_AGE, CONTROL_N
 # from selfdrive.controls.lib.events import Events
-from selfdrive.modeld.constants import T_IDXS
+from openpilot.selfdrive.modeld.constants import T_IDXS
 import cereal.messaging as messaging
 
 
@@ -281,7 +281,7 @@ class SpeedLimitController():
     # cause a temp inactive transition if the controller is updated before controlsd sets actual cruise
     # speed.
     if not self._op_enabled_prev and self._op_enabled:
-      self._last_op_enabled_time = sec_since_boot()
+      self._last_op_enabled_time = time.monotonic()
 
     # Update change tracking variables
     self._speed_limit_changed = self._speed_limit != self._speed_limit_prev
@@ -303,7 +303,7 @@ class SpeedLimitController():
     # Ignore if a minimum ammount of time has not passed since activation. This is to prevent temp inactivations
     # due to controlsd logic changing cruise setpoint when going active.
     if self._v_cruise_setpoint_changed and \
-       sec_since_boot() > (self._last_op_enabled_time + _TEMP_INACTIVE_GUARD_PERIOD):
+       time.monotonic() > (self._last_op_enabled_time + _TEMP_INACTIVE_GUARD_PERIOD):
       self.state = SpeedLimitControlState.tempInactive
       return
 

@@ -58,6 +58,10 @@ int comms_control_handler(ControlPacket_t *req, uint8_t *resp) {
     case 0xa2:
       current_board->set_ignition((req->param1 == 1U));
       break;
+    // **** 0xa0: Set panda power per channel by bitmask.
+    case 0xa3:
+      current_board->set_panda_individual_power(req->param1, (req->param2 > 0U));
+      break;
     // **** 0xa8: get microsecond timer
     case 0xa8:
       time = microsecond_timer_get();
@@ -80,6 +84,7 @@ int comms_control_handler(ControlPacket_t *req, uint8_t *resp) {
     case 0xc2:
       COMPILE_TIME_ASSERT(sizeof(can_health_t) <= USBPACKET_MAX_SIZE);
       if (req->param1 < 3U) {
+        update_can_health_pkt(req->param1, 0U);
         can_health[req->param1].can_speed = (bus_config[req->param1].can_speed / 10U);
         can_health[req->param1].can_data_speed = (bus_config[req->param1].can_data_speed / 10U);
         can_health[req->param1].canfd_enabled = bus_config[req->param1].canfd_enabled;

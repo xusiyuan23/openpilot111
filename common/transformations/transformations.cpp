@@ -7,15 +7,20 @@
             "common/transformations/coordinates.cc",
             "common/transformations/coordinates.hpp",
             "common/transformations/orientation.cc",
-            "common/transformations/orientation.hpp"
+            "common/transformations/orientation.hpp",
+            "openpilot/common/transformations/coordinates.cc",
+            "openpilot/common/transformations/coordinates.hpp",
+            "openpilot/common/transformations/orientation.cc",
+            "openpilot/common/transformations/orientation.hpp"
         ],
         "include_dirs": [
-            "common/transformations"
+            "common/transformations",
+            "openpilot/common/transformations"
         ],
         "language": "c++",
         "name": "common.transformations.transformations",
         "sources": [
-            "/data/openpilot/common/transformations/transformations.pyx"
+            "/data/dp-private/common/transformations/transformations.pyx"
         ]
     },
     "module_name": "common.transformations.transformations"
@@ -2528,6 +2533,8 @@ static CYTHON_INLINE char *__pyx_f_5numpy_7ndarray_4data_data(PyArrayObject *__p
 
 /* Module declarations from "libcpp" */
 
+/* Module declarations from "openpilot.common.transformations.transformations" */
+
 /* Module declarations from "cython" */
 
 /* Module declarations from "libc.string" */
@@ -2707,6 +2714,8 @@ typedef struct {
   #endif
   #ifdef __Pyx_Coroutine_USED
   PyTypeObject *__pyx_CoroutineType;
+  #endif
+  #if CYTHON_USE_MODULE_STATE
   #endif
   #if CYTHON_USE_MODULE_STATE
   #endif
@@ -3256,6 +3265,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #endif
 #ifdef __Pyx_Coroutine_USED
 #define __pyx_CoroutineType __pyx_mstate_global->__pyx_CoroutineType
+#endif
+#if CYTHON_USE_MODULE_STATE
 #endif
 #if CYTHON_USE_MODULE_STATE
 #endif
@@ -10123,7 +10134,7 @@ if (!__Pyx_RefNanny) {
   /* "common/transformations/transformations.pyx":1
  * # distutils: language = c++             # <<<<<<<<<<<<<<
  * # cython: language_level = 3
- * from common.transformations.transformations cimport Matrix3, Vector3, Quaternion
+ * from openpilot.common.transformations.transformations cimport Matrix3, Vector3, Quaternion
  */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);

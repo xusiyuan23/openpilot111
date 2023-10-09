@@ -1,10 +1,10 @@
 import numpy as np
 from cereal import log
-from common.filter_simple import FirstOrderFilter
-from common.numpy_fast import interp
-from common.realtime import DT_MDL
-from selfdrive.hardware import TICI
-from system.swaglog import cloudlog
+from openpilot.common.filter_simple import FirstOrderFilter
+from openpilot.common.numpy_fast import interp
+from openpilot.common.realtime import DT_MDL
+from openpilot.system.hardware import TICI
+from openpilot.system.swaglog import cloudlog
 
 
 TRAJECTORY_SIZE = 33

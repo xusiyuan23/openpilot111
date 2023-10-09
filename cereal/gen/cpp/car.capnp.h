@@ -67,7 +67,7 @@ enum class EventName_baa8c5d505f727de: uint16_t {
   CALIBRATION_PROGRESS_D_E_P_R_E_C_A_T_E_D,
   LOW_BATTERY,
   INVALID_GIRAFFE_HONDA_D_E_P_R_E_C_A_T_E_D,
-  VEHICLE_MODEL_INVALID,
+  PARAMSD_TEMPORARY_ERROR,
   ACC_FAULTED,
   SENSOR_DATA_INVALID,
   COMM_ISSUE,
@@ -120,7 +120,7 @@ enum class EventName_baa8c5d505f727de: uint16_t {
   ROAD_CAMERA_ERROR,
   DRIVER_CAMERA_ERROR,
   WIDE_ROAD_CAMERA_ERROR,
-  LOCALIZER_MALFUNCTION,
+  LOCATIOND_TEMPORARY_ERROR,
   STARTUP_NO_FW,
   HIGH_CPU_USAGE,
   CRUISE_MISMATCH,
@@ -135,6 +135,8 @@ enum class EventName_baa8c5d505f727de: uint16_t {
   STEER_TIME_LIMIT,
   VEHICLE_SENSORS_INVALID,
   CALIBRATION_RECALIBRATING,
+  LOCATIOND_PERMANENT_ERROR,
+  PARAMSD_PERMANENT_ERROR,
 };
 CAPNP_DECLARE_ENUM(EventName, baa8c5d505f727de);
 CAPNP_DECLARE_SCHEMA(9da4fa09e052903c);
@@ -675,8 +677,8 @@ struct CarParams::LateralTuning {
   class Pipeline;
   enum Which: uint16_t {
     PID,
-    INDI,
-    LQR,
+    INDI_D_E_P_R_E_C_A_T_E_D,
+    LQR_D_E_P_R_E_C_A_T_E_D,
     TORQUE,
   };
 
@@ -3704,13 +3706,13 @@ public:
   inline bool hasPid() const;
   inline  ::cereal::CarParams::LateralPIDTuning::Reader getPid() const;
 
-  inline bool isIndi() const;
-  inline bool hasIndi() const;
-  inline  ::cereal::CarParams::LateralINDITuning::Reader getIndi() const;
+  inline bool isIndiDEPRECATED() const;
+  inline bool hasIndiDEPRECATED() const;
+  inline  ::cereal::CarParams::LateralINDITuning::Reader getIndiDEPRECATED() const;
 
-  inline bool isLqr() const;
-  inline bool hasLqr() const;
-  inline  ::cereal::CarParams::LateralLQRTuning::Reader getLqr() const;
+  inline bool isLqrDEPRECATED() const;
+  inline bool hasLqrDEPRECATED() const;
+  inline  ::cereal::CarParams::LateralLQRTuning::Reader getLqrDEPRECATED() const;
 
   inline bool isTorque() const;
   inline bool hasTorque() const;
@@ -3753,21 +3755,21 @@ public:
   inline void adoptPid(::capnp::Orphan< ::cereal::CarParams::LateralPIDTuning>&& value);
   inline ::capnp::Orphan< ::cereal::CarParams::LateralPIDTuning> disownPid();
 
-  inline bool isIndi();
-  inline bool hasIndi();
-  inline  ::cereal::CarParams::LateralINDITuning::Builder getIndi();
-  inline void setIndi( ::cereal::CarParams::LateralINDITuning::Reader value);
-  inline  ::cereal::CarParams::LateralINDITuning::Builder initIndi();
-  inline void adoptIndi(::capnp::Orphan< ::cereal::CarParams::LateralINDITuning>&& value);
-  inline ::capnp::Orphan< ::cereal::CarParams::LateralINDITuning> disownIndi();
+  inline bool isIndiDEPRECATED();
+  inline bool hasIndiDEPRECATED();
+  inline  ::cereal::CarParams::LateralINDITuning::Builder getIndiDEPRECATED();
+  inline void setIndiDEPRECATED( ::cereal::CarParams::LateralINDITuning::Reader value);
+  inline  ::cereal::CarParams::LateralINDITuning::Builder initIndiDEPRECATED();
+  inline void adoptIndiDEPRECATED(::capnp::Orphan< ::cereal::CarParams::LateralINDITuning>&& value);
+  inline ::capnp::Orphan< ::cereal::CarParams::LateralINDITuning> disownIndiDEPRECATED();
 
-  inline bool isLqr();
-  inline bool hasLqr();
-  inline  ::cereal::CarParams::LateralLQRTuning::Builder getLqr();
-  inline void setLqr( ::cereal::CarParams::LateralLQRTuning::Reader value);
-  inline  ::cereal::CarParams::LateralLQRTuning::Builder initLqr();
-  inline void adoptLqr(::capnp::Orphan< ::cereal::CarParams::LateralLQRTuning>&& value);
-  inline ::capnp::Orphan< ::cereal::CarParams::LateralLQRTuning> disownLqr();
+  inline bool isLqrDEPRECATED();
+  inline bool hasLqrDEPRECATED();
+  inline  ::cereal::CarParams::LateralLQRTuning::Builder getLqrDEPRECATED();
+  inline void setLqrDEPRECATED( ::cereal::CarParams::LateralLQRTuning::Reader value);
+  inline  ::cereal::CarParams::LateralLQRTuning::Builder initLqrDEPRECATED();
+  inline void adoptLqrDEPRECATED(::capnp::Orphan< ::cereal::CarParams::LateralLQRTuning>&& value);
+  inline ::capnp::Orphan< ::cereal::CarParams::LateralLQRTuning> disownLqrDEPRECATED();
 
   inline bool isTorque();
   inline bool hasTorque();
@@ -8668,109 +8670,109 @@ inline ::capnp::Orphan< ::cereal::CarParams::LateralPIDTuning> CarParams::Latera
       ::capnp::bounded<9>() * ::capnp::POINTERS));
 }
 
-inline bool CarParams::LateralTuning::Reader::isIndi() const {
-  return which() == CarParams::LateralTuning::INDI;
+inline bool CarParams::LateralTuning::Reader::isIndiDEPRECATED() const {
+  return which() == CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool CarParams::LateralTuning::Builder::isIndi() {
-  return which() == CarParams::LateralTuning::INDI;
+inline bool CarParams::LateralTuning::Builder::isIndiDEPRECATED() {
+  return which() == CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool CarParams::LateralTuning::Reader::hasIndi() const {
-  if (which() != CarParams::LateralTuning::INDI) return false;
+inline bool CarParams::LateralTuning::Reader::hasIndiDEPRECATED() const {
+  if (which() != CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS).isNull();
 }
-inline bool CarParams::LateralTuning::Builder::hasIndi() {
-  if (which() != CarParams::LateralTuning::INDI) return false;
+inline bool CarParams::LateralTuning::Builder::hasIndiDEPRECATED() {
+  if (which() != CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::CarParams::LateralINDITuning::Reader CarParams::LateralTuning::Reader::getIndi() const {
-  KJ_IREQUIRE((which() == CarParams::LateralTuning::INDI),
+inline  ::cereal::CarParams::LateralINDITuning::Reader CarParams::LateralTuning::Reader::getIndiDEPRECATED() const {
+  KJ_IREQUIRE((which() == CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralINDITuning>::get(_reader.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS));
 }
-inline  ::cereal::CarParams::LateralINDITuning::Builder CarParams::LateralTuning::Builder::getIndi() {
-  KJ_IREQUIRE((which() == CarParams::LateralTuning::INDI),
+inline  ::cereal::CarParams::LateralINDITuning::Builder CarParams::LateralTuning::Builder::getIndiDEPRECATED() {
+  KJ_IREQUIRE((which() == CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralINDITuning>::get(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS));
 }
-inline void CarParams::LateralTuning::Builder::setIndi( ::cereal::CarParams::LateralINDITuning::Reader value) {
+inline void CarParams::LateralTuning::Builder::setIndiDEPRECATED( ::cereal::CarParams::LateralINDITuning::Reader value) {
   _builder.setDataField<CarParams::LateralTuning::Which>(
-      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::INDI);
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralINDITuning>::set(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::CarParams::LateralINDITuning::Builder CarParams::LateralTuning::Builder::initIndi() {
+inline  ::cereal::CarParams::LateralINDITuning::Builder CarParams::LateralTuning::Builder::initIndiDEPRECATED() {
   _builder.setDataField<CarParams::LateralTuning::Which>(
-      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::INDI);
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D);
   return ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralINDITuning>::init(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS));
 }
-inline void CarParams::LateralTuning::Builder::adoptIndi(
+inline void CarParams::LateralTuning::Builder::adoptIndiDEPRECATED(
     ::capnp::Orphan< ::cereal::CarParams::LateralINDITuning>&& value) {
   _builder.setDataField<CarParams::LateralTuning::Which>(
-      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::INDI);
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralINDITuning>::adopt(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::CarParams::LateralINDITuning> CarParams::LateralTuning::Builder::disownIndi() {
-  KJ_IREQUIRE((which() == CarParams::LateralTuning::INDI),
+inline ::capnp::Orphan< ::cereal::CarParams::LateralINDITuning> CarParams::LateralTuning::Builder::disownIndiDEPRECATED() {
+  KJ_IREQUIRE((which() == CarParams::LateralTuning::INDI_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralINDITuning>::disown(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS));
 }
 
-inline bool CarParams::LateralTuning::Reader::isLqr() const {
-  return which() == CarParams::LateralTuning::LQR;
+inline bool CarParams::LateralTuning::Reader::isLqrDEPRECATED() const {
+  return which() == CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool CarParams::LateralTuning::Builder::isLqr() {
-  return which() == CarParams::LateralTuning::LQR;
+inline bool CarParams::LateralTuning::Builder::isLqrDEPRECATED() {
+  return which() == CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D;
 }
-inline bool CarParams::LateralTuning::Reader::hasLqr() const {
-  if (which() != CarParams::LateralTuning::LQR) return false;
+inline bool CarParams::LateralTuning::Reader::hasLqrDEPRECATED() const {
+  if (which() != CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D) return false;
   return !_reader.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS).isNull();
 }
-inline bool CarParams::LateralTuning::Builder::hasLqr() {
-  if (which() != CarParams::LateralTuning::LQR) return false;
+inline bool CarParams::LateralTuning::Builder::hasLqrDEPRECATED() {
+  if (which() != CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D) return false;
   return !_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS).isNull();
 }
-inline  ::cereal::CarParams::LateralLQRTuning::Reader CarParams::LateralTuning::Reader::getLqr() const {
-  KJ_IREQUIRE((which() == CarParams::LateralTuning::LQR),
+inline  ::cereal::CarParams::LateralLQRTuning::Reader CarParams::LateralTuning::Reader::getLqrDEPRECATED() const {
+  KJ_IREQUIRE((which() == CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralLQRTuning>::get(_reader.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS));
 }
-inline  ::cereal::CarParams::LateralLQRTuning::Builder CarParams::LateralTuning::Builder::getLqr() {
-  KJ_IREQUIRE((which() == CarParams::LateralTuning::LQR),
+inline  ::cereal::CarParams::LateralLQRTuning::Builder CarParams::LateralTuning::Builder::getLqrDEPRECATED() {
+  KJ_IREQUIRE((which() == CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralLQRTuning>::get(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS));
 }
-inline void CarParams::LateralTuning::Builder::setLqr( ::cereal::CarParams::LateralLQRTuning::Reader value) {
+inline void CarParams::LateralTuning::Builder::setLqrDEPRECATED( ::cereal::CarParams::LateralLQRTuning::Reader value) {
   _builder.setDataField<CarParams::LateralTuning::Which>(
-      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::LQR);
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralLQRTuning>::set(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS), value);
 }
-inline  ::cereal::CarParams::LateralLQRTuning::Builder CarParams::LateralTuning::Builder::initLqr() {
+inline  ::cereal::CarParams::LateralLQRTuning::Builder CarParams::LateralTuning::Builder::initLqrDEPRECATED() {
   _builder.setDataField<CarParams::LateralTuning::Which>(
-      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::LQR);
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D);
   return ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralLQRTuning>::init(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS));
 }
-inline void CarParams::LateralTuning::Builder::adoptLqr(
+inline void CarParams::LateralTuning::Builder::adoptLqrDEPRECATED(
     ::capnp::Orphan< ::cereal::CarParams::LateralLQRTuning>&& value) {
   _builder.setDataField<CarParams::LateralTuning::Which>(
-      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::LQR);
+      ::capnp::bounded<7>() * ::capnp::ELEMENTS, CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D);
   ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralLQRTuning>::adopt(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS), kj::mv(value));
 }
-inline ::capnp::Orphan< ::cereal::CarParams::LateralLQRTuning> CarParams::LateralTuning::Builder::disownLqr() {
-  KJ_IREQUIRE((which() == CarParams::LateralTuning::LQR),
+inline ::capnp::Orphan< ::cereal::CarParams::LateralLQRTuning> CarParams::LateralTuning::Builder::disownLqrDEPRECATED() {
+  KJ_IREQUIRE((which() == CarParams::LateralTuning::LQR_D_E_P_R_E_C_A_T_E_D),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::CarParams::LateralLQRTuning>::disown(_builder.getPointerField(
       ::capnp::bounded<9>() * ::capnp::POINTERS));

@@ -17,6 +17,25 @@
     </message>
 </context>
 <context>
+    <name>AccelButton</name>
+    <message>
+        <source>OP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ECO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SPT</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AdvancedNetworking</name>
     <message>
         <source>Back</source>
@@ -90,28 +109,12 @@
         <translation>LIMITE</translation>
     </message>
     <message>
-        <source> km</source>
-        <translation type="obsolete"> km</translation>
-    </message>
-    <message>
-        <source> m</source>
-        <translation type="obsolete"> m</translation>
-    </message>
-    <message>
-        <source> mi</source>
-        <translation type="obsolete"> mi</translation>
-    </message>
-    <message>
-        <source> ft</source>
-        <translation type="obsolete"> ft</translation>
-    </message>
-    <message>
         <source>km</source>
         <translation type="unfinished">km</translation>
     </message>
     <message>
         <source>m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">m</translation>
     </message>
     <message>
         <source>mi</source>
@@ -119,7 +122,7 @@
     </message>
     <message>
         <source>ft</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ft</translation>
     </message>
 </context>
 <context>
@@ -345,7 +348,19 @@ Reboot required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>*α* Enable Otisserv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*α* Enable NOO Voice Guidance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -374,6 +389,16 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enable Enhanced longitudinal Tune</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, TSS2 car will use special tune which will result in smoother and natural breaking. Works best with accel dynamic follow + accel profile. 
+ONLY FOR TSS2.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Enable Door Auto Locking</source>
         <translation type="unfinished"></translation>
     </message>
@@ -392,6 +417,16 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enable Zorro-Steering-Sensor (ZSS) Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use sensor outputs from ZSS for more accurate steering control.
+DO NOT ENABLE unless you have ZSS installed.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Enable Stock Longitudinal Control</source>
         <translation type="unfinished"></translation>
     </message>
@@ -401,15 +436,19 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>*α* Enable Otisserv</source>
+        <source>On-Screen Personality Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>*α* Enable NOO Voice Guidance</source>
+        <source>When enabled, openpilot will display an on-screen personality button.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
+        <source>On-Screen Accel Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will display an on-screen accel profile button.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -546,8 +585,8 @@ Reboot Required.</source>
         <translation>Éteindre</translation>
     </message>
     <message>
-        <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.</source>
-        <translation>openpilot nécessite que l&apos;appareil soit monté à 4° à gauche ou à droite et à 5° vers le haut ou 8° vers le bas. openpilot se calibre en continu, la réinitialisation est rarement nécessaire.</translation>
+        <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 9° down. openpilot is continuously calibrating, resetting is rarely required.</source>
+        <translation>openpilot nécessite que l&apos;appareil soit monté à 4° à gauche ou à droite et à 5° vers le haut ou 9° vers le bas. openpilot se calibre en continu, la réinitialisation est rarement nécessaire.</translation>
     </message>
     <message>
         <source> Your device is pointed %1° %2 and %3° %4.</source>
@@ -673,33 +712,6 @@ Reboot Required.</source>
     <message>
         <source>hr</source>
         <translation>h</translation>
-    </message>
-    <message>
-        <source>km</source>
-        <translation>km</translation>
-    </message>
-    <message>
-        <source>mi</source>
-        <translation>mi</translation>
-    </message>
-</context>
-<context>
-    <name>MapInstructions</name>
-    <message>
-        <source> km</source>
-        <translation> km</translation>
-    </message>
-    <message>
-        <source> m</source>
-        <translation> m</translation>
-    </message>
-    <message>
-        <source> mi</source>
-        <translation> mi</translation>
-    </message>
-    <message>
-        <source> ft</source>
-        <translation> ft</translation>
     </message>
 </context>
 <context>
@@ -861,10 +873,25 @@ Reboot Required.</source>
     </message>
 </context>
 <context>
+    <name>PersonalityButton</name>
+    <message>
+        <source>Aggressive</source>
+        <translation type="unfinished">Aggressif</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation type="unfinished">Standard</translation>
+    </message>
+    <message>
+        <source>Relaxed</source>
+        <translation type="unfinished">Détendu</translation>
+    </message>
+</context>
+<context>
     <name>PrimeAdWidget</name>
     <message>
         <source>Upgrade Now</source>
-        <translation>Mettre à niveau maintenant</translation>
+        <translation>Mettre à niveau</translation>
     </message>
     <message>
         <source>Become a comma prime member at connect.comma.ai</source>
@@ -940,6 +967,22 @@ Reboot Required.</source>
             <numerusform>il y a %n jour</numerusform>
             <numerusform>il y a %n jours</numerusform>
         </translation>
+    </message>
+    <message>
+        <source>km</source>
+        <translation>km</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
+    <message>
+        <source>mi</source>
+        <translation>mi</translation>
+    </message>
+    <message>
+        <source>ft</source>
+        <translation>ft</translation>
     </message>
 </context>
 <context>
@@ -1092,6 +1135,10 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <source>Start over</source>
         <translation>Recommencer</translation>
     </message>
+    <message>
+        <source>Select a language</source>
+        <translation>Choisir une langue</translation>
+    </message>
 </context>
 <context>
     <name>SetupWidget</name>
@@ -1195,7 +1242,7 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
     <name>SoftwarePanel</name>
     <message>
         <source>Updates are only downloaded while the car is off.</source>
-        <translation>Les mises à jour sont téléchargées uniquement lorsque la voiture est éteinte.</translation>
+        <translation>Les MàJ sont téléchargées uniquement si la voiture est éteinte.</translation>
     </message>
     <message>
         <source>Current Version</source>
@@ -1509,7 +1556,7 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
     <name>WiFiPromptWidget</name>
     <message>
         <source>Setup Wi-Fi</source>
-        <translation>Configurer le Wi-Fi</translation>
+        <translation>Configurer Wi-Fi</translation>
     </message>
     <message>
         <source>Connect to Wi-Fi to upload driving data and help improve openpilot</source>

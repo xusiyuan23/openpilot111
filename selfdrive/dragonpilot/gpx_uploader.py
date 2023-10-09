@@ -23,11 +23,12 @@
 
 import os
 import time
-from common.params import Params
-from system.version import get_version
+from openpilot.common.params import Params
+from openpilot.system.version import get_version, get_branch
+from openpilot.common.realtime import set_core_affinity, set_realtime_priority
 
 # for uploader
-from system.loggerd.xattr_cache import getxattr, setxattr
+from openpilot.system.loggerd.xattr_cache import getxattr, setxattr
 import glob
 import requests
 import json
@@ -57,6 +58,8 @@ class GpxUploader():
   def __init__(self):
     self._delete_after_upload = True #not Params().get_bool('dp_gpxd')
     self._car_model = "Unknown Vehicle"
+    self._version = get_version()
+    self._branch = get_branch()
 
   def _identify_vehicle(self):
     # read model from LiveParameters
@@ -64,7 +67,6 @@ class GpxUploader():
     if params is not None:
       params = json.loads(params)
       self._car_model = params.get('carFingerprint', self._car_model)
-    self._dp_version = get_version()
     _debug("GpxUploader init - _delete_after_upload = %s" % self._delete_after_upload)
     _debug("GpxUploader init - _car_model = %s" % self._car_model)
 
@@ -99,7 +101,7 @@ class GpxUploader():
   def _do_upload(self, filename):
     fn = os.path.basename(filename)
     data = {
-      'description': "Routes from dragonpilot %s (%s)." % (self._dp_version, self._car_model),
+      'description': f"Routes from dragonpilot {self._branch} / {self._version} ({self._car_model}).",
       'visibility': 'identifiable'
     }
     files = {
@@ -113,7 +115,7 @@ class GpxUploader():
       return False
 
   def run(self):
-    # give it few seconds before we start runing the process
+    # give it few seconds before we start running the process
     # only identify vehicle once
     time.sleep(10)
     self._identify_vehicle()
@@ -141,6 +143,8 @@ class GpxUploader():
       time.sleep(60)
 
 def gpx_uploader_thread():
+  set_core_affinity([0, 1, 2, 3])
+  set_realtime_priority(1)
   gpx_uploader = GpxUploader()
   gpx_uploader.run()
 

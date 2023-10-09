@@ -17,6 +17,25 @@
     </message>
 </context>
 <context>
+    <name>AccelButton</name>
+    <message>
+        <source>OP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ECO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SPT</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AdvancedNetworking</name>
     <message>
         <source>Back</source>
@@ -89,6 +108,29 @@
         <source>LIMIT</source>
         <translation>จำกัด</translation>
     </message>
+    <message>
+        <source>km</source>
+        <translation type="unfinished">กม.</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation type="unfinished">ม.</translation>
+    </message>
+    <message>
+        <source>mi</source>
+        <translation type="unfinished">ไมล์</translation>
+    </message>
+    <message>
+        <source>ft</source>
+        <translation type="unfinished">ฟุต</translation>
+    </message>
+</context>
+<context>
+    <name>CarSelectionPanel</name>
+    <message>
+        <source>[AUTO SELECT]</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfirmationDialog</name>
@@ -99,6 +141,315 @@
     <message>
         <source>Cancel</source>
         <translation>ยกเลิก</translation>
+    </message>
+</context>
+<context>
+    <name>DPCtrlPanel</name>
+    <message>
+        <source>Ctrl - Lateral</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable ALKA</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot lateral Control will be always on when ACC MAIN is ON.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Lane Priority Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use lane lines for lateral control, fallback to laneless mode automatically when lane lines probabilities are low.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Road Edge Detection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will block lane change if road edge is detected.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ctrl - Longitudinal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable TACO Tune</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use slow down for turns from taco2 branch.
+See https://github.com/commaai/openpilot/commit/7b97ddb3aacb222bfaf0b978c49cb5b756903ef7 for more information.
+This is tune for KIA EV6 and may not work on your vehicle.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Dynamic Following</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will dynamically adjust following distance based on your &quot;Driving Personality&quot; setting.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Dynamic End-to-End Longitudinal Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will dynamically change between End-to-End or ACC mode.
+Your vehicle must support openpilot longitudinal control.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Turn Speed Control - Vision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use path predictions from camera vision to estimate the appropriate speed to drive through turns ahead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable MapD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will display current road name on the screen.
+Author: https://github.com/move-fast/
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ECO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SPT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acceleration Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OP - Stock tune.
+ECO - Eco tune.
+NOR - Normal tune.
+SPT - Sport tune.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Device</source>
+        <translation type="unfinished">อุปกรณ์</translation>
+    </message>
+    <message>
+        <source>Disable Temp Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will disable device temperature check.
+**NOTED** An overheated device may result in random shutdowns or lag.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Auto Shutdown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will shutdown the device automatically.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation type="unfinished">มาตรฐาน</translation>
+    </message>
+    <message>
+        <source>On-Road</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MAIN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Display Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On-Road - When driving, the display will be off (excl. warning).
+MAIN - When ACC MAIN is on, the display will be off (excl. warning).
+OP - When OP is enabled, the display will be off (excl. warning).
+Off - the display will be off completely (incl. warning).
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audible Alert Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning - Only emits sound when there is a warning.
+Off - Does not emit any sound at all.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto Shutdown In</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust your shutdown waiting period.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> mins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Immediately</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Miscellaneous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable File server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, you will be able to access log data using browser through port 9000.
+Needs to be in the same network. (e.g. LAN)
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*α* Enable Otisserv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*α* Enable NOO Voice Guidance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toyota / Lexus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Stop and Go (SnG) Hack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will stop sending standstill signal when the car is fully stopped.
+ONLY WORK ON SOME VEHICLES.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Enhanced BSM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use debugging CAN messages to receive unfiltered BSM signals, allowing detection of more objects.
+Tested on Prius TSS2 and RAV4 TSS1.
+ONLY WORK ON SOME VEHICLES.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Enhanced longitudinal Tune</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, TSS2 car will use special tune which will result in smoother and natural breaking. Works best with accel dynamic follow + accel profile. 
+ONLY FOR TSS2.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Locking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will attempt to lock the doors when drive above 10 km/h (6.2 mph).
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Unlocking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will attempt to unlock the doors when shift to gear P.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Zorro-Steering-Sensor (ZSS) Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use sensor outputs from ZSS for more accurate steering control.
+DO NOT ENABLE unless you have ZSS installed.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Stock Longitudinal Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will not handle longitudinal control.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On-Screen Personality Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will display an on-screen personality button.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On-Screen Accel Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will display an on-screen accel profile button.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -226,8 +577,8 @@
         <translation>ปิดเครื่อง</translation>
     </message>
     <message>
-        <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.</source>
-        <translation>openpilot กำหนดให้ติดตั้งอุปกรณ์ โดยสามารถเอียงด้านซ้ายหรือขวาไม่เกิน 4° และเอียงขึ้นด้านบนไม่เกิน 5° หรือเอียงลงด้านล่างไม่เกิน 8° openpilot ทำการคาลิเบรทอย่างต่อเนื่อง แทบจะไม่จำเป็นต้องทำการรีเซ็ตการคาลิเบรท</translation>
+        <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 9° down. openpilot is continuously calibrating, resetting is rarely required.</source>
+        <translation>openpilot กำหนดให้ติดตั้งอุปกรณ์ โดยสามารถเอียงด้านซ้ายหรือขวาไม่เกิน 4° และเอียงขึ้นด้านบนไม่เกิน 5° หรือเอียงลงด้านล่างไม่เกิน 9° openpilot ทำการคาลิเบรทอย่างต่อเนื่อง แทบจะไม่จำเป็นต้องทำการรีเซ็ตการคาลิเบรท</translation>
     </message>
     <message>
         <source> Your device is pointed %1° %2 and %3° %4.</source>
@@ -272,6 +623,14 @@
     <message>
         <source>Review</source>
         <translation>ทบทวน</translation>
+    </message>
+    <message>
+        <source>Debug Console</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error displaying tmux output.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -352,33 +711,6 @@
     <message>
         <source>hr</source>
         <translation>ชม.</translation>
-    </message>
-    <message>
-        <source>km</source>
-        <translation>กม.</translation>
-    </message>
-    <message>
-        <source>mi</source>
-        <translation>ไมล์</translation>
-    </message>
-</context>
-<context>
-    <name>MapInstructions</name>
-    <message>
-        <source> km</source>
-        <translation> กม.</translation>
-    </message>
-    <message>
-        <source> m</source>
-        <translation> ม.</translation>
-    </message>
-    <message>
-        <source> mi</source>
-        <translation> ไมล์</translation>
-    </message>
-    <message>
-        <source> ft</source>
-        <translation> ฟุต</translation>
     </message>
 </context>
 <context>
@@ -540,6 +872,21 @@
     </message>
 </context>
 <context>
+    <name>PersonalityButton</name>
+    <message>
+        <source>Aggressive</source>
+        <translation type="unfinished">ดุดัน</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation type="unfinished">มาตรฐาน</translation>
+    </message>
+    <message>
+        <source>Relaxed</source>
+        <translation type="unfinished">ผ่อนคลาย</translation>
+    </message>
+</context>
+<context>
     <name>PrimeAdWidget</name>
     <message>
         <source>Upgrade Now</source>
@@ -617,6 +964,22 @@
             <numerusform>%n วันที่แล้ว</numerusform>
         </translation>
     </message>
+    <message>
+        <source>km</source>
+        <translation>กม.</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation>ม.</translation>
+    </message>
+    <message>
+        <source>mi</source>
+        <translation>ไมล์</translation>
+    </message>
+    <message>
+        <source>ft</source>
+        <translation>ฟุต</translation>
+    </message>
 </context>
 <context>
     <name>Reset</name>
@@ -680,6 +1043,14 @@ This may take up to a minute.</source>
     <message>
         <source>Software</source>
         <translation>ซอฟต์แวร์</translation>
+    </message>
+    <message>
+        <source>Vehicle Model:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[AUTO SELECT]</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -759,6 +1130,10 @@ This may take up to a minute.</source>
     <message>
         <source>No custom software found at this URL.</source>
         <translation>ไม่พบซอฟต์แวร์ที่กำหนดเองที่ URL นี้</translation>
+    </message>
+    <message>
+        <source>Select a language</source>
+        <translation>เลือกภาษา</translation>
     </message>
 </context>
 <context>

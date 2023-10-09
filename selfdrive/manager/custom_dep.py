@@ -5,10 +5,10 @@ import errno
 import shutil
 import subprocess
 from pathlib import Path
-from system.hardware import PC
+from openpilot.system.hardware import PC
 
 # NOTE: Do NOT import anything here that needs be built (e.g. params)
-from common.spinner import Spinner
+from openpilot.common.spinner import Spinner
 
 if not PC:
   THIRD_PARTY_DIR = "/data/third_party_modules"
@@ -25,7 +25,7 @@ OVERPY_VERSION = "0.6"
 
 def param_is_enabled(param="dp_mapd"):
   try:
-    from common.params import Params
+    from openpilot.common.params import Params
     with open(Params().get_param_path() + f"/{param}", 'r') as f:
       return f.read() == '1'
   except Exception:

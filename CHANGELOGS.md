@@ -1,6 +1,21 @@
-dragonpilot beta3 2023.08.22
+dragonpilot beta3 2023.10.09
 =======================
 * openpilot master branch on 2023.07.21.
+* Comma 0.9.6 release
+ * Night Strike Model
+   * Improved navigate on openpilot performance using navigation instructions as an additional model input
+* DP HIGHLIGHT:
+    * Always on lateral.
+    * Otisserv with snapshot! Comma Prime Experience https://dragonpilot.org/
+    * Dynamic End-to-End Longitudinal Control
+    * Road Edge Detection
+    * Acceleration profiles
+    * Enhanced BSM for all Toyota/Lexus that is not currently supported by stock openpilot.
+    * Display Mode
+    * Audible Alert Mode
+    * File server
+    * Lane Priority Mode
+    * New minimal UI with on screen button.
 
 dragonpilot [2023.5.12]
 =======================

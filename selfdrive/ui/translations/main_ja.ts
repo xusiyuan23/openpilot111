@@ -17,6 +17,25 @@
     </message>
 </context>
 <context>
+    <name>AccelButton</name>
+    <message>
+        <source>OP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ECO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SPT</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AdvancedNetworking</name>
     <message>
         <source>Back</source>
@@ -90,28 +109,12 @@
         <translation>制限速度</translation>
     </message>
     <message>
-        <source> km</source>
-        <translation type="obsolete"> ｷﾛﾒｰﾄﾙ</translation>
-    </message>
-    <message>
-        <source> m</source>
-        <translation type="obsolete"> ﾒｰﾄﾙ</translation>
-    </message>
-    <message>
-        <source> mi</source>
-        <translation type="obsolete"> ﾏｲﾙ</translation>
-    </message>
-    <message>
-        <source> ft</source>
-        <translation type="obsolete"> ﾌｨｰﾄ</translation>
-    </message>
-    <message>
         <source>km</source>
         <translation type="unfinished">ｷﾛﾒｰﾄﾙ</translation>
     </message>
     <message>
         <source>m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ﾒｰﾄﾙ</translation>
     </message>
     <message>
         <source>mi</source>
@@ -119,7 +122,7 @@
     </message>
     <message>
         <source>ft</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ﾌｨｰﾄ</translation>
     </message>
 </context>
 <context>
@@ -388,7 +391,39 @@ SPT - Sport tune.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>*α* Enable Otisserv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*α* Enable NOO Voice Guidance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Enhanced longitudinal Tune</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, TSS2 car will use special tune which will result in smoother and natural breaking. Works best with accel dynamic follow + accel profile. 
+ONLY FOR TSS2.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Zorro-Steering-Sensor (ZSS) Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use sensor outputs from ZSS for more accurate steering control.
+DO NOT ENABLE unless you have ZSS installed.
+Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -401,15 +436,19 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>*α* Enable Otisserv</source>
+        <source>On-Screen Personality Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>*α* Enable NOO Voice Guidance</source>
+        <source>When enabled, openpilot will display an on-screen personality button.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
+        <source>On-Screen Accel Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will display an on-screen accel profile button.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -538,8 +577,8 @@ Reboot Required.</source>
         <translation>電源を切る</translation>
     </message>
     <message>
-        <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.</source>
-        <translation>openpilotの本体は、左右4°以内、上5°、下8°以内の角度で取付ける必要があります。継続してキャリブレーションを続けているので、手動でリセットを行う必要はほぼありません。</translation>
+        <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 9° down. openpilot is continuously calibrating, resetting is rarely required.</source>
+        <translation>openpilotの本体は、左右4°以内、上5°、下9°以内の角度で取付ける必要があります。継続してキャリブレーションを続けているので、手動でリセットを行う必要はほぼありません。</translation>
     </message>
     <message>
         <source> Your device is pointed %1° %2 and %3° %4.</source>
@@ -672,33 +711,6 @@ Reboot Required.</source>
     <message>
         <source>hr</source>
         <translation>時間</translation>
-    </message>
-    <message>
-        <source>km</source>
-        <translation>ｷﾛﾒｰﾄﾙ</translation>
-    </message>
-    <message>
-        <source>mi</source>
-        <translation>ﾏｲﾙ</translation>
-    </message>
-</context>
-<context>
-    <name>MapInstructions</name>
-    <message>
-        <source> km</source>
-        <translation> ｷﾛﾒｰﾄﾙ</translation>
-    </message>
-    <message>
-        <source> m</source>
-        <translation> ﾒｰﾄﾙ</translation>
-    </message>
-    <message>
-        <source> mi</source>
-        <translation> ﾏｲﾙ</translation>
-    </message>
-    <message>
-        <source> ft</source>
-        <translation> ﾌｨｰﾄ</translation>
     </message>
 </context>
 <context>
@@ -859,6 +871,21 @@ Reboot Required.</source>
     </message>
 </context>
 <context>
+    <name>PersonalityButton</name>
+    <message>
+        <source>Aggressive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Relaxed</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PrimeAdWidget</name>
     <message>
         <source>Upgrade Now</source>
@@ -935,6 +962,22 @@ Reboot Required.</source>
         <translation>
             <numerusform>%n 日前</numerusform>
         </translation>
+    </message>
+    <message>
+        <source>km</source>
+        <translation>ｷﾛﾒｰﾄﾙ</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation>ﾒｰﾄﾙ</translation>
+    </message>
+    <message>
+        <source>mi</source>
+        <translation>ﾏｲﾙ</translation>
+    </message>
+    <message>
+        <source>ft</source>
+        <translation>ﾌｨｰﾄ</translation>
     </message>
 </context>
 <context>
@@ -1085,6 +1128,10 @@ This may take up to a minute.</source>
     <message>
         <source>Something went wrong. Reboot the device.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a language</source>
+        <translation>言語を選択</translation>
     </message>
 </context>
 <context>
@@ -1404,19 +1451,11 @@ This may take up to a minute.</source>
         <translation>この車のACCがアクセル制御を行うため実験モードを利用することができません。</translation>
     </message>
     <message>
-        <source>openpilot longitudinal control may come in a future update.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>openpilot Longitudinal Control (Alpha)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>WARNING: openpilot longitudinal control is in alpha for this car and will disable Automatic Emergency Braking (AEB).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On this car, openpilot defaults to the car&apos;s built-in ACC instead of openpilot&apos;s longitudinal control. Enable this to switch to openpilot longitudinal control. Enabling Experimental mode is recommended when enabling openpilot longitudinal control alpha.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1436,23 +1475,19 @@ This may take up to a minute.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>On this car, openpilot defaults to the car&apos;s built-in ACC instead of openpilot&apos;s longitudinal control. Enable this to switch to openpilot longitudinal control. Enabling Experimental mode is recommended when enabling openpilot longitudinal control alpha.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>An alpha version of openpilot longitudinal control can be tested, along with Experimental mode, on non-release branches.</source>
+        <source>End-to-End Longitudinal Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Navigate on openpilot</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>End-to-End Longitudinal Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1461,6 +1496,18 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>openpilot longitudinal control may come in a future update.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An alpha version of openpilot longitudinal control can be tested, along with Experimental mode, on non-release branches.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

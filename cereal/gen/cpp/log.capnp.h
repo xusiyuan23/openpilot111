@@ -471,6 +471,8 @@ enum class Direction_eea5b9d8c9e5c192: uint16_t {
   LEFT,
   RIGHT,
   STRAIGHT,
+  SLIGHT_LEFT,
+  SLIGHT_RIGHT,
 };
 CAPNP_DECLARE_ENUM(Direction, eea5b9d8c9e5c192);
 CAPNP_DECLARE_SCHEMA(b66e0aa568d09c66);
@@ -2438,6 +2440,10 @@ struct Event {
     LIVESTREAM_ROAD_ENCODE_DATA,
     LIVESTREAM_WIDE_ROAD_ENCODE_DATA,
     LIVESTREAM_DRIVER_ENCODE_DATA,
+    TEMPERATURE_SENSOR2,
+    CUSTOM_RESERVED_RAW_DATA0,
+    CUSTOM_RESERVED_RAW_DATA1,
+    CUSTOM_RESERVED_RAW_DATA2,
   };
 
   struct _capnpPrivate {
@@ -18866,6 +18872,22 @@ public:
   inline bool hasLivestreamDriverEncodeData() const;
   inline  ::cereal::EncodeData::Reader getLivestreamDriverEncodeData() const;
 
+  inline bool isTemperatureSensor2() const;
+  inline bool hasTemperatureSensor2() const;
+  inline  ::cereal::SensorEventData::Reader getTemperatureSensor2() const;
+
+  inline bool isCustomReservedRawData0() const;
+  inline bool hasCustomReservedRawData0() const;
+  inline  ::capnp::Data::Reader getCustomReservedRawData0() const;
+
+  inline bool isCustomReservedRawData1() const;
+  inline bool hasCustomReservedRawData1() const;
+  inline  ::capnp::Data::Reader getCustomReservedRawData1() const;
+
+  inline bool isCustomReservedRawData2() const;
+  inline bool hasCustomReservedRawData2() const;
+  inline  ::capnp::Data::Reader getCustomReservedRawData2() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -19868,6 +19890,38 @@ public:
   inline  ::cereal::EncodeData::Builder initLivestreamDriverEncodeData();
   inline void adoptLivestreamDriverEncodeData(::capnp::Orphan< ::cereal::EncodeData>&& value);
   inline ::capnp::Orphan< ::cereal::EncodeData> disownLivestreamDriverEncodeData();
+
+  inline bool isTemperatureSensor2();
+  inline bool hasTemperatureSensor2();
+  inline  ::cereal::SensorEventData::Builder getTemperatureSensor2();
+  inline void setTemperatureSensor2( ::cereal::SensorEventData::Reader value);
+  inline  ::cereal::SensorEventData::Builder initTemperatureSensor2();
+  inline void adoptTemperatureSensor2(::capnp::Orphan< ::cereal::SensorEventData>&& value);
+  inline ::capnp::Orphan< ::cereal::SensorEventData> disownTemperatureSensor2();
+
+  inline bool isCustomReservedRawData0();
+  inline bool hasCustomReservedRawData0();
+  inline  ::capnp::Data::Builder getCustomReservedRawData0();
+  inline void setCustomReservedRawData0( ::capnp::Data::Reader value);
+  inline  ::capnp::Data::Builder initCustomReservedRawData0(unsigned int size);
+  inline void adoptCustomReservedRawData0(::capnp::Orphan< ::capnp::Data>&& value);
+  inline ::capnp::Orphan< ::capnp::Data> disownCustomReservedRawData0();
+
+  inline bool isCustomReservedRawData1();
+  inline bool hasCustomReservedRawData1();
+  inline  ::capnp::Data::Builder getCustomReservedRawData1();
+  inline void setCustomReservedRawData1( ::capnp::Data::Reader value);
+  inline  ::capnp::Data::Builder initCustomReservedRawData1(unsigned int size);
+  inline void adoptCustomReservedRawData1(::capnp::Orphan< ::capnp::Data>&& value);
+  inline ::capnp::Orphan< ::capnp::Data> disownCustomReservedRawData1();
+
+  inline bool isCustomReservedRawData2();
+  inline bool hasCustomReservedRawData2();
+  inline  ::capnp::Data::Builder getCustomReservedRawData2();
+  inline void setCustomReservedRawData2( ::capnp::Data::Reader value);
+  inline  ::capnp::Data::Builder initCustomReservedRawData2(unsigned int size);
+  inline void adoptCustomReservedRawData2(::capnp::Orphan< ::capnp::Data>&& value);
+  inline ::capnp::Orphan< ::capnp::Data> disownCustomReservedRawData2();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -51987,6 +52041,222 @@ inline ::capnp::Orphan< ::cereal::EncodeData> Event::Builder::disownLivestreamDr
   KJ_IREQUIRE((which() == Event::LIVESTREAM_DRIVER_ENCODE_DATA),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::cereal::EncodeData>::disown(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+
+inline bool Event::Reader::isTemperatureSensor2() const {
+  return which() == Event::TEMPERATURE_SENSOR2;
+}
+inline bool Event::Builder::isTemperatureSensor2() {
+  return which() == Event::TEMPERATURE_SENSOR2;
+}
+inline bool Event::Reader::hasTemperatureSensor2() const {
+  if (which() != Event::TEMPERATURE_SENSOR2) return false;
+  return !_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline bool Event::Builder::hasTemperatureSensor2() {
+  if (which() != Event::TEMPERATURE_SENSOR2) return false;
+  return !_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline  ::cereal::SensorEventData::Reader Event::Reader::getTemperatureSensor2() const {
+  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::get(_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline  ::cereal::SensorEventData::Builder Event::Builder::getTemperatureSensor2() {
+  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::get(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void Event::Builder::setTemperatureSensor2( ::cereal::SensorEventData::Reader value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2);
+  ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline  ::cereal::SensorEventData::Builder Event::Builder::initTemperatureSensor2() {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2);
+  return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::init(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void Event::Builder::adoptTemperatureSensor2(
+    ::capnp::Orphan< ::cereal::SensorEventData>&& value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::TEMPERATURE_SENSOR2);
+  ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::adopt(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::cereal::SensorEventData> Event::Builder::disownTemperatureSensor2() {
+  KJ_IREQUIRE((which() == Event::TEMPERATURE_SENSOR2),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::cereal::SensorEventData>::disown(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+
+inline bool Event::Reader::isCustomReservedRawData0() const {
+  return which() == Event::CUSTOM_RESERVED_RAW_DATA0;
+}
+inline bool Event::Builder::isCustomReservedRawData0() {
+  return which() == Event::CUSTOM_RESERVED_RAW_DATA0;
+}
+inline bool Event::Reader::hasCustomReservedRawData0() const {
+  if (which() != Event::CUSTOM_RESERVED_RAW_DATA0) return false;
+  return !_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline bool Event::Builder::hasCustomReservedRawData0() {
+  if (which() != Event::CUSTOM_RESERVED_RAW_DATA0) return false;
+  return !_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::Data::Reader Event::Reader::getCustomReservedRawData0() const {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA0),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::get(_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline  ::capnp::Data::Builder Event::Builder::getCustomReservedRawData0() {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA0),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::get(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void Event::Builder::setCustomReservedRawData0( ::capnp::Data::Reader value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA0);
+  ::capnp::_::PointerHelpers< ::capnp::Data>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::Data::Builder Event::Builder::initCustomReservedRawData0(unsigned int size) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA0);
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::init(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), size);
+}
+inline void Event::Builder::adoptCustomReservedRawData0(
+    ::capnp::Orphan< ::capnp::Data>&& value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA0);
+  ::capnp::_::PointerHelpers< ::capnp::Data>::adopt(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::Data> Event::Builder::disownCustomReservedRawData0() {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA0),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::disown(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+
+inline bool Event::Reader::isCustomReservedRawData1() const {
+  return which() == Event::CUSTOM_RESERVED_RAW_DATA1;
+}
+inline bool Event::Builder::isCustomReservedRawData1() {
+  return which() == Event::CUSTOM_RESERVED_RAW_DATA1;
+}
+inline bool Event::Reader::hasCustomReservedRawData1() const {
+  if (which() != Event::CUSTOM_RESERVED_RAW_DATA1) return false;
+  return !_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline bool Event::Builder::hasCustomReservedRawData1() {
+  if (which() != Event::CUSTOM_RESERVED_RAW_DATA1) return false;
+  return !_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::Data::Reader Event::Reader::getCustomReservedRawData1() const {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA1),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::get(_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline  ::capnp::Data::Builder Event::Builder::getCustomReservedRawData1() {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA1),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::get(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void Event::Builder::setCustomReservedRawData1( ::capnp::Data::Reader value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA1);
+  ::capnp::_::PointerHelpers< ::capnp::Data>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::Data::Builder Event::Builder::initCustomReservedRawData1(unsigned int size) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA1);
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::init(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), size);
+}
+inline void Event::Builder::adoptCustomReservedRawData1(
+    ::capnp::Orphan< ::capnp::Data>&& value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA1);
+  ::capnp::_::PointerHelpers< ::capnp::Data>::adopt(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::Data> Event::Builder::disownCustomReservedRawData1() {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA1),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::disown(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+
+inline bool Event::Reader::isCustomReservedRawData2() const {
+  return which() == Event::CUSTOM_RESERVED_RAW_DATA2;
+}
+inline bool Event::Builder::isCustomReservedRawData2() {
+  return which() == Event::CUSTOM_RESERVED_RAW_DATA2;
+}
+inline bool Event::Reader::hasCustomReservedRawData2() const {
+  if (which() != Event::CUSTOM_RESERVED_RAW_DATA2) return false;
+  return !_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline bool Event::Builder::hasCustomReservedRawData2() {
+  if (which() != Event::CUSTOM_RESERVED_RAW_DATA2) return false;
+  return !_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::Data::Reader Event::Reader::getCustomReservedRawData2() const {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA2),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::get(_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline  ::capnp::Data::Builder Event::Builder::getCustomReservedRawData2() {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA2),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::get(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void Event::Builder::setCustomReservedRawData2( ::capnp::Data::Reader value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA2);
+  ::capnp::_::PointerHelpers< ::capnp::Data>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::Data::Builder Event::Builder::initCustomReservedRawData2(unsigned int size) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA2);
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::init(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), size);
+}
+inline void Event::Builder::adoptCustomReservedRawData2(
+    ::capnp::Orphan< ::capnp::Data>&& value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CUSTOM_RESERVED_RAW_DATA2);
+  ::capnp::_::PointerHelpers< ::capnp::Data>::adopt(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::Data> Event::Builder::disownCustomReservedRawData2() {
+  KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA2),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::capnp::Data>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 

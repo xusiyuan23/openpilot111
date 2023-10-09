@@ -17,6 +17,25 @@
     </message>
 </context>
 <context>
+    <name>AccelButton</name>
+    <message>
+        <source>OP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ECO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SPT</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AdvancedNetworking</name>
     <message>
         <source>Back</source>
@@ -90,36 +109,20 @@
         <translation>VELO</translation>
     </message>
     <message>
-        <source> km</source>
-        <translation type="obsolete"> km</translation>
-    </message>
-    <message>
-        <source> m</source>
-        <translation type="obsolete"> m</translation>
-    </message>
-    <message>
-        <source> mi</source>
-        <translation type="obsolete"> milha</translation>
-    </message>
-    <message>
-        <source> ft</source>
-        <translation type="obsolete"> pés</translation>
-    </message>
-    <message>
         <source>km</source>
         <translation type="unfinished">km</translation>
     </message>
     <message>
         <source>m</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">m</translation>
     </message>
     <message>
         <source>mi</source>
-        <translation type="unfinished">mi</translation>
+        <translation type="unfinished">milha</translation>
     </message>
     <message>
         <source>ft</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">pés</translation>
     </message>
 </context>
 <context>
@@ -388,7 +391,39 @@ SPT - Sport tune.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>*α* Enable Otisserv</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*α* Enable NOO Voice Guidance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Enhanced longitudinal Tune</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, TSS2 car will use special tune which will result in smoother and natural breaking. Works best with accel dynamic follow + accel profile. 
+ONLY FOR TSS2.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Zorro-Steering-Sensor (ZSS) Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use sensor outputs from ZSS for more accurate steering control.
+DO NOT ENABLE unless you have ZSS installed.
+Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -401,15 +436,19 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>*α* Enable Otisserv</source>
+        <source>On-Screen Personality Button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>*α* Enable NOO Voice Guidance</source>
+        <source>When enabled, openpilot will display an on-screen personality button.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
+        <source>On-Screen Accel Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will display an on-screen accel profile button.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -538,8 +577,8 @@ Reboot Required.</source>
         <translation>Desligar</translation>
     </message>
     <message>
-        <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 8° down. openpilot is continuously calibrating, resetting is rarely required.</source>
-        <translation>O openpilot requer que o dispositivo seja montado dentro de 4° esquerda ou direita e dentro de 5° para cima ou 8° para baixo. O openpilot está continuamente calibrando, resetar raramente é necessário.</translation>
+        <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 9° down. openpilot is continuously calibrating, resetting is rarely required.</source>
+        <translation>O openpilot requer que o dispositivo seja montado dentro de 4° esquerda ou direita e dentro de 5° para cima ou 9° para baixo. O openpilot está continuamente calibrando, resetar raramente é necessário.</translation>
     </message>
     <message>
         <source> Your device is pointed %1° %2 and %3° %4.</source>
@@ -673,33 +712,6 @@ Reboot Required.</source>
     <message>
         <source>hr</source>
         <translation>hr</translation>
-    </message>
-    <message>
-        <source>km</source>
-        <translation>km</translation>
-    </message>
-    <message>
-        <source>mi</source>
-        <translation>mi</translation>
-    </message>
-</context>
-<context>
-    <name>MapInstructions</name>
-    <message>
-        <source> km</source>
-        <translation> km</translation>
-    </message>
-    <message>
-        <source> m</source>
-        <translation> m</translation>
-    </message>
-    <message>
-        <source> mi</source>
-        <translation> milha</translation>
-    </message>
-    <message>
-        <source> ft</source>
-        <translation> pés</translation>
     </message>
 </context>
 <context>
@@ -861,6 +873,21 @@ Reboot Required.</source>
     </message>
 </context>
 <context>
+    <name>PersonalityButton</name>
+    <message>
+        <source>Aggressive</source>
+        <translation type="unfinished">Disputa</translation>
+    </message>
+    <message>
+        <source>Standard</source>
+        <translation type="unfinished">Neutro</translation>
+    </message>
+    <message>
+        <source>Relaxed</source>
+        <translation type="unfinished">Calmo</translation>
+    </message>
+</context>
+<context>
     <name>PrimeAdWidget</name>
     <message>
         <source>Upgrade Now</source>
@@ -940,6 +967,22 @@ Reboot Required.</source>
             <numerusform>há %n dia</numerusform>
             <numerusform>há %n dias</numerusform>
         </translation>
+    </message>
+    <message>
+        <source>km</source>
+        <translation>km</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
+    <message>
+        <source>mi</source>
+        <translation>milha</translation>
+    </message>
+    <message>
+        <source>ft</source>
+        <translation>pés</translation>
     </message>
 </context>
 <context>
@@ -1091,6 +1134,10 @@ Isso pode levar até um minuto.</translation>
     <message>
         <source>Something went wrong. Reboot the device.</source>
         <translation>Algo deu errado. Reinicie o dispositivo.</translation>
+    </message>
+    <message>
+        <source>Select a language</source>
+        <translation>Selecione o Idioma</translation>
     </message>
 </context>
 <context>

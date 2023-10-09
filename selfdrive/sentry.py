@@ -3,16 +3,15 @@ import sentry_sdk
 from enum import Enum
 from sentry_sdk.integrations.threading import ThreadingIntegration
 
-from common.params import Params
-# from selfdrive.athena.registration import is_registered_device
-from system.hardware import HARDWARE, PC
-from system.swaglog import cloudlog
-from system.version import get_branch, get_commit, get_origin, get_version, \
+from openpilot.common.params import Params
+#from openpilot.selfdrive.athena.registration import is_registered_device
+from openpilot.system.hardware import HARDWARE, PC
+from openpilot.system.swaglog import cloudlog
+from openpilot.system.version import get_branch, get_commit, get_origin, get_version, \
                               is_comma_remote, is_dirty, is_tested_branch
 
 import os
 import traceback
-import requests
 from cereal import car
 from datetime import datetime
 
@@ -24,38 +23,6 @@ class SentryProject(Enum):
 
 CRASHES_DIR = '/data/media/0/crash_logs'
 
-ret = car.CarParams.new_message()
-candidate = ret.carFingerprint
-
-params = Params()
-#uniqueID = op_params.get('uniqueID')
-try:
-  dongle_id = params.get("DongleId").decode('utf8')
-except AttributeError:
-  dongle_id = "None"
-try:
-  gitname = params.get("GithubUsername", encoding='utf-8')
-except Exception:
-  gitname = ""
-error_tags = {
-  'dirty': is_dirty(),
-  'dongle_id': dongle_id,
-  'branch': get_branch(),
-  'remote': get_origin(),
-  'fingerprintedAs': candidate,
-  'gitname': gitname
-}
-ip = "{{auto}}"
-
-try:
-  cached_params = params.get("CarParams")
-  if cached_params is not None:
-    cached_params = car.CarParams.from_bytes(cached_params)
-    car_name = cached_params.carFingerprint
-  else:
-    car_name = "None"
-except Exception:
-  car_name = "None"
 
 def report_tombstone(fn: str, message: str, contents: str) -> None:
   cloudlog.error({'tombstone': message})
@@ -70,7 +37,6 @@ def report_tombstone(fn: str, message: str, contents: str) -> None:
 def capture_exception(*args, **kwargs) -> None:
   save_exception(traceback.format_exc())
   cloudlog.error("crash", exc_info=kwargs.get('exc_info', 1))
-  bind_user(id=dongle_id, ip_address=ip, username=gitname)
 
   try:
     sentry_sdk.capture_exception(*args, **kwargs)
@@ -87,35 +53,36 @@ def save_exception(exc_text):
     f.write(exc_text)
   print('Logged current crash to {}'.format(log_file))
 
-def bind_user(**kwargs) -> None:
-    sentry_sdk.set_user(kwargs)
-    sentry_sdk.flush()
-
 def capture_warning(warning_string):
-  bind_user(id=dongle_id, ip_address=ip, name=gitname)
   sentry_sdk.capture_message(warning_string, level='warning')
   sentry_sdk.flush()
 
 def capture_info(info_string):
-  bind_user(id=dongle_id, ip_address=ip, name=gitname)
   sentry_sdk.capture_message(info_string, level='info')
   sentry_sdk.flush()
 
 def set_tag(key: str, value: str) -> None:
   sentry_sdk.set_tag(key, value)
-  sentry_sdk.flush()
-
 
 def init(project: SentryProject) -> None:
   # forks like to mess with this, so double check
   #comma_remote = is_comma_remote() and "commaai" in get_origin(default="")
   #if not comma_remote or not is_registered_device() or PC:
     #return
-
+  params = Params()
   env = "release" if is_tested_branch() else "master"
   dongle_id = params.get("DongleId", encoding='utf-8')
   gitname = params.get("GithubUsername", encoding='utf-8')
   ip = "{{auto}}"
+  try:
+    cached_params = params.get("CarParams")
+    if cached_params is not None:
+      cached_params = car.CarParams.from_bytes(cached_params)
+      car_name = cached_params.carFingerprint
+    else:
+      car_name = "None"
+  except Exception:
+    car_name = "None"
 
 
   integrations = []

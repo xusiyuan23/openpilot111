@@ -1,6 +1,6 @@
 import overpy
 import numpy as np
-from selfdrive.mapd.lib.geo import R
+from openpilot.selfdrive.mapd.lib.geo import R
 
 
 def create_way(way_id, node_ids, from_way):

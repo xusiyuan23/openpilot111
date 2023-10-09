@@ -3,8 +3,8 @@ import gc
 import time
 
 import cereal.messaging as messaging
-from common.realtime import set_realtime_priority, DT_DMON
-from common.params import Params
+from openpilot.common.realtime import set_realtime_priority, DT_DMON
+from openpilot.common.params import Params
 
 
 def dmonitoringd_thread(sm=None, pm=None):

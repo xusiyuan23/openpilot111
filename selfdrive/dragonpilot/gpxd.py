@@ -25,8 +25,8 @@
 import cereal.messaging as messaging
 import os
 import datetime
-from common.realtime import set_core_affinity, set_realtime_priority
-from system.swaglog import cloudlog
+from openpilot.common.realtime import set_core_affinity, set_realtime_priority
+from openpilot.system.swaglog import cloudlog
 from pathlib import Path
 
 # customisable values
@@ -38,6 +38,7 @@ LOST_SIGNAL_COUNT_LENGTH = 10 # secs, output log file if we lost signal for this
 # do not change
 LOST_SIGNAL_COUNT_MAX = LOST_SIGNAL_COUNT_LENGTH * LOG_HERTZ # secs,
 LOGS_PER_FILE = LOG_LENGTH * 60 * LOG_HERTZ # e.g. 10 * 60 * 10 = 6000 points per file
+MIN_UPLOAD_POINTS = 1000
 
 _DEBUG = False
 _CLOUDLOG_DEBUG = True
@@ -57,6 +58,12 @@ class GpxD():
     self.started_time = datetime.datetime.utcnow().isoformat()
     self.pause = True
 
+  def _reset(self):
+    self.lost_signal_count = 0
+    self.log_count = 0
+    self.logs.clear()
+    self.started_time = datetime.datetime.utcnow().isoformat()
+
   def log(self, sm):
     gps = sm['gpsLocationExternal']
 
@@ -64,9 +71,10 @@ class GpxD():
       self.pause = False
 
     location_not_valid = gps.flags % 2 == 0
-    if location_not_valid or self.pause:
-      if self.log_count > 0:
-        self.lost_signal_count += 1
+    if self.pause:
+      pass
+    elif location_not_valid:
+      self.lost_signal_count += 1
     else:
       lat = gps.latitude
       lon = gps.longitude
@@ -83,39 +91,40 @@ class GpxD():
       self.pause = True
 
 
-  def write_log(self, force=False):
+  def write_log(self):
     if self.log_count == 0:
       return
 
-    if force or (self.log_count >= LOGS_PER_FILE or self.lost_signal_count >= LOST_SIGNAL_COUNT_MAX):
+    if self.log_count < MIN_UPLOAD_POINTS:
+      if self.lost_signal_count >= LOST_SIGNAL_COUNT_MAX:
+        self._reset()
+      return
+
+    if self.log_count >= LOGS_PER_FILE or self.lost_signal_count >= LOST_SIGNAL_COUNT_MAX:
       _debug("gpxd: save to log")
       self._write_gpx()
-      self.lost_signal_count = 0
-      self.log_count = 0
-      self.logs.clear()
-      self.started_time = datetime.datetime.utcnow().isoformat()
+      self._reset()
 
   def _write_gpx(self):
-    if len(self.logs) > 1:
-      if not os.path.exists(GPX_LOG_PATH):
-        os.makedirs(GPX_LOG_PATH)
-      filename = f"{self.started_time.replace(':', '-')}.gpx"
-      lines = [
-        '<?xml version="1.0" encoding="utf-8" standalone="yes"?>',
-        '<gpx version="1.1" creator="dragonpilot https://github.com/dragonpilot-community/dragonpilot" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">',
-        '<trk>',
-        f'<name>{self.started_time}</name>',
-        '<trkseg>',
-      ]
-      for trkpt in self.logs:
-        lines.append(self._trkpt_template(trkpt[0], trkpt[1], trkpt[2], trkpt[3]))
-      lines.extend([
-        '</trkseg>',
-        '</trk>',
-        '</gpx>',
-      ])
-      with open(Path(GPX_LOG_PATH) / filename, 'w') as f:
-        f.write('\n'.join(lines))
+    if not os.path.exists(GPX_LOG_PATH):
+      os.makedirs(GPX_LOG_PATH)
+    filename = f"{self.started_time.replace(':', '-')}.gpx"
+    lines = [
+      '<?xml version="1.0" encoding="utf-8" standalone="yes"?>',
+      '<gpx version="1.1" creator="dragonpilot https://github.com/dragonpilot-community/dragonpilot" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">',
+      '<trk>',
+      f'<name>{self.started_time}</name>',
+      '<trkseg>',
+    ]
+    for trkpt in self.logs:
+      lines.append(self._trkpt_template(trkpt[0], trkpt[1], trkpt[2], trkpt[3]))
+    lines.extend([
+      '</trkseg>',
+      '</trk>',
+      '</gpx>',
+    ])
+    with open(Path(GPX_LOG_PATH) / filename, 'w') as f:
+      f.write('\n'.join(lines))
 
   def _trkpt_template(self, time, lat, lon, alt):
     return f'<trkpt lat="{lat}" lon="{lon}">\n' \
@@ -124,7 +133,7 @@ class GpxD():
            f'</trkpt>\n'
 
 def gpxd_thread(sm=None, pm=None):
-  set_core_affinity([1,])
+  set_core_affinity([0, 1, 2, 3])
   set_realtime_priority(1)
   if sm is None:
     sm = messaging.SubMaster(['gpsLocationExternal'])

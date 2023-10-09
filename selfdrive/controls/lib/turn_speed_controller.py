@@ -1,11 +1,11 @@
 import numpy as np
 import time
-from common.params import Params
+from openpilot.common.params import Params
 from cereal import custom
 # from common.realtime import sec_since_boot
-from selfdrive.controls.lib.drive_helpers import LIMIT_ADAPT_ACC, LIMIT_MIN_SPEED, LIMIT_MAX_MAP_DATA_AGE, \
+from openpilot.selfdrive.controls.lib.drive_helpers import LIMIT_ADAPT_ACC, LIMIT_MIN_SPEED, LIMIT_MAX_MAP_DATA_AGE, \
   LIMIT_SPEED_OFFSET_TH, CONTROL_N, LIMIT_MIN_ACC, LIMIT_MAX_ACC
-from selfdrive.modeld.constants import T_IDXS
+from openpilot.selfdrive.modeld.constants import T_IDXS
 import cereal.messaging as messaging
 
 
