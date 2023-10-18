@@ -436,6 +436,15 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enable krkeegan Tune (SNG Boost)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, it will apply an offset to get_stopped_equivalence_factor in longitudinal MPC resulting in an early demand for acceleration.
+Credit to krkeegen: https://github.com/krkeegan/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>On-Screen Personality Button</source>
         <translation type="unfinished"></translation>
     </message>

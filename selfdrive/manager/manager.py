@@ -80,6 +80,7 @@ def manager_init() -> None:
     ("dp_lateral_road_edge_detection", "0"),
     ("dp_nav_voice_guidance", "0"),
     ("dp_hkg_tacobell_lat", "0"),
+    ("dp_long_use_krkeegen_tune", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))

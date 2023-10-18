@@ -48,8 +48,6 @@ STOP_AND_GO_FRAME = 500
 
 MODE_SWITCH_DELAY_FRAME = 500
 
-MAX_YREL_THRESHOLD = 0.25
-
 class SNG_State:
   off = 0
   stopped = 1
@@ -134,7 +132,6 @@ class DynamicEndtoEndController:
     # lead detection
     self._lead_gmac.add_data(lead_one.status)
     self._has_lead_filtered = self._lead_gmac.get_moving_average() >= LEAD_PROB
-    self._has_lead_yrel = lead_one.yRel > MAX_YREL_THRESHOLD
 
   # slow down detection
     self._slow_down_gmac.add_data(len(md.orientation.x) == len(md.position.x) == TRAJECTORY_SIZE and md.position.x[TRAJECTORY_SIZE - 1] < interp(self._v_ego_kph, SLOW_DOWN_BP, SLOW_DOWN_DIST))
@@ -220,8 +217,7 @@ class DynamicEndtoEndController:
 
   def _acc_priority_mode(self):
     # If there is a filtered lead, the vehicle is not in standstill, and the lead vehicle's yRel meets the condition,
-    # e,g. stopped at the red light and car crossing the intersection.
-    if self._has_lead_filtered and not self._has_standstill and self._has_lead_yrel:
+    if self._has_lead_filtered and not self._has_standstill:
       self._mode = 'acc'
       return
 

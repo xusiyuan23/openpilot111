@@ -1,4 +1,11 @@
-dragonpilot beta3 2023.10.09
+dragonpilot beta3 2023.10.17
+=======================
+* openpilot master branch on 2023.10.20.
+* Otisserv improvement/bug fixes.
+* TSS2 updated long tune.
+* @krkeegan SNG boost tune.
+
+dragonpilot beta3 [2023-10-09]
 =======================
 * openpilot master branch on 2023.07.21.
 * Comma 0.9.6 release

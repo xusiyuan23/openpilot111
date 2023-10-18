@@ -267,15 +267,15 @@ class CarInterface(CarInterfaceBase):
     if candidate in TSS2_CAR or ret.enableGasInterceptor:
       tune.kpBP = [0., 5., 20.]
       tune.kpV = [1.3, 1.0, 0.7] if dp_toyota_enhanced_long_tune else [1.8, 1.0, 0.7]
-      tune.kiBP = [0.,   1.,    2.,    3.,   4.,   5.,    12.,  20.,  27., 40.] if dp_toyota_enhanced_long_tune else [0., 5., 12., 20., 27.]
-      tune.kiV = [.34,  .325,   .31, .29, .27, .226, .198, .17,  .10, .01] if dp_toyota_enhanced_long_tune else [.35, .23, .20, .17, .1]
+      tune.kiBP = [0.,   1.,    2.,    3.,   4.,   5.,   8.,   12.,  20.,  27.,  40.] if dp_toyota_enhanced_long_tune else [0., 5., 12., 20., 27.]
+      tune.kiV = [.35,  .331,   .308,   .285,  .26,  .227, .21, .19,  .17,  .10,  .001] if dp_toyota_enhanced_long_tune else [.35, .23, .20, .17, .1]
       #tune.kiBP = [0.,  5.,  12., 20.,  25.,  30.,  40.] if dp_toyota_enhanced_long_tune else [0., 5., 12., 20., 27.]
       #tune.kiV = [.35, .23, .20, .17, .10, .01,  .001]  if dp_toyota_enhanced_long_tune else [.35, .23, .20, .17, .1]
       if candidate in TSS2_CAR:
-        ret.vEgoStopping = 0.2 if dp_toyota_enhanced_long_tune else 0.25 # car is near 0.1 to 0.2 when car starts requesting stopping accel
-        ret.vEgoStarting = 0.2 if dp_toyota_enhanced_long_tune else 0.25 # needs to be > or == vEgoStopping
-        ret.stopAccel = -0.42  if dp_toyota_enhanced_long_tune else -2.0 # Toyota requests -0.4 when stopped
-        ret.stoppingDecelRate = 0.057 if dp_toyota_enhanced_long_tune else 0.3 # reach stopping target smoothly - seems to take 0.5 seconds to go from 0 to -0.4
+        ret.vEgoStopping = 0.1 if dp_toyota_enhanced_long_tune else 0.25 # car is near 0.1 to 0.2 when car starts requesting stopping accel
+        ret.vEgoStarting = 0.1 if dp_toyota_enhanced_long_tune else 0.25 # needs to be > or == vEgoStopping
+        ret.stopAccel = -0.40  if dp_toyota_enhanced_long_tune else -2.0 # Toyota requests -0.4 when stopped
+        ret.stoppingDecelRate = 0.05 if dp_toyota_enhanced_long_tune else 0.3 # reach stopping target smoothly - seems to take 0.5 seconds to go from 0 to -0.4
         #ret.longitudinalActuatorDelayLowerBound = 1.5 if dp_toyota_enhanced_long_tune else 1.5
         #ret.longitudinalActuatorDelayUpperBound = 1.5 if dp_toyota_enhanced_long_tune else 1.5
     else:
