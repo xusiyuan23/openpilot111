@@ -68,7 +68,7 @@ def init(project: SentryProject) -> None:
   # forks like to mess with this, so double check
   #comma_remote = is_comma_remote() and "commaai" in get_origin(default="")
   #if not comma_remote or not is_registered_device() or PC:
-    #return
+    #return False
   params = Params()
   env = "release" if is_tested_branch() else "master"
   dongle_id = params.get("DongleId", encoding='utf-8')
@@ -111,3 +111,5 @@ def init(project: SentryProject) -> None:
 
   if project == SentryProject.SELFDRIVE:
     sentry_sdk.Hub.current.start_session()
+
+  return True

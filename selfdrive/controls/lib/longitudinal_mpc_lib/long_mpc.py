@@ -102,17 +102,6 @@ def desired_follow_distance(v_ego, v_lead, t_follow=None):
     t_follow = get_T_FOLLOW()
   return get_safe_obstacle_distance(v_ego, t_follow) - get_stopped_equivalence_factor(v_lead)
 
-def get_stopped_equivalence_factor_krkeegen(v_lead, v_ego):
-  # KRKeegan this offset rapidly decreases the following distance when the lead pulls
-  # away, resulting in an early demand for acceleration.
-  v_diff_offset = 0
-  if np.all(v_lead - v_ego > 0):
-    v_diff_offset = ((v_lead - v_ego) * 1.)
-    v_diff_offset = np.clip(v_diff_offset, 0, STOP_DISTANCE / 2)
-    v_diff_offset = np.maximum(v_diff_offset * ((10 - v_ego)/10), 0)
-  distance = (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
-  return distance
-
 def gen_long_model():
   model = AcadosModel()
   model.name = MODEL_NAME
@@ -355,7 +344,7 @@ class LongitudinalMpc:
     self.max_a = max_a
 
   # def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
-  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, use_df_tune=False, use_krkeegen_tune=False):
+  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, use_df_tune=False, aggressive_acceleration=False, smoother_braking=False):
     # t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
     t_follow = get_T_FOLLOW(personality) if not use_df_tune else get_dynamic_follow(v_ego, personality)
@@ -364,15 +353,23 @@ class LongitudinalMpc:
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
 
+    # Offset by FrogAi for FrogPilot for a more aggressive takeoff with a lead
+    if aggressive_acceleration:
+      speed_factor = np.maximum(1, lead_xv_0[:,1] - v_ego)
+      t_follow_offset = np.clip(10 - v_ego, 1, speed_factor**2)
+      t_follow = t_follow / t_follow_offset
+
+    # Offset by FrogAi for FrogPilot for a more natural approach to a slower lead
+    if smoother_braking:
+      distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
+      t_follow_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
+      t_follow = t_follow / t_follow_offset
+
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
     # and then treat that as a stopped car/obstacle at this new distance.
-    if use_krkeegen_tune:
-      lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor_krkeegen(lead_xv_0[:,1], v_ego)
-      lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor_krkeegen(lead_xv_1[:,1], v_ego)
-    else:
-      lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
-      lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
+    lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
+    lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
 
     self.params[:,0] = ACCEL_MIN
     self.params[:,1] = self.max_a

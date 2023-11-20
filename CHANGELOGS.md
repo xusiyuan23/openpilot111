@@ -1,4 +1,30 @@
-dragonpilot beta3 2023.10.17
+dragonpilot beta3 2023.11.20
+=======================
+* Comma 0.9.5 release
+  * New driving model (Farm Ville)
+    * Improved navigate on openpilot performance using navigation instructions as an additional model input
+    * Do lateral planning inside the model
+    * New vision transformer architecture
+  * Cadillac Escalade ESV 2019 support thanks to twilsonco!
+  * Hyundai Azera 2022 support thanks to sunnyhaibin!
+  * Hyundai Azera Hybrid 2020 support thanks to chanhojung and haram-KONA!
+  * Hyundai Custin 2023 support thanks to sunnyhaibin and Saber422!
+  * Hyundai Ioniq 6 2023 support thanks to sunnyhaibin, alamo3, and sshane!
+  * Hyundai Kona Electric 2023 (Korean version) support thanks to sunnyhaibin and haram-KONA!
+  * Kia K8 Hybrid (with HDA II) 2023 support thanks to sunnyhaibin!
+  * Kia Sorento Hybrid 2023 support thanks to sunnyhaibin!
+  * Kia Optima Hybrid 2019 support
+  * Lexus IS 2023 support thanks to L3R5!
+* DP HIGHLIGHT:
+  * Otisserv Improvement/bug fixes. You can now see your car 12v battery on the main page. (https://dragonpilot.org)
+  * UI/UX Improvement.
+  * TSS2 updated long tune.
+  * Added Smooth braking and Aggressive take off Thanks to @FrogAi.
+  * Added Toggle to Disable uploads onroad.
+  * Remove Lane Priority Mode.
+
+
+dragonpilot beta3 [2023.10.20]
 =======================
 * openpilot master branch on 2023.10.20.
 * Otisserv improvement/bug fixes.
@@ -8,7 +34,7 @@ dragonpilot beta3 2023.10.17
 dragonpilot beta3 [2023-10-09]
 =======================
 * openpilot master branch on 2023.07.21.
-* Comma 0.9.6 release
+* Comma 0.9.3 release
  * Night Strike Model
    * Improved navigate on openpilot performance using navigation instructions as an additional model input
 * DP HIGHLIGHT:

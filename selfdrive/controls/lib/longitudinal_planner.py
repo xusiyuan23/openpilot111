@@ -9,7 +9,7 @@ import cereal.messaging as messaging
 from openpilot.common.conversions import Conversions as CV
 from openpilot.common.filter_simple import FirstOrderFilter
 from openpilot.common.realtime import DT_MDL
-from openpilot.selfdrive.modeld.constants import T_IDXS
+from openpilot.selfdrive.modeld.constants import ModelConstants
 from openpilot.selfdrive.car.interfaces import ACCEL_MIN, ACCEL_MAX
 from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc
@@ -79,7 +79,8 @@ class LongitudinalPlanner:
     self.personality = log.LongitudinalPersonality.standard
     self.dp_long_use_df_tune = False
     self.dp_long_taco = self.params.get_bool('dp_long_taco')
-    self.dp_long_use_krkeegen_tune = False
+    self.dp_long_frogai_aggre_accel_tune = False
+    self.dp_long_frogai_smooth_braking_tune = False
 
   def read_param(self):
     try:
@@ -88,16 +89,17 @@ class LongitudinalPlanner:
       self.personality = log.LongitudinalPersonality.standard
 
     self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
-    self.dp_long_use_krkeegen_tune = self.params.get_bool('dp_long_use_krkeegen_tune')
+    self.dp_long_frogai_aggre_accel_tune = self.params.get_bool('dp_long_frogai_aggre_accel_tune')
+    self.dp_long_frogai_smooth_braking_tune = self.params.get_bool('dp_long_frogai_smooth_braking_tune')
 
   @staticmethod
   def parse_model(model_msg, model_error, v_ego, taco=False):
     if (len(model_msg.position.x) == 33 and
        len(model_msg.velocity.x) == 33 and
        len(model_msg.acceleration.x) == 33):
-      x = np.interp(T_IDXS_MPC, T_IDXS, model_msg.position.x) - model_error * T_IDXS_MPC
-      v = np.interp(T_IDXS_MPC, T_IDXS, model_msg.velocity.x) - model_error
-      a = np.interp(T_IDXS_MPC, T_IDXS, model_msg.acceleration.x)
+      x = np.interp(T_IDXS_MPC, ModelConstants.T_IDXS, model_msg.position.x) - model_error * T_IDXS_MPC
+      v = np.interp(T_IDXS_MPC, ModelConstants.T_IDXS, model_msg.velocity.x) - model_error
+      a = np.interp(T_IDXS_MPC, ModelConstants.T_IDXS, model_msg.acceleration.x)
       j = np.zeros(len(T_IDXS_MPC))
     else:
       x = np.zeros(len(T_IDXS_MPC))
@@ -108,7 +110,7 @@ class LongitudinalPlanner:
     # rick - taco tune
     if taco:
       max_lat_accel = interp(v_ego, [5, 10, 20], [1.5, 2.0, 3.0])
-      curvatures = np.interp(T_IDXS_MPC, T_IDXS, model_msg.orientationRate.z) / np.clip(v, 0.3, 100.0)
+      curvatures = np.interp(T_IDXS_MPC, ModelConstants.T_IDXS, model_msg.orientationRate.z) / np.clip(v, 0.3, 100.0)
       max_v = np.sqrt(max_lat_accel / (np.abs(curvatures) + 1e-3)) - 2.0
       v = np.minimum(max_v, v)
     return x, v, a, j
@@ -187,13 +189,13 @@ class LongitudinalPlanner:
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error, v_ego, taco=self.dp_long_taco)
-    self.mpc.update(sm['radarState'], v_cruise_sol, x, v, a, j, personality=self.personality, use_df_tune=self.dp_long_use_df_tune, use_krkeegen_tune=self.dp_long_use_krkeegen_tune)
+    self.mpc.update(sm['radarState'], v_cruise_sol, x, v, a, j, personality=self.personality, use_df_tune=self.dp_long_use_df_tune, aggressive_acceleration=self.dp_long_frogai_aggre_accel_tune, smoother_braking=self.dp_long_frogai_smooth_braking_tune)
 
-    self.v_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
-    self.a_desired_trajectory_full = np.interp(T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
+    self.v_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
+    self.a_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
     self.v_desired_trajectory = self.v_desired_trajectory_full[:CONTROL_N]
     self.a_desired_trajectory = self.a_desired_trajectory_full[:CONTROL_N]
-    self.j_desired_trajectory = np.interp(T_IDXS[:CONTROL_N], T_IDXS_MPC[:-1], self.mpc.j_solution)
+    self.j_desired_trajectory = np.interp(ModelConstants.T_IDXS[:CONTROL_N], T_IDXS_MPC[:-1], self.mpc.j_solution)
 
     # TODO counter is only needed because radar is glitchy, remove once radar is gone
     self.fcw = self.mpc.crash_cnt > 2 and not sm['carState'].standstill
@@ -202,7 +204,7 @@ class LongitudinalPlanner:
 
     # Interpolate 0.05 seconds and save as starting point for next iteration
     a_prev = self.a_desired
-    self.a_desired = float(interp(DT_MDL, T_IDXS[:CONTROL_N], self.a_desired_trajectory))
+    self.a_desired = float(interp(DT_MDL, ModelConstants.T_IDXS[:CONTROL_N], self.a_desired_trajectory))
     self.v_desired_filter.x = self.v_desired_filter.x + DT_MDL * (self.a_desired + a_prev) / 2.0
 
   def publish(self, sm, pm):

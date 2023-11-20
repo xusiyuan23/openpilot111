@@ -15,7 +15,7 @@
         "language": "c++",
         "name": "selfdrive.modeld.models.commonmodel_pyx",
         "sources": [
-            "/data/dp-private/selfdrive/modeld/models/commonmodel_pyx.pyx"
+            "/data/openpilot/selfdrive/modeld/models/commonmodel_pyx.pyx"
         ]
     },
     "module_name": "selfdrive.modeld.models.commonmodel_pyx"

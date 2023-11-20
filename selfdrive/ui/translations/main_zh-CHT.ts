@@ -160,12 +160,7 @@ Reboot required.</source>
     </message>
     <message>
         <source>Enable Lane Priority Mode</source>
-        <translation>啟用線道優先模式</translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use lane lines for lateral control, fallback to laneless mode automatically when lane lines probabilities are low.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">啟用線道優先模式</translation>
     </message>
     <message>
         <source>Ctrl - Longitudinal</source>
@@ -436,12 +431,21 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable krkeegan Tune (SNG Boost)</source>
+        <source>Enable Aggressive Acceleration With Lead (SNG Boost)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled, it will apply an offset to get_stopped_equivalence_factor in longitudinal MPC resulting in an early demand for acceleration.
-Credit to krkeegen: https://github.com/krkeegan/</source>
+        <source>When enabled, Accelerate more aggressively behind a lead when starting from a stop.
+Credit to FrogaAi: https://github.com/FrogAi/FrogPilot/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Smooth Braking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, Smoother Braking Behind Lead More natural braking behavior when coming up to a slower vehicle. 
+Credit to FrogaAi: https://github.com/FrogAi/FrogPilot/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -458,6 +462,15 @@ Credit to krkeegen: https://github.com/krkeegan/</source>
     </message>
     <message>
         <source>When enabled, openpilot will display an on-screen accel profile button.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable OnRoad Upload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will not upload driving log/videos to comma connect when driving. 
+Reboot required.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -640,33 +653,6 @@ Credit to krkeegen: https://github.com/krkeegan/</source>
     <message>
         <source>Error displaying tmux output.</source>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DriveStats</name>
-    <message>
-        <source>Drives</source>
-        <translation>旅程</translation>
-    </message>
-    <message>
-        <source>Hours</source>
-        <translation>小時</translation>
-    </message>
-    <message>
-        <source>ALL TIME</source>
-        <translation>總共</translation>
-    </message>
-    <message>
-        <source>PAST WEEK</source>
-        <translation>上週</translation>
-    </message>
-    <message>
-        <source>KM</source>
-        <translation>公里</translation>
-    </message>
-    <message>
-        <source>Miles</source>
-        <translation>英里</translation>
     </message>
 </context>
 <context>

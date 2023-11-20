@@ -1993,11 +1993,6 @@ static void __Pyx_AddTraceback(const char *funcname, int c_line,
 /* None.proto */
 #include <new>
 
-/* GCCDiagnostics.proto */
-#if !defined(__INTEL_COMPILER) && defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#define __Pyx_HAS_GCC_DIAGNOSTIC
-#endif
-
 /* CppExceptionConversion.proto */
 #ifndef __Pyx_CppExn2PyErr
 #include <new>
@@ -2038,6 +2033,11 @@ static void __Pyx_CppExn2PyErr() {
     PyErr_SetString(PyExc_RuntimeError, "Unknown exception");
   }
 }
+#endif
+
+/* GCCDiagnostics.proto */
+#if !defined(__INTEL_COMPILER) && defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
+#define __Pyx_HAS_GCC_DIAGNOSTIC
 #endif
 
 /* CIntFromPy.proto */
@@ -2673,13 +2673,14 @@ static int __pyx_pf_7opendbc_3can_10packer_pyx_9CANPacker___init__(struct __pyx_
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   std::string __pyx_t_1;
-  int __pyx_t_2;
-  PyObject *__pyx_t_3 = NULL;
+  struct DBC const *__pyx_t_2;
+  int __pyx_t_3;
   PyObject *__pyx_t_4 = NULL;
-  std::vector<struct Msg> ::size_type __pyx_t_5;
+  PyObject *__pyx_t_5 = NULL;
   std::vector<struct Msg> ::size_type __pyx_t_6;
   std::vector<struct Msg> ::size_type __pyx_t_7;
-  uint32_t __pyx_t_8;
+  std::vector<struct Msg> ::size_type __pyx_t_8;
+  uint32_t __pyx_t_9;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -2693,7 +2694,13 @@ static int __pyx_pf_7opendbc_3can_10packer_pyx_9CANPacker___init__(struct __pyx_
  *       raise RuntimeError(f"Can't lookup {dbc_name}")
  */
   __pyx_t_1 = __pyx_convert_string_from_py_std__in_string(__pyx_v_dbc_name); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 20, __pyx_L1_error)
-  __pyx_v_self->dbc = dbc_lookup(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_1));
+  try {
+    __pyx_t_2 = dbc_lookup(__PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_1));
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    __PYX_ERR(0, 20, __pyx_L1_error)
+  }
+  __pyx_v_self->dbc = __pyx_t_2;
 
   /* "opendbc/can/packer_pyx.pyx":21
  *   def __init__(self, dbc_name):
@@ -2702,8 +2709,8 @@ static int __pyx_pf_7opendbc_3can_10packer_pyx_9CANPacker___init__(struct __pyx_
  *       raise RuntimeError(f"Can't lookup {dbc_name}")
  * 
  */
-  __pyx_t_2 = (!(__pyx_v_self->dbc != 0));
-  if (unlikely(__pyx_t_2)) {
+  __pyx_t_3 = (!(__pyx_v_self->dbc != 0));
+  if (unlikely(__pyx_t_3)) {
 
     /* "opendbc/can/packer_pyx.pyx":22
  *     self.dbc = dbc_lookup(dbc_name)
@@ -2712,16 +2719,16 @@ static int __pyx_pf_7opendbc_3can_10packer_pyx_9CANPacker___init__(struct __pyx_
  * 
  *     self.packer = new cpp_CANPacker(dbc_name)
  */
-    __pyx_t_3 = __Pyx_PyObject_FormatSimple(__pyx_v_dbc_name, __pyx_empty_unicode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 22, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyUnicode_Concat(__pyx_kp_u_Can_t_lookup, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 22, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_FormatSimple(__pyx_v_dbc_name, __pyx_empty_unicode); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 22, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_3 = __Pyx_PyObject_CallOneArg(__pyx_builtin_RuntimeError, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 22, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = __Pyx_PyUnicode_Concat(__pyx_kp_u_Can_t_lookup, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 22, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_4 = __Pyx_PyObject_CallOneArg(__pyx_builtin_RuntimeError, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 22, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __Pyx_Raise(__pyx_t_4, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __PYX_ERR(0, 22, __pyx_L1_error)
 
     /* "opendbc/can/packer_pyx.pyx":21
@@ -2750,10 +2757,10 @@ static int __pyx_pf_7opendbc_3can_10packer_pyx_9CANPacker___init__(struct __pyx_
  *       msg = self.dbc[0].msgs[i]
  *       self.name_to_address[string(msg.name)] = msg.address
  */
-  __pyx_t_5 = (__pyx_v_self->dbc[0]).msgs.size();
-  __pyx_t_6 = __pyx_t_5;
-  for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
-    __pyx_v_i = __pyx_t_7;
+  __pyx_t_6 = (__pyx_v_self->dbc[0]).msgs.size();
+  __pyx_t_7 = __pyx_t_6;
+  for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
+    __pyx_v_i = __pyx_t_8;
 
     /* "opendbc/can/packer_pyx.pyx":26
  *     self.packer = new cpp_CANPacker(dbc_name)
@@ -2771,14 +2778,14 @@ static int __pyx_pf_7opendbc_3can_10packer_pyx_9CANPacker___init__(struct __pyx_
  * 
  *   cdef vector[uint8_t] pack(self, addr, values):
  */
-    __pyx_t_8 = __pyx_v_msg.address;
+    __pyx_t_9 = __pyx_v_msg.address;
     try {
       __pyx_t_1 = std::string(__pyx_v_msg.name);
     } catch(...) {
       __Pyx_CppExn2PyErr();
       __PYX_ERR(0, 27, __pyx_L1_error)
     }
-    (__pyx_v_self->name_to_address[__pyx_t_1]) = __pyx_t_8;
+    (__pyx_v_self->name_to_address[__pyx_t_1]) = __pyx_t_9;
   }
 
   /* "opendbc/can/packer_pyx.pyx":19
@@ -2793,8 +2800,8 @@ static int __pyx_pf_7opendbc_3can_10packer_pyx_9CANPacker___init__(struct __pyx_
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
   __Pyx_AddTraceback("opendbc.can.packer_pyx.CANPacker.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;

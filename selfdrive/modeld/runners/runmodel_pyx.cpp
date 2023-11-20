@@ -13,7 +13,7 @@
         "language": "c++",
         "name": "selfdrive.modeld.runners.runmodel_pyx",
         "sources": [
-            "/data/dp-private/selfdrive/modeld/runners/runmodel_pyx.pyx"
+            "/data/openpilot/selfdrive/modeld/runners/runmodel_pyx.pyx"
         ]
     },
     "module_name": "selfdrive.modeld.runners.runmodel_pyx"

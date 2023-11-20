@@ -14,7 +14,7 @@
         "language": "c++",
         "name": "selfdrive.modeld.runners.snpemodel_pyx",
         "sources": [
-            "/data/dp-private/selfdrive/modeld/runners/snpemodel_pyx.pyx"
+            "/data/openpilot/selfdrive/modeld/runners/snpemodel_pyx.pyx"
         ]
     },
     "module_name": "selfdrive.modeld.runners.snpemodel_pyx"

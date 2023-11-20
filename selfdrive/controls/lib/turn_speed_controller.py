@@ -5,7 +5,7 @@ from cereal import custom
 # from common.realtime import sec_since_boot
 from openpilot.selfdrive.controls.lib.drive_helpers import LIMIT_ADAPT_ACC, LIMIT_MIN_SPEED, LIMIT_MAX_MAP_DATA_AGE, \
   LIMIT_SPEED_OFFSET_TH, CONTROL_N, LIMIT_MIN_ACC, LIMIT_MAX_ACC
-from openpilot.selfdrive.modeld.constants import T_IDXS
+from openpilot.selfdrive.modeld.constants import ModelConstants
 import cereal.messaging as messaging
 
 
@@ -228,7 +228,7 @@ class TurnSpeedController():
     elif self.state == TurnSpeedControlState.active:
       # When active we are trying to keep the speed constant around the control time horizon.
       # but under constrained acceleration limits since we are in a turn.
-      a_target = self._v_offset / T_IDXS[CONTROL_N]
+      a_target = self._v_offset / ModelConstants.T_IDXS[CONTROL_N]
       a_target = np.clip(a_target, _ACTIVE_LIMIT_MIN_ACC, _ACTIVE_LIMIT_MAX_ACC)
 
     # update solution values.

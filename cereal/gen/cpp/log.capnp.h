@@ -269,6 +269,7 @@ enum class ConfidenceClass_aa3247d9d2a61cd4: uint16_t {
 CAPNP_DECLARE_ENUM(ConfidenceClass, aa3247d9d2a61cd4);
 CAPNP_DECLARE_SCHEMA(860aa5ddbcdc8d25);
 CAPNP_DECLARE_SCHEMA(fb3ec0702e67884f);
+CAPNP_DECLARE_SCHEMA(84caeca5a6b4acfe);
 CAPNP_DECLARE_SCHEMA(89d394e3541735fc);
 CAPNP_DECLARE_SCHEMA(c0ad259ec157ccd3);
 enum class Type_c0ad259ec157ccd3: uint16_t {
@@ -555,7 +556,7 @@ struct InitData {
   struct IosBuildInfo;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(e71008caeb3fb65c, 1, 17)
+    CAPNP_DECLARE_STRUCT_HEADER(e71008caeb3fb65c, 2, 17)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -1155,9 +1156,10 @@ struct ModelDataV2 {
 
   struct DisengagePredictions;
   struct Pose;
+  struct LateralPlannerSolution;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(c4713f6b0d36abe9, 6, 15)
+    CAPNP_DECLARE_STRUCT_HEADER(c4713f6b0d36abe9, 6, 16)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -1233,6 +1235,21 @@ struct ModelDataV2::Pose {
 
   struct _capnpPrivate {
     CAPNP_DECLARE_STRUCT_HEADER(fb3ec0702e67884f, 0, 4)
+    #if !CAPNP_LITE
+    static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
+    #endif  // !CAPNP_LITE
+  };
+};
+
+struct ModelDataV2::LateralPlannerSolution {
+  LateralPlannerSolution() = delete;
+
+  class Reader;
+  class Builder;
+  class Pipeline;
+
+  struct _capnpPrivate {
+    CAPNP_DECLARE_STRUCT_HEADER(84caeca5a6b4acfe, 0, 8)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -2732,6 +2749,8 @@ public:
   inline bool hasCommands() const;
   inline  ::cereal::Map< ::capnp::Text,  ::capnp::Data>::Reader getCommands() const;
 
+  inline  ::uint64_t getWallTimeNanos() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -2888,6 +2907,9 @@ public:
   inline  ::cereal::Map< ::capnp::Text,  ::capnp::Data>::Builder initCommands();
   inline void adoptCommands(::capnp::Orphan< ::cereal::Map< ::capnp::Text,  ::capnp::Data>>&& value);
   inline ::capnp::Orphan< ::cereal::Map< ::capnp::Text,  ::capnp::Data>> disownCommands();
+
+  inline  ::uint64_t getWallTimeNanos();
+  inline void setWallTimeNanos( ::uint64_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -8167,6 +8189,9 @@ public:
 
   inline  ::uint64_t getLocationMonoTime() const;
 
+  inline bool hasLateralPlannerSolution() const;
+  inline  ::cereal::ModelDataV2::LateralPlannerSolution::Reader getLateralPlannerSolution() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -8333,6 +8358,13 @@ public:
   inline  ::uint64_t getLocationMonoTime();
   inline void setLocationMonoTime( ::uint64_t value);
 
+  inline bool hasLateralPlannerSolution();
+  inline  ::cereal::ModelDataV2::LateralPlannerSolution::Builder getLateralPlannerSolution();
+  inline void setLateralPlannerSolution( ::cereal::ModelDataV2::LateralPlannerSolution::Reader value);
+  inline  ::cereal::ModelDataV2::LateralPlannerSolution::Builder initLateralPlannerSolution();
+  inline void adoptLateralPlannerSolution(::capnp::Orphan< ::cereal::ModelDataV2::LateralPlannerSolution>&& value);
+  inline ::capnp::Orphan< ::cereal::ModelDataV2::LateralPlannerSolution> disownLateralPlannerSolution();
+
 private:
   ::capnp::_::StructBuilder _builder;
   template <typename, ::capnp::Kind>
@@ -8358,6 +8390,7 @@ public:
   inline  ::cereal::ModelDataV2::MetaData::Pipeline getMeta();
   inline  ::cereal::XYZTData::Pipeline getAcceleration();
   inline  ::cereal::ModelDataV2::Pose::Pipeline getTemporalPose();
+  inline  ::cereal::ModelDataV2::LateralPlannerSolution::Pipeline getLateralPlannerSolution();
 private:
   ::capnp::AnyPointer::Pipeline _typeless;
   friend class ::capnp::PipelineHook;
@@ -9028,6 +9061,165 @@ private:
 class ModelDataV2::Pose::Pipeline {
 public:
   typedef Pose Pipelines;
+
+  inline Pipeline(decltype(nullptr)): _typeless(nullptr) {}
+  inline explicit Pipeline(::capnp::AnyPointer::Pipeline&& typeless)
+      : _typeless(kj::mv(typeless)) {}
+
+private:
+  ::capnp::AnyPointer::Pipeline _typeless;
+  friend class ::capnp::PipelineHook;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+};
+#endif  // !CAPNP_LITE
+
+class ModelDataV2::LateralPlannerSolution::Reader {
+public:
+  typedef LateralPlannerSolution Reads;
+
+  Reader() = default;
+  inline explicit Reader(::capnp::_::StructReader base): _reader(base) {}
+
+  inline ::capnp::MessageSize totalSize() const {
+    return _reader.totalSize().asPublic();
+  }
+
+#if !CAPNP_LITE
+  inline ::kj::StringTree toString() const {
+    return ::capnp::_::structString(_reader, *_capnpPrivate::brand());
+  }
+#endif  // !CAPNP_LITE
+
+  inline bool hasX() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getX() const;
+
+  inline bool hasY() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getY() const;
+
+  inline bool hasYaw() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getYaw() const;
+
+  inline bool hasYawRate() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getYawRate() const;
+
+  inline bool hasXStd() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getXStd() const;
+
+  inline bool hasYStd() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getYStd() const;
+
+  inline bool hasYawStd() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getYawStd() const;
+
+  inline bool hasYawRateStd() const;
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader getYawRateStd() const;
+
+private:
+  ::capnp::_::StructReader _reader;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::_::PointerHelpers;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::List;
+  friend class ::capnp::MessageBuilder;
+  friend class ::capnp::Orphanage;
+};
+
+class ModelDataV2::LateralPlannerSolution::Builder {
+public:
+  typedef LateralPlannerSolution Builds;
+
+  Builder() = delete;  // Deleted to discourage incorrect usage.
+                       // You can explicitly initialize to nullptr instead.
+  inline Builder(decltype(nullptr)) {}
+  inline explicit Builder(::capnp::_::StructBuilder base): _builder(base) {}
+  inline operator Reader() const { return Reader(_builder.asReader()); }
+  inline Reader asReader() const { return *this; }
+
+  inline ::capnp::MessageSize totalSize() const { return asReader().totalSize(); }
+#if !CAPNP_LITE
+  inline ::kj::StringTree toString() const { return asReader().toString(); }
+#endif  // !CAPNP_LITE
+
+  inline bool hasX();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getX();
+  inline void setX( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setX(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initX(unsigned int size);
+  inline void adoptX(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownX();
+
+  inline bool hasY();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getY();
+  inline void setY( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setY(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initY(unsigned int size);
+  inline void adoptY(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownY();
+
+  inline bool hasYaw();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getYaw();
+  inline void setYaw( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setYaw(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initYaw(unsigned int size);
+  inline void adoptYaw(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownYaw();
+
+  inline bool hasYawRate();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getYawRate();
+  inline void setYawRate( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setYawRate(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initYawRate(unsigned int size);
+  inline void adoptYawRate(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownYawRate();
+
+  inline bool hasXStd();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getXStd();
+  inline void setXStd( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setXStd(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initXStd(unsigned int size);
+  inline void adoptXStd(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownXStd();
+
+  inline bool hasYStd();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getYStd();
+  inline void setYStd( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setYStd(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initYStd(unsigned int size);
+  inline void adoptYStd(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownYStd();
+
+  inline bool hasYawStd();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getYawStd();
+  inline void setYawStd( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setYawStd(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initYawStd(unsigned int size);
+  inline void adoptYawStd(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownYawStd();
+
+  inline bool hasYawRateStd();
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder getYawRateStd();
+  inline void setYawRateStd( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value);
+  inline void setYawRateStd(::kj::ArrayPtr<const float> value);
+  inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder initYawRateStd(unsigned int size);
+  inline void adoptYawRateStd(::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value);
+  inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> disownYawRateStd();
+
+private:
+  ::capnp::_::StructBuilder _builder;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+  friend class ::capnp::Orphanage;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::_::PointerHelpers;
+};
+
+#if !CAPNP_LITE
+class ModelDataV2::LateralPlannerSolution::Pipeline {
+public:
+  typedef LateralPlannerSolution Pipelines;
 
   inline Pipeline(decltype(nullptr)): _typeless(nullptr) {}
   inline explicit Pipeline(::capnp::AnyPointer::Pipeline&& typeless)
@@ -20814,6 +21006,20 @@ inline ::capnp::Orphan< ::cereal::Map< ::capnp::Text,  ::capnp::Data>> InitData:
       ::capnp::bounded<16>() * ::capnp::POINTERS));
 }
 
+inline  ::uint64_t InitData::Reader::getWallTimeNanos() const {
+  return _reader.getDataField< ::uint64_t>(
+      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
+}
+
+inline  ::uint64_t InitData::Builder::getWallTimeNanos() {
+  return _builder.getDataField< ::uint64_t>(
+      ::capnp::bounded<1>() * ::capnp::ELEMENTS);
+}
+inline void InitData::Builder::setWallTimeNanos( ::uint64_t value) {
+  _builder.setDataField< ::uint64_t>(
+      ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
+}
+
 inline bool InitData::PandaInfo::Reader::getHasPanda() const {
   return _reader.getDataField<bool>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
@@ -30122,6 +30328,45 @@ inline void ModelDataV2::Builder::setLocationMonoTime( ::uint64_t value) {
       ::capnp::bounded<5>() * ::capnp::ELEMENTS, value);
 }
 
+inline bool ModelDataV2::Reader::hasLateralPlannerSolution() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<15>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::Builder::hasLateralPlannerSolution() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<15>() * ::capnp::POINTERS).isNull();
+}
+inline  ::cereal::ModelDataV2::LateralPlannerSolution::Reader ModelDataV2::Reader::getLateralPlannerSolution() const {
+  return ::capnp::_::PointerHelpers< ::cereal::ModelDataV2::LateralPlannerSolution>::get(_reader.getPointerField(
+      ::capnp::bounded<15>() * ::capnp::POINTERS));
+}
+inline  ::cereal::ModelDataV2::LateralPlannerSolution::Builder ModelDataV2::Builder::getLateralPlannerSolution() {
+  return ::capnp::_::PointerHelpers< ::cereal::ModelDataV2::LateralPlannerSolution>::get(_builder.getPointerField(
+      ::capnp::bounded<15>() * ::capnp::POINTERS));
+}
+#if !CAPNP_LITE
+inline  ::cereal::ModelDataV2::LateralPlannerSolution::Pipeline ModelDataV2::Pipeline::getLateralPlannerSolution() {
+  return  ::cereal::ModelDataV2::LateralPlannerSolution::Pipeline(_typeless.getPointerField(15));
+}
+#endif  // !CAPNP_LITE
+inline void ModelDataV2::Builder::setLateralPlannerSolution( ::cereal::ModelDataV2::LateralPlannerSolution::Reader value) {
+  ::capnp::_::PointerHelpers< ::cereal::ModelDataV2::LateralPlannerSolution>::set(_builder.getPointerField(
+      ::capnp::bounded<15>() * ::capnp::POINTERS), value);
+}
+inline  ::cereal::ModelDataV2::LateralPlannerSolution::Builder ModelDataV2::Builder::initLateralPlannerSolution() {
+  return ::capnp::_::PointerHelpers< ::cereal::ModelDataV2::LateralPlannerSolution>::init(_builder.getPointerField(
+      ::capnp::bounded<15>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::Builder::adoptLateralPlannerSolution(
+    ::capnp::Orphan< ::cereal::ModelDataV2::LateralPlannerSolution>&& value) {
+  ::capnp::_::PointerHelpers< ::cereal::ModelDataV2::LateralPlannerSolution>::adopt(_builder.getPointerField(
+      ::capnp::bounded<15>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::cereal::ModelDataV2::LateralPlannerSolution> ModelDataV2::Builder::disownLateralPlannerSolution() {
+  return ::capnp::_::PointerHelpers< ::cereal::ModelDataV2::LateralPlannerSolution>::disown(_builder.getPointerField(
+      ::capnp::bounded<15>() * ::capnp::POINTERS));
+}
+
 inline float ModelDataV2::LeadDataV2::Reader::getProb() const {
   return _reader.getDataField<float>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
@@ -31197,6 +31442,310 @@ inline void ModelDataV2::Pose::Builder::adoptRotStd(
 inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::Pose::Builder::disownRotStd() {
   return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
       ::capnp::bounded<3>() * ::capnp::POINTERS));
+}
+
+inline bool ModelDataV2::LateralPlannerSolution::Reader::hasX() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::LateralPlannerSolution::Builder::hasX() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader ModelDataV2::LateralPlannerSolution::Reader::getX() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::getX() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setX( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setX(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::initX(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), size);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::adoptX(
+    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::LateralPlannerSolution::Builder::disownX() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+
+inline bool ModelDataV2::LateralPlannerSolution::Reader::hasY() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::LateralPlannerSolution::Builder::hasY() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader ModelDataV2::LateralPlannerSolution::Reader::getY() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::getY() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setY( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS), value);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setY(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::initY(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS), size);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::adoptY(
+    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::LateralPlannerSolution::Builder::disownY() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
+      ::capnp::bounded<1>() * ::capnp::POINTERS));
+}
+
+inline bool ModelDataV2::LateralPlannerSolution::Reader::hasYaw() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::LateralPlannerSolution::Builder::hasYaw() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader ModelDataV2::LateralPlannerSolution::Reader::getYaw() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::getYaw() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYaw( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS), value);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYaw(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::initYaw(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS), size);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::adoptYaw(
+    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::LateralPlannerSolution::Builder::disownYaw() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
+      ::capnp::bounded<2>() * ::capnp::POINTERS));
+}
+
+inline bool ModelDataV2::LateralPlannerSolution::Reader::hasYawRate() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::LateralPlannerSolution::Builder::hasYawRate() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader ModelDataV2::LateralPlannerSolution::Reader::getYawRate() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::getYawRate() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYawRate( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS), value);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYawRate(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::initYawRate(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS), size);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::adoptYawRate(
+    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::LateralPlannerSolution::Builder::disownYawRate() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
+      ::capnp::bounded<3>() * ::capnp::POINTERS));
+}
+
+inline bool ModelDataV2::LateralPlannerSolution::Reader::hasXStd() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::LateralPlannerSolution::Builder::hasXStd() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader ModelDataV2::LateralPlannerSolution::Reader::getXStd() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::getXStd() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setXStd( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS), value);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setXStd(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::initXStd(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS), size);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::adoptXStd(
+    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::LateralPlannerSolution::Builder::disownXStd() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
+      ::capnp::bounded<4>() * ::capnp::POINTERS));
+}
+
+inline bool ModelDataV2::LateralPlannerSolution::Reader::hasYStd() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::LateralPlannerSolution::Builder::hasYStd() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader ModelDataV2::LateralPlannerSolution::Reader::getYStd() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::getYStd() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYStd( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS), value);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYStd(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::initYStd(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS), size);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::adoptYStd(
+    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::LateralPlannerSolution::Builder::disownYStd() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
+      ::capnp::bounded<5>() * ::capnp::POINTERS));
+}
+
+inline bool ModelDataV2::LateralPlannerSolution::Reader::hasYawStd() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::LateralPlannerSolution::Builder::hasYawStd() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader ModelDataV2::LateralPlannerSolution::Reader::getYawStd() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::getYawStd() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYawStd( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS), value);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYawStd(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::initYawStd(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS), size);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::adoptYawStd(
+    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::LateralPlannerSolution::Builder::disownYawStd() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
+      ::capnp::bounded<6>() * ::capnp::POINTERS));
+}
+
+inline bool ModelDataV2::LateralPlannerSolution::Reader::hasYawRateStd() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS).isNull();
+}
+inline bool ModelDataV2::LateralPlannerSolution::Builder::hasYawRateStd() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader ModelDataV2::LateralPlannerSolution::Reader::getYawRateStd() const {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_reader.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS));
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::getYawRateStd() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::get(_builder.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS));
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYawRateStd( ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS), value);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::setYawRateStd(::kj::ArrayPtr<const float> value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::set(_builder.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>::Builder ModelDataV2::LateralPlannerSolution::Builder::initYawRateStd(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::init(_builder.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS), size);
+}
+inline void ModelDataV2::LateralPlannerSolution::Builder::adoptYawRateStd(
+    ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::adopt(_builder.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>> ModelDataV2::LateralPlannerSolution::Builder::disownYawRateStd() {
+  return ::capnp::_::PointerHelpers< ::capnp::List<float,  ::capnp::Kind::PRIMITIVE>>::disown(_builder.getPointerField(
+      ::capnp::bounded<7>() * ::capnp::POINTERS));
 }
 
 inline  ::uint32_t EncodeIndex::Reader::getFrameId() const {

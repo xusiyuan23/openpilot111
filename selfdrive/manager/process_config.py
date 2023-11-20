@@ -5,6 +5,8 @@ from openpilot.common.params import Params
 from openpilot.system.hardware import PC, TICI
 from openpilot.selfdrive.manager.process import PythonProcess, NativeProcess, DaemonProcess
 
+dp_disable_onroad_uploads = Params().get_bool("dp_disable_onroad_uploads")
+
 WEBCAM = os.getenv("USE_WEBCAM") is not None
 
 def driverview(started: bool, params: Params, CP: car.CarParams) -> bool:
@@ -45,7 +47,6 @@ procs = [
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
 
   NativeProcess("camerad", "system/camerad", ["./camerad"], driverview),
-  NativeProcess("clocksd", "system/clocksd", ["./clocksd"], only_onroad),
   NativeProcess("logcatd", "system/logcatd", ["./logcatd"], only_onroad),
   NativeProcess("proclogd", "system/proclogd", ["./proclogd"], only_onroad),
   PythonProcess("logmessaged", "system.logmessaged", always_run),
@@ -69,7 +70,6 @@ procs = [
   PythonProcess("controlsd", "selfdrive.controls.controlsd", only_onroad),
   PythonProcess("deleter", "system.loggerd.deleter", always_run),
   PythonProcess("dmonitoringd", "selfdrive.monitoring.dmonitoringd", driverview, enabled=(not PC or WEBCAM)),
-  PythonProcess("laikad", "selfdrive.locationd.laikad", only_onroad),
   PythonProcess("rawgpsd", "system.sensord.rawgps.rawgpsd", qcomgps, enabled=TICI),
   PythonProcess("navd", "selfdrive.navd.navd", only_onroad),
   PythonProcess("pandad", "selfdrive.boardd.pandad", always_run),
@@ -81,7 +81,7 @@ procs = [
   PythonProcess("thermald", "selfdrive.thermald.thermald", always_run),
   PythonProcess("tombstoned", "selfdrive.tombstoned", always_run, enabled=not PC),
   PythonProcess("updated", "selfdrive.updated", only_offroad, enabled=not PC),
-  PythonProcess("uploader", "system.loggerd.uploader", always_run),
+  PythonProcess("uploader", "system.loggerd.uploader", only_offroad if dp_disable_onroad_uploads else always_run),
   PythonProcess("statsd", "selfdrive.statsd", always_run),
 
   # debug procs
@@ -94,7 +94,7 @@ procs = [
   # gpxd
   PythonProcess("gpxd", "selfdrive.dragonpilot.gpxd", only_onroad),
   PythonProcess("gpx_uploader", "selfdrive.dragonpilot.gpx_uploader", always_run),
-  PythonProcess("dpdmonitoringd", "selfdrive.dragonpilot.dpdmonitoringd", only_onroad),
+  PythonProcess("dpdmonitoringd", "selfdrive.dragonpilot.dpdmonitoringd", only_onroad, enabled=not PC),
   NativeProcess("fileserv", "selfdrive/dragonpilot", ['./fileserv'], always_run),
 ]
 

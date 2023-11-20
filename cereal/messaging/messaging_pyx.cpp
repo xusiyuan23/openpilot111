@@ -10,7 +10,7 @@
         "language": "c++",
         "name": "cereal.messaging.messaging_pyx",
         "sources": [
-            "/data/dp-private/cereal/messaging/messaging_pyx.pyx"
+            "/data/openpilot/cereal/messaging/messaging_pyx.pyx"
         ]
     },
     "module_name": "cereal.messaging.messaging_pyx"

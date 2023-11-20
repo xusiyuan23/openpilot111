@@ -63,7 +63,6 @@ def manager_init() -> None:
     ("dp_toyota_sng", "0"),
     ("dp_toyota_enhanced_bsm", "0"),
     ("dp_toyota_enhanced_long_tune", "0"),
-    ("dp_lat_lane_priority_mode", "0"),
     ("dp_mapd", "0"),
     ("dp_mapd_vision_turn_control", "0"),
     ("dp_mapd_speed_limit_control", "0"),
@@ -79,8 +78,12 @@ def manager_init() -> None:
     ("dp_long_missing_lead_warning", "0"),
     ("dp_lateral_road_edge_detection", "0"),
     ("dp_nav_voice_guidance", "0"),
-    ("dp_hkg_tacobell_lat", "0"),
-    ("dp_long_use_krkeegen_tune", "0"),
+    ("dp_long_frogai_aggre_accel_tune", "0"),
+    ("dp_toyota_zss", "0"),
+    ("dp_long_accel_btn", "0"),
+    ("dp_long_personality_btn", "0"),
+    ("dp_disable_onroad_uploads", "0"),
+    ("dp_long_frogai_smooth_braking_tune", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
