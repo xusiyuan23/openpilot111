@@ -11,10 +11,11 @@ from openpilot.common.realtime import DT_MDL
 from openpilot.selfdrive.legacy_modeld.constants import T_IDXS
 from openpilot.common.conversions import Conversions as CV
 from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
-from openpilot.selfdrive.controls.lib.legacy_longitudinal_mpc_lib.long_mpc import LongitudinalMpc, STOP_DISTANCE
+from openpilot.selfdrive.controls.lib.legacy_longitudinal_mpc_lib.long_mpc import LongitudinalMpc
 from openpilot.selfdrive.controls.lib.legacy_longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
 from openpilot.selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N
 from openpilot.system.swaglog import cloudlog
+from openpilot.selfdrive.controls.lib.legacy_longitudinal_mpc_lib.long_mpc import STOP_DISTANCE
 from openpilot.selfdrive.controls.lib.vision_turn_controller import VisionTurnController
 from openpilot.selfdrive.controls.lib.accel_controller import AccelController
 
@@ -70,22 +71,20 @@ class LongitudinalPlanner:
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
     self.dp_long_use_df_tune = False
+    self.dp_long_use_krkeegen_tune = False
 
   def read_param(self):
-    try:
-      self.personality = int(self.params.get('LongitudinalPersonality'))
-      self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
-    except (ValueError, TypeError):
-      self.personality = log.LongitudinalPersonality.standard
-      self.dp_long_use_df_tune = False
+    self.personality = int(self.params.get('LongitudinalPersonality'))
+    self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
+    self.dp_long_use_krkeegen_tune = self.params.get_bool('dp_long_use_krkeegen_tune')
 
   def update(self, sm):
     if self.param_read_counter % 50 == 0:
       self.read_param()
 
-      if self.param_read_counter % 300 == 0:
-        self.accel_controller.set_profile(self.params.get("dp_long_accel_profile", encoding='utf-8'))
-        self.vision_turn_controller.set_enabled(self.params.get_bool("dp_mapd_vision_turn_control"))
+    if self.param_read_counter % 300 == 0:
+      self.accel_controller.set_profile(self.params.get("dp_long_accel_profile", encoding='utf-8'))
+      self.vision_turn_controller.set_enabled(self.params.get_bool("dp_mapd_vision_turn_control"))
 
     self.param_read_counter += 1
     v_ego = sm['carState'].vEgo
@@ -133,7 +132,7 @@ class LongitudinalPlanner:
     self.mpc.set_weights(prev_accel_constraint, personality=self.personality)
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
-    self.mpc.update(sm['carState'], sm['radarState'], v_cruise_sol, personality=self.personality, use_df_tune=self.dp_long_use_df_tune)
+    self.mpc.update(sm['carState'], sm['radarState'], v_cruise_sol, personality=self.personality, use_df_tune=self.dp_long_use_df_tune, use_krkeegen_tune=self.dp_long_use_krkeegen_tune)
 
     self.v_desired_trajectory = np.interp(T_IDXS[:CONTROL_N], T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory = np.interp(T_IDXS[:CONTROL_N], T_IDXS_MPC, self.mpc.a_solution)
