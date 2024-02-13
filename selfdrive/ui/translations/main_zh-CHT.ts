@@ -501,7 +501,7 @@ Credit to krkeegen: https://github.com/krkeegan/</source>
     </message>
     <message>
         <source>Enable Smooth Braking</source>
-        <translation>啟用平穩煞車</translation>
+        <translation type="vanished">啟用平穩煞車</translation>
     </message>
     <message>
         <source>When enabled, Smoother Braking Behind Lead More natural braking behavior when coming up to a slower vehicle.
@@ -617,6 +617,10 @@ Reboot Required.</source>
     </message>
     <message>
         <source>When enabled, openpilot automatically lane change when possible(WARNING: USE IT AT YOUR OWN RISK!!!!).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>*α* Enable Smooth Braking</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

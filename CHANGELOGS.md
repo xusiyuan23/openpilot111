@@ -1,4 +1,4 @@
-dragonpilot beta3 2024.02.12
+dragonpilot beta3 2024.02.13
 =======================
 * Comma 0.9.6 release
   * New driving model (Los Angles V2)
