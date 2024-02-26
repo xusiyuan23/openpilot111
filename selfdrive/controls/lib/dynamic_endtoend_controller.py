@@ -21,13 +21,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-# Version = 2023-12-13
+# Version = 2024-02-26
 from common.numpy_fast import interp
 
 # d-e2e, from modeldata.h
 TRAJECTORY_SIZE = 33
 
-LEAD_WINDOW_SIZE = 5
+LEAD_WINDOW_SIZE = 3
 LEAD_PROB = 0.6
 
 SLOW_DOWN_WINDOW_SIZE = 5
@@ -42,13 +42,13 @@ SLOWNESS_CRUISE_OFFSET = 1.05
 DANGEROUS_TTC_WINDOW_SIZE = 5
 DANGEROUS_TTC = 2.0
 
-HIGHWAY_CRUISE_KPH = 75
+HIGHWAY_CRUISE_KPH = 70
 
 STOP_AND_GO_FRAME = 60
 
 SET_MODE_TIMEOUT = 10
 
-MPC_FCW_WINDOW_SIZE = 5
+MPC_FCW_WINDOW_SIZE = 10
 MPC_FCW_PROB = 0.6
 
 class SNG_State:
@@ -196,7 +196,7 @@ class DynamicEndtoEndController:
     # when at highway cruise and SNG: blended
     # ensuring blended mode is used because acc is bad at catching SNG lead car
     # especially those who accel very fast and then brake very hard.
-    if self._sng_state == SNG_State.going and self._v_cruise_kph >= HIGHWAY_CRUISE_KPH:
+    if self._sng_state == SNG_State.going and self._v_cruise_kph < HIGHWAY_CRUISE_KPH:
       self._set_mode('blended')
       return
 
