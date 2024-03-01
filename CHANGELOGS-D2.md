@@ -1,3 +1,18 @@
+2024-03-01
+========================
+* Display correct changelogs.
+
+
+2024-02-29
+========================
+* Added Lead Vehicle Warning
+* Added Disable Auto Updates toggle
+* Reverted panda back to last working version for honda with minimal changes from op master. (breaks red panda support for now)
+* Added EON Installer (https://raw.githubusercontent.com/dragonpilot-community/dragonpilot/d2/scripts/eon_installer.sh)
+* Conditionally include red panda firmware.
+* Enabled branch selector.
+* Reverted transform patch.
+
 2024-02-27
 ========================
 * Fixed door lock/unlock for Toyotas.

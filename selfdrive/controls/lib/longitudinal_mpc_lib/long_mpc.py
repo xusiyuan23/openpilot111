@@ -54,7 +54,7 @@ T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 COMFORT_BRAKE = 2.5
-STOP_DISTANCE = 5.5
+STOP_DISTANCE = 6.0
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -79,14 +79,14 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
 
 def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
-    x_vel =  [0,    3.05,   3.61,   4.16,   7.14,   11.11]
-    y_dist = [1.75, 1.75, 1.77, 1.75, 1.8,  1.8]
+    x_vel =  [0.0,  3.0,  8.33,  13.90,  20,    25,    40]
+    y_dist = [1.2,  1.25, 1.40,  1.40,   1.50,  1.85,  2.0]
   elif personality==log.LongitudinalPersonality.standard:
-    x_vel =  [0,    3.05,   3.61,   4.16,   7.14,   11.11]
-    y_dist = [1.5,  1.5,  1.51,  1.5,  1.5,  1.45]
+    x_vel =  [0.0,  3.0,  8.33,  13.90,  20,    25,    40]
+    y_dist = [1.00,  1.00, 1.20,  1.20,   1.25,  1.45,  1.5]
   elif personality==log.LongitudinalPersonality.aggressive:
-    x_vel =  [0,    3.05,   3.61,   4.16,   7.14,   11.11]
-    y_dist = [1.12, 1.12, 1.13, 1.12, 1.22, 1.22]
+    x_vel =  [0.0,  4.00, 8.33,  13.89,  20,    25,    40]
+    y_dist = [0.8,  0.80, 0.90,  0.90,   0.9,  1.105, 1.12]
   else:
     raise NotImplementedError("Dynamic Follow personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
@@ -109,8 +109,8 @@ def get_stopped_equivalence_factor_krkeegen(v_lead, v_ego):
   if np.all(v_lead - v_ego > 0):
     v_diff_offset = ((v_lead - v_ego) * 1.)
     v_diff_offset = np.clip(v_diff_offset, 0, STOP_DISTANCE / 2)
-    v_diff_offset = np.maximum(v_diff_offset * ((10 - v_ego**2)/10), 0)
-  distance = (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset * 1.2
+    v_diff_offset = np.maximum(v_diff_offset * ((10 - v_ego)/10), 0)
+  distance = (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
   return distance
 
 def gen_long_model():

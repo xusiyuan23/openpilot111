@@ -2,6 +2,7 @@
 import os
 import math
 import time
+import threading
 from typing import SupportsFloat
 
 from cereal import car, log
@@ -65,6 +66,9 @@ DP_VAG_TIMEBOMB_BYPASS_WARNING = 34000
 DP_VAG_TIMEBOMB_BYPASS_START = 345000
 DP_VAG_TIMEBOMB_BYPASS_END = 348000
 
+DP_LONG_MISSING_LEAD_COUNT = 2. / DT_CTRL
+DP_LONG_MISSING_LEAD_SPEED = 19.44  # 70 kph
+
 class Controls:
   def __init__(self, sm=None, pm=None, can_sock=None, CI=None):
     config_realtime_process(4 if TICI else 3, Priority.CTRL_HIGH)
@@ -103,6 +107,9 @@ class Controls:
     self._dp_vag_timebomb_bypass = self.params.get_bool("dp_vag_timebomb_bypass")
     self._dp_lat_lane_change_assist_disabled = int(self.params.get("dp_lat_lane_change_assist_speed", encoding="utf-8")) == 0
     self._dp_lat_lane_change_assist_disabled_active = False
+    self._dp_long_missing_lead_warning = self.params.get_bool("dp_long_missing_lead_warning")
+    self._dp_long_missing_lead_count = 0
+    self._dp_long_missing_lead_prev = False
     self.sm = sm
     if self.sm is None:
       ignore = ['testJoystick']
@@ -270,6 +277,26 @@ class Controls:
     # no more events while in dashcam mode
     if self.read_only:
       return
+
+    # lead missing alert
+    # when driving on highway and the lead car suddenly gone missing, hazard ahead?
+    if self._dp_long_missing_lead_warning and CS.vEgo >= DP_LONG_MISSING_LEAD_SPEED:
+      _dp_long_missing_lead = not self.sm['longitudinalPlan'].hasLead
+
+      # lead vehicle missing started
+      if not self._dp_long_missing_lead_prev and _dp_long_missing_lead:
+        self._dp_long_missing_lead_count = DP_LONG_MISSING_LEAD_COUNT
+
+      # only send event when counter reach 0
+      if self._dp_long_missing_lead_count > 0:
+        if CS.steeringPressed or CS.brakePressed or not _dp_long_missing_lead:
+          self._dp_long_missing_lead_count = 0
+        else:
+          self._dp_long_missing_lead_count -= 1
+          if self._dp_long_missing_lead_count == 0:
+            self.events.add(EventName.promptDriverDistracted)
+
+      self._dp_long_missing_lead_prev = _dp_long_missing_lead
 
     # ALKA combination
     if self._dp_alka and CS.brakePressed:
@@ -963,18 +990,10 @@ class Controls:
 
   def step(self):
     start_time = time.monotonic()
-    self.prof.checkpoint("Ratekeeper", ignore=True)
-
-    self.is_metric = self.params.get_bool("IsMetric")
-    self.experimental_mode = self.params.get_bool("ExperimentalMode") and self.CP.openpilotLongitudinalControl
-    # rick - we should disable experimental mode on radarless car w/ 0.8.13 model
-    if self.CP.radarUnavailable and self.dp_0813:
-      self.experimental_mode = False
 
     # Sample data from sockets and get a carState
     CS = self.data_sample()
     cloudlog.timestamp("Data sampled")
-    self.prof.checkpoint("Sample")
 
     self.update_events(CS)
     cloudlog.timestamp("Events updated")
@@ -982,24 +1001,37 @@ class Controls:
     if not self.read_only and self.initialized:
       # Update control state
       self.state_transition(CS)
-      self.prof.checkpoint("State transition")
 
     # Compute actuators (runs PID loops and lateral MPC)
     CC, lac_log = self.state_control(CS)
 
-    self.prof.checkpoint("State Control")
-
     # Publish data
     self.publish_logs(CS, start_time, CC, lac_log)
-    self.prof.checkpoint("Sent")
 
     self.CS_prev = CS
 
+  def params_thread(self, evt):
+    while not evt.is_set():
+      self.is_metric = self.params.get_bool("IsMetric")
+      self.experimental_mode = self.params.get_bool("ExperimentalMode") and self.CP.openpilotLongitudinalControl
+      # rick - we should disable experimental mode on radarless car w/ 0.8.13 model
+      if self.CP.radarUnavailable and self.dp_0813:
+        self.experimental_mode = False
+      if self.CP.notCar:
+        self.joystick_mode = self.params.get_bool("JoystickDebugMode")
+      time.sleep(0.1)
+
   def controlsd_thread(self):
-    while True:
-      self.step()
-      self.rk.monitor_time()
-      self.prof.display()
+    e = threading.Event()
+    t = threading.Thread(target=self.params_thread, args=(e, ))
+    try:
+      t.start()
+      while True:
+        self.step()
+        self.rk.monitor_time()
+    except SystemExit:
+      e.set()
+      t.join()
 
 
 def main(sm=None, pm=None, logcan=None):
