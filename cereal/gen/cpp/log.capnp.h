@@ -41,6 +41,7 @@ enum class DeviceType_9d5d7238eba86608: uint16_t {
   TICI,
   PC,
   TIZI,
+  MICI,
 };
 CAPNP_DECLARE_ENUM(DeviceType, 9d5d7238eba86608);
 CAPNP_DECLARE_SCHEMA(e673e8725cdff0ad);
@@ -589,7 +590,7 @@ struct InitData {
   struct IosBuildInfo;
 
   struct _capnpPrivate {
-    CAPNP_DECLARE_STRUCT_HEADER(e71008caeb3fb65c, 2, 17)
+    CAPNP_DECLARE_STRUCT_HEADER(e71008caeb3fb65c, 2, 18)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -2516,6 +2517,7 @@ struct Event {
     CUSTOM_RESERVED_RAW_DATA0,
     CUSTOM_RESERVED_RAW_DATA1,
     CUSTOM_RESERVED_RAW_DATA2,
+    CAR_OUTPUT,
   };
 
   struct _capnpPrivate {
@@ -2806,6 +2808,9 @@ public:
 
   inline  ::uint64_t getWallTimeNanos() const;
 
+  inline bool hasGitCommitDate() const;
+  inline  ::capnp::Text::Reader getGitCommitDate() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -2965,6 +2970,13 @@ public:
 
   inline  ::uint64_t getWallTimeNanos();
   inline void setWallTimeNanos( ::uint64_t value);
+
+  inline bool hasGitCommitDate();
+  inline  ::capnp::Text::Builder getGitCommitDate();
+  inline void setGitCommitDate( ::capnp::Text::Reader value);
+  inline  ::capnp::Text::Builder initGitCommitDate(unsigned int size);
+  inline void adoptGitCommitDate(::capnp::Orphan< ::capnp::Text>&& value);
+  inline ::capnp::Orphan< ::capnp::Text> disownGitCommitDate();
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -4622,7 +4634,7 @@ public:
 
   inline float getBearingDeg() const;
 
-  inline float getAccuracy() const;
+  inline float getHorizontalAccuracy() const;
 
   inline  ::int64_t getUnixTimestampMillis() const;
 
@@ -4683,8 +4695,8 @@ public:
   inline float getBearingDeg();
   inline void setBearingDeg(float value);
 
-  inline float getAccuracy();
-  inline void setAccuracy(float value);
+  inline float getHorizontalAccuracy();
+  inline void setHorizontalAccuracy(float value);
 
   inline  ::int64_t getUnixTimestampMillis();
   inline void setUnixTimestampMillis( ::int64_t value);
@@ -4911,7 +4923,7 @@ public:
 
   inline float getBatteryTempCDEPRECATED() const;
 
-  inline float getAmbientTempC() const;
+  inline float getAmbientTempCDEPRECATED() const;
 
   inline bool hasNetworkInfo() const;
   inline  ::cereal::DeviceState::NetworkInfo::Reader getNetworkInfo() const;
@@ -5080,8 +5092,8 @@ public:
   inline float getBatteryTempCDEPRECATED();
   inline void setBatteryTempCDEPRECATED(float value);
 
-  inline float getAmbientTempC();
-  inline void setAmbientTempC(float value);
+  inline float getAmbientTempCDEPRECATED();
+  inline void setAmbientTempCDEPRECATED(float value);
 
   inline bool hasNetworkInfo();
   inline  ::cereal::DeviceState::NetworkInfo::Builder getNetworkInfo();
@@ -15195,15 +15207,15 @@ public:
   }
 #endif  // !CAPNP_LITE
 
-  inline  ::uint64_t getBootTimeNanos() const;
+  inline  ::uint64_t getBootTimeNanosDEPRECATED() const;
 
-  inline  ::uint64_t getMonotonicNanos() const;
+  inline  ::uint64_t getMonotonicNanosDEPRECATED() const;
 
-  inline  ::uint64_t getMonotonicRawNanos() const;
+  inline  ::uint64_t getMonotonicRawNanosDEPRECATD() const;
 
   inline  ::uint64_t getWallTimeNanos() const;
 
-  inline  ::uint64_t getModemUptimeMillis() const;
+  inline  ::uint64_t getModemUptimeMillisDEPRECATED() const;
 
 private:
   ::capnp::_::StructReader _reader;
@@ -15233,20 +15245,20 @@ public:
   inline ::kj::StringTree toString() const { return asReader().toString(); }
 #endif  // !CAPNP_LITE
 
-  inline  ::uint64_t getBootTimeNanos();
-  inline void setBootTimeNanos( ::uint64_t value);
+  inline  ::uint64_t getBootTimeNanosDEPRECATED();
+  inline void setBootTimeNanosDEPRECATED( ::uint64_t value);
 
-  inline  ::uint64_t getMonotonicNanos();
-  inline void setMonotonicNanos( ::uint64_t value);
+  inline  ::uint64_t getMonotonicNanosDEPRECATED();
+  inline void setMonotonicNanosDEPRECATED( ::uint64_t value);
 
-  inline  ::uint64_t getMonotonicRawNanos();
-  inline void setMonotonicRawNanos( ::uint64_t value);
+  inline  ::uint64_t getMonotonicRawNanosDEPRECATD();
+  inline void setMonotonicRawNanosDEPRECATD( ::uint64_t value);
 
   inline  ::uint64_t getWallTimeNanos();
   inline void setWallTimeNanos( ::uint64_t value);
 
-  inline  ::uint64_t getModemUptimeMillis();
-  inline void setModemUptimeMillis( ::uint64_t value);
+  inline  ::uint64_t getModemUptimeMillisDEPRECATED();
+  inline void setModemUptimeMillisDEPRECATED( ::uint64_t value);
 
 private:
   ::capnp::_::StructBuilder _builder;
@@ -19247,6 +19259,10 @@ public:
   inline bool hasCustomReservedRawData2() const;
   inline  ::capnp::Data::Reader getCustomReservedRawData2() const;
 
+  inline bool isCarOutput() const;
+  inline bool hasCarOutput() const;
+  inline  ::cereal::CarOutput::Reader getCarOutput() const;
+
 private:
   ::capnp::_::StructReader _reader;
   template <typename, ::capnp::Kind>
@@ -20282,6 +20298,14 @@ public:
   inline void adoptCustomReservedRawData2(::capnp::Orphan< ::capnp::Data>&& value);
   inline ::capnp::Orphan< ::capnp::Data> disownCustomReservedRawData2();
 
+  inline bool isCarOutput();
+  inline bool hasCarOutput();
+  inline  ::cereal::CarOutput::Builder getCarOutput();
+  inline void setCarOutput( ::cereal::CarOutput::Reader value);
+  inline  ::cereal::CarOutput::Builder initCarOutput();
+  inline void adoptCarOutput(::capnp::Orphan< ::cereal::CarOutput>&& value);
+  inline ::capnp::Orphan< ::cereal::CarOutput> disownCarOutput();
+
 private:
   ::capnp::_::StructBuilder _builder;
   template <typename, ::capnp::Kind>
@@ -21193,6 +21217,40 @@ inline  ::uint64_t InitData::Builder::getWallTimeNanos() {
 inline void InitData::Builder::setWallTimeNanos( ::uint64_t value) {
   _builder.setDataField< ::uint64_t>(
       ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
+}
+
+inline bool InitData::Reader::hasGitCommitDate() const {
+  return !_reader.getPointerField(
+      ::capnp::bounded<17>() * ::capnp::POINTERS).isNull();
+}
+inline bool InitData::Builder::hasGitCommitDate() {
+  return !_builder.getPointerField(
+      ::capnp::bounded<17>() * ::capnp::POINTERS).isNull();
+}
+inline  ::capnp::Text::Reader InitData::Reader::getGitCommitDate() const {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_reader.getPointerField(
+      ::capnp::bounded<17>() * ::capnp::POINTERS));
+}
+inline  ::capnp::Text::Builder InitData::Builder::getGitCommitDate() {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::get(_builder.getPointerField(
+      ::capnp::bounded<17>() * ::capnp::POINTERS));
+}
+inline void InitData::Builder::setGitCommitDate( ::capnp::Text::Reader value) {
+  ::capnp::_::PointerHelpers< ::capnp::Text>::set(_builder.getPointerField(
+      ::capnp::bounded<17>() * ::capnp::POINTERS), value);
+}
+inline  ::capnp::Text::Builder InitData::Builder::initGitCommitDate(unsigned int size) {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::init(_builder.getPointerField(
+      ::capnp::bounded<17>() * ::capnp::POINTERS), size);
+}
+inline void InitData::Builder::adoptGitCommitDate(
+    ::capnp::Orphan< ::capnp::Text>&& value) {
+  ::capnp::_::PointerHelpers< ::capnp::Text>::adopt(_builder.getPointerField(
+      ::capnp::bounded<17>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::capnp::Text> InitData::Builder::disownGitCommitDate() {
+  return ::capnp::_::PointerHelpers< ::capnp::Text>::disown(_builder.getPointerField(
+      ::capnp::bounded<17>() * ::capnp::POINTERS));
 }
 
 inline bool InitData::PandaInfo::Reader::getHasPanda() const {
@@ -23994,16 +24052,16 @@ inline void GpsLocationData::Builder::setBearingDeg(float value) {
       ::capnp::bounded<8>() * ::capnp::ELEMENTS, value);
 }
 
-inline float GpsLocationData::Reader::getAccuracy() const {
+inline float GpsLocationData::Reader::getHorizontalAccuracy() const {
   return _reader.getDataField<float>(
       ::capnp::bounded<9>() * ::capnp::ELEMENTS);
 }
 
-inline float GpsLocationData::Builder::getAccuracy() {
+inline float GpsLocationData::Builder::getHorizontalAccuracy() {
   return _builder.getDataField<float>(
       ::capnp::bounded<9>() * ::capnp::ELEMENTS);
 }
-inline void GpsLocationData::Builder::setAccuracy(float value) {
+inline void GpsLocationData::Builder::setHorizontalAccuracy(float value) {
   _builder.setDataField<float>(
       ::capnp::bounded<9>() * ::capnp::ELEMENTS, value);
 }
@@ -24680,16 +24738,16 @@ inline void DeviceState::Builder::setBatteryTempCDEPRECATED(float value) {
       ::capnp::bounded<16>() * ::capnp::ELEMENTS, value);
 }
 
-inline float DeviceState::Reader::getAmbientTempC() const {
+inline float DeviceState::Reader::getAmbientTempCDEPRECATED() const {
   return _reader.getDataField<float>(
       ::capnp::bounded<17>() * ::capnp::ELEMENTS);
 }
 
-inline float DeviceState::Builder::getAmbientTempC() {
+inline float DeviceState::Builder::getAmbientTempCDEPRECATED() {
   return _builder.getDataField<float>(
       ::capnp::bounded<17>() * ::capnp::ELEMENTS);
 }
-inline void DeviceState::Builder::setAmbientTempC(float value) {
+inline void DeviceState::Builder::setAmbientTempCDEPRECATED(float value) {
   _builder.setDataField<float>(
       ::capnp::bounded<17>() * ::capnp::ELEMENTS, value);
 }
@@ -41644,44 +41702,44 @@ inline void QcomGnss::DrSvPolyReport::Builder::setGpsTow(double value) {
       ::capnp::bounded<7>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::uint64_t Clocks::Reader::getBootTimeNanos() const {
+inline  ::uint64_t Clocks::Reader::getBootTimeNanosDEPRECATED() const {
   return _reader.getDataField< ::uint64_t>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
 }
 
-inline  ::uint64_t Clocks::Builder::getBootTimeNanos() {
+inline  ::uint64_t Clocks::Builder::getBootTimeNanosDEPRECATED() {
   return _builder.getDataField< ::uint64_t>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS);
 }
-inline void Clocks::Builder::setBootTimeNanos( ::uint64_t value) {
+inline void Clocks::Builder::setBootTimeNanosDEPRECATED( ::uint64_t value) {
   _builder.setDataField< ::uint64_t>(
       ::capnp::bounded<0>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::uint64_t Clocks::Reader::getMonotonicNanos() const {
+inline  ::uint64_t Clocks::Reader::getMonotonicNanosDEPRECATED() const {
   return _reader.getDataField< ::uint64_t>(
       ::capnp::bounded<1>() * ::capnp::ELEMENTS);
 }
 
-inline  ::uint64_t Clocks::Builder::getMonotonicNanos() {
+inline  ::uint64_t Clocks::Builder::getMonotonicNanosDEPRECATED() {
   return _builder.getDataField< ::uint64_t>(
       ::capnp::bounded<1>() * ::capnp::ELEMENTS);
 }
-inline void Clocks::Builder::setMonotonicNanos( ::uint64_t value) {
+inline void Clocks::Builder::setMonotonicNanosDEPRECATED( ::uint64_t value) {
   _builder.setDataField< ::uint64_t>(
       ::capnp::bounded<1>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::uint64_t Clocks::Reader::getMonotonicRawNanos() const {
+inline  ::uint64_t Clocks::Reader::getMonotonicRawNanosDEPRECATD() const {
   return _reader.getDataField< ::uint64_t>(
       ::capnp::bounded<2>() * ::capnp::ELEMENTS);
 }
 
-inline  ::uint64_t Clocks::Builder::getMonotonicRawNanos() {
+inline  ::uint64_t Clocks::Builder::getMonotonicRawNanosDEPRECATD() {
   return _builder.getDataField< ::uint64_t>(
       ::capnp::bounded<2>() * ::capnp::ELEMENTS);
 }
-inline void Clocks::Builder::setMonotonicRawNanos( ::uint64_t value) {
+inline void Clocks::Builder::setMonotonicRawNanosDEPRECATD( ::uint64_t value) {
   _builder.setDataField< ::uint64_t>(
       ::capnp::bounded<2>() * ::capnp::ELEMENTS, value);
 }
@@ -41700,16 +41758,16 @@ inline void Clocks::Builder::setWallTimeNanos( ::uint64_t value) {
       ::capnp::bounded<3>() * ::capnp::ELEMENTS, value);
 }
 
-inline  ::uint64_t Clocks::Reader::getModemUptimeMillis() const {
+inline  ::uint64_t Clocks::Reader::getModemUptimeMillisDEPRECATED() const {
   return _reader.getDataField< ::uint64_t>(
       ::capnp::bounded<4>() * ::capnp::ELEMENTS);
 }
 
-inline  ::uint64_t Clocks::Builder::getModemUptimeMillis() {
+inline  ::uint64_t Clocks::Builder::getModemUptimeMillisDEPRECATED() {
   return _builder.getDataField< ::uint64_t>(
       ::capnp::bounded<4>() * ::capnp::ELEMENTS);
 }
-inline void Clocks::Builder::setModemUptimeMillis( ::uint64_t value) {
+inline void Clocks::Builder::setModemUptimeMillisDEPRECATED( ::uint64_t value) {
   _builder.setDataField< ::uint64_t>(
       ::capnp::bounded<4>() * ::capnp::ELEMENTS, value);
 }
@@ -53104,6 +53162,60 @@ inline ::capnp::Orphan< ::capnp::Data> Event::Builder::disownCustomReservedRawDa
   KJ_IREQUIRE((which() == Event::CUSTOM_RESERVED_RAW_DATA2),
               "Must check which() before get()ing a union member.");
   return ::capnp::_::PointerHelpers< ::capnp::Data>::disown(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+
+inline bool Event::Reader::isCarOutput() const {
+  return which() == Event::CAR_OUTPUT;
+}
+inline bool Event::Builder::isCarOutput() {
+  return which() == Event::CAR_OUTPUT;
+}
+inline bool Event::Reader::hasCarOutput() const {
+  if (which() != Event::CAR_OUTPUT) return false;
+  return !_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline bool Event::Builder::hasCarOutput() {
+  if (which() != Event::CAR_OUTPUT) return false;
+  return !_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS).isNull();
+}
+inline  ::cereal::CarOutput::Reader Event::Reader::getCarOutput() const {
+  KJ_IREQUIRE((which() == Event::CAR_OUTPUT),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::cereal::CarOutput>::get(_reader.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline  ::cereal::CarOutput::Builder Event::Builder::getCarOutput() {
+  KJ_IREQUIRE((which() == Event::CAR_OUTPUT),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::cereal::CarOutput>::get(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void Event::Builder::setCarOutput( ::cereal::CarOutput::Reader value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CAR_OUTPUT);
+  ::capnp::_::PointerHelpers< ::cereal::CarOutput>::set(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), value);
+}
+inline  ::cereal::CarOutput::Builder Event::Builder::initCarOutput() {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CAR_OUTPUT);
+  return ::capnp::_::PointerHelpers< ::cereal::CarOutput>::init(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS));
+}
+inline void Event::Builder::adoptCarOutput(
+    ::capnp::Orphan< ::cereal::CarOutput>&& value) {
+  _builder.setDataField<Event::Which>(
+      ::capnp::bounded<4>() * ::capnp::ELEMENTS, Event::CAR_OUTPUT);
+  ::capnp::_::PointerHelpers< ::cereal::CarOutput>::adopt(_builder.getPointerField(
+      ::capnp::bounded<0>() * ::capnp::POINTERS), kj::mv(value));
+}
+inline ::capnp::Orphan< ::cereal::CarOutput> Event::Builder::disownCarOutput() {
+  KJ_IREQUIRE((which() == Event::CAR_OUTPUT),
+              "Must check which() before get()ing a union member.");
+  return ::capnp::_::PointerHelpers< ::cereal::CarOutput>::disown(_builder.getPointerField(
       ::capnp::bounded<0>() * ::capnp::POINTERS));
 }
 

@@ -1716,7 +1716,7 @@ struct __pyx_obj_9selfdrive_6modeld_6models_15commonmodel_pyx_CLContext {
  *   pass
  * 
  * cdef class CLMem:             # <<<<<<<<<<<<<<
- *   cdef cl_mem * mem;
+ *   cdef cl_mem * mem
  * 
  */
 struct __pyx_obj_9selfdrive_6modeld_6models_15commonmodel_pyx_CLMem {
@@ -1833,7 +1833,7 @@ static struct __pyx_vtabstruct_6cereal_9visionipc_13visionipc_pyx_VisionBuf *__p
  *   pass
  * 
  * cdef class CLMem:             # <<<<<<<<<<<<<<
- *   cdef cl_mem * mem;
+ *   cdef cl_mem * mem
  * 
  */
 
@@ -17863,7 +17863,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "selfdrive/modeld/runners/runmodel_pyx.pyx":16
+/* "selfdrive/modeld/runners/runmodel_pyx.pyx":15
  * 
  * cdef class RunModel:
  *   def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -17886,7 +17886,7 @@ static void __pyx_pw_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_1__dea
 
 static void __pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel___dealloc__(struct __pyx_obj_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel *__pyx_v_self) {
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":17
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":16
  * cdef class RunModel:
  *   def __dealloc__(self):
  *     del self.model             # <<<<<<<<<<<<<<
@@ -17895,7 +17895,7 @@ static void __pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel___deal
  */
   delete __pyx_v_self->model;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":16
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":15
  * 
  * cdef class RunModel:
  *   def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -17906,7 +17906,7 @@ static void __pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel___deal
   /* function exit code */
 }
 
-/* "selfdrive/modeld/runners/runmodel_pyx.pyx":19
+/* "selfdrive/modeld/runners/runmodel_pyx.pyx":18
  *     del self.model
  * 
  *   def addInput(self, string name, float[:] buffer):             # <<<<<<<<<<<<<<
@@ -17970,7 +17970,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 19, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 18, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -17978,14 +17978,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 19, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 18, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("addInput", 1, 2, 2, 1); __PYX_ERR(1, 19, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("addInput", 1, 2, 2, 1); __PYX_ERR(1, 18, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "addInput") < 0)) __PYX_ERR(1, 19, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "addInput") < 0)) __PYX_ERR(1, 18, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -17993,12 +17993,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
       values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
     }
-    __pyx_v_name = __pyx_convert_string_from_py_std__in_string(values[0]); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 19, __pyx_L3_error)
-    __pyx_v_buffer = __Pyx_PyObject_to_MemoryviewSlice_ds_float(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_buffer.memview)) __PYX_ERR(1, 19, __pyx_L3_error)
+    __pyx_v_name = __pyx_convert_string_from_py_std__in_string(values[0]); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 18, __pyx_L3_error)
+    __pyx_v_buffer = __Pyx_PyObject_to_MemoryviewSlice_ds_float(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_buffer.memview)) __PYX_ERR(1, 18, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("addInput", 1, 2, 2, __pyx_nargs); __PYX_ERR(1, 19, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("addInput", 1, 2, 2, __pyx_nargs); __PYX_ERR(1, 18, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -18039,7 +18039,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_2
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("addInput", 1);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":20
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":19
  * 
  *   def addInput(self, string name, float[:] buffer):
  *     if buffer is not None:             # <<<<<<<<<<<<<<
@@ -18049,7 +18049,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_2
   __pyx_t_1 = (((PyObject *) __pyx_v_buffer.memview) != Py_None);
   if (__pyx_t_1) {
 
-    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":21
+    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":20
  *   def addInput(self, string name, float[:] buffer):
  *     if buffer is not None:
  *       self.model.addInput(name, &buffer[0], len(buffer))             # <<<<<<<<<<<<<<
@@ -18064,12 +18064,12 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_2
     } else if (unlikely(__pyx_t_2 >= __pyx_v_buffer.shape[0])) __pyx_t_3 = 0;
     if (unlikely(__pyx_t_3 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_3);
-      __PYX_ERR(1, 21, __pyx_L1_error)
+      __PYX_ERR(1, 20, __pyx_L1_error)
     }
     __pyx_t_4 = __Pyx_MemoryView_Len(__pyx_v_buffer); 
     __pyx_v_self->model->addInput(__pyx_v_name, (&(*((float *) ( /* dim=0 */ (__pyx_v_buffer.data + __pyx_t_2 * __pyx_v_buffer.strides[0]) )))), __pyx_t_4);
 
-    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":20
+    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":19
  * 
  *   def addInput(self, string name, float[:] buffer):
  *     if buffer is not None:             # <<<<<<<<<<<<<<
@@ -18079,7 +18079,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_2
     goto __pyx_L3;
   }
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":23
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":22
  *       self.model.addInput(name, &buffer[0], len(buffer))
  *     else:
  *       self.model.addInput(name, NULL, 0)             # <<<<<<<<<<<<<<
@@ -18091,7 +18091,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_2
   }
   __pyx_L3:;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":19
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":18
  *     del self.model
  * 
  *   def addInput(self, string name, float[:] buffer):             # <<<<<<<<<<<<<<
@@ -18111,7 +18111,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_2
   return __pyx_r;
 }
 
-/* "selfdrive/modeld/runners/runmodel_pyx.pyx":25
+/* "selfdrive/modeld/runners/runmodel_pyx.pyx":24
  *       self.model.addInput(name, NULL, 0)
  * 
  *   def setInputBuffer(self, string name, float[:] buffer):             # <<<<<<<<<<<<<<
@@ -18175,7 +18175,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 25, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 24, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -18183,14 +18183,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 25, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 24, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("setInputBuffer", 1, 2, 2, 1); __PYX_ERR(1, 25, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("setInputBuffer", 1, 2, 2, 1); __PYX_ERR(1, 24, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "setInputBuffer") < 0)) __PYX_ERR(1, 25, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "setInputBuffer") < 0)) __PYX_ERR(1, 24, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 2)) {
       goto __pyx_L5_argtuple_error;
@@ -18198,12 +18198,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
       values[1] = __Pyx_Arg_FASTCALL(__pyx_args, 1);
     }
-    __pyx_v_name = __pyx_convert_string_from_py_std__in_string(values[0]); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 25, __pyx_L3_error)
-    __pyx_v_buffer = __Pyx_PyObject_to_MemoryviewSlice_ds_float(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_buffer.memview)) __PYX_ERR(1, 25, __pyx_L3_error)
+    __pyx_v_name = __pyx_convert_string_from_py_std__in_string(values[0]); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 24, __pyx_L3_error)
+    __pyx_v_buffer = __Pyx_PyObject_to_MemoryviewSlice_ds_float(values[1], PyBUF_WRITABLE); if (unlikely(!__pyx_v_buffer.memview)) __PYX_ERR(1, 24, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("setInputBuffer", 1, 2, 2, __pyx_nargs); __PYX_ERR(1, 25, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("setInputBuffer", 1, 2, 2, __pyx_nargs); __PYX_ERR(1, 24, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -18244,7 +18244,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_4
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("setInputBuffer", 1);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":26
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":25
  * 
  *   def setInputBuffer(self, string name, float[:] buffer):
  *     if buffer is not None:             # <<<<<<<<<<<<<<
@@ -18254,7 +18254,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_4
   __pyx_t_1 = (((PyObject *) __pyx_v_buffer.memview) != Py_None);
   if (__pyx_t_1) {
 
-    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":27
+    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":26
  *   def setInputBuffer(self, string name, float[:] buffer):
  *     if buffer is not None:
  *       self.model.setInputBuffer(name, &buffer[0], len(buffer))             # <<<<<<<<<<<<<<
@@ -18269,12 +18269,12 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_4
     } else if (unlikely(__pyx_t_2 >= __pyx_v_buffer.shape[0])) __pyx_t_3 = 0;
     if (unlikely(__pyx_t_3 != -1)) {
       __Pyx_RaiseBufferIndexError(__pyx_t_3);
-      __PYX_ERR(1, 27, __pyx_L1_error)
+      __PYX_ERR(1, 26, __pyx_L1_error)
     }
     __pyx_t_4 = __Pyx_MemoryView_Len(__pyx_v_buffer); 
     __pyx_v_self->model->setInputBuffer(__pyx_v_name, (&(*((float *) ( /* dim=0 */ (__pyx_v_buffer.data + __pyx_t_2 * __pyx_v_buffer.strides[0]) )))), __pyx_t_4);
 
-    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":26
+    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":25
  * 
  *   def setInputBuffer(self, string name, float[:] buffer):
  *     if buffer is not None:             # <<<<<<<<<<<<<<
@@ -18284,7 +18284,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_4
     goto __pyx_L3;
   }
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":29
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":28
  *       self.model.setInputBuffer(name, &buffer[0], len(buffer))
  *     else:
  *       self.model.setInputBuffer(name, NULL, 0)             # <<<<<<<<<<<<<<
@@ -18296,7 +18296,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_4
   }
   __pyx_L3:;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":25
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":24
  *       self.model.addInput(name, NULL, 0)
  * 
  *   def setInputBuffer(self, string name, float[:] buffer):             # <<<<<<<<<<<<<<
@@ -18316,7 +18316,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_4
   return __pyx_r;
 }
 
-/* "selfdrive/modeld/runners/runmodel_pyx.pyx":31
+/* "selfdrive/modeld/runners/runmodel_pyx.pyx":30
  *       self.model.setInputBuffer(name, NULL, 0)
  * 
  *   def getCLBuffer(self, string name):             # <<<<<<<<<<<<<<
@@ -18377,23 +18377,23 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 31, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 30, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "getCLBuffer") < 0)) __PYX_ERR(1, 31, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "getCLBuffer") < 0)) __PYX_ERR(1, 30, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_Arg_FASTCALL(__pyx_args, 0);
     }
-    __pyx_v_name = __pyx_convert_string_from_py_std__in_string(values[0]); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 31, __pyx_L3_error)
+    __pyx_v_name = __pyx_convert_string_from_py_std__in_string(values[0]); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 30, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("getCLBuffer", 1, 1, 1, __pyx_nargs); __PYX_ERR(1, 31, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("getCLBuffer", 1, 1, 1, __pyx_nargs); __PYX_ERR(1, 30, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -18431,7 +18431,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_6
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("getCLBuffer", 1);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":32
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":31
  * 
  *   def getCLBuffer(self, string name):
  *     cdef void * cl_buf = self.model.getCLBuffer(name)             # <<<<<<<<<<<<<<
@@ -18440,7 +18440,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_6
  */
   __pyx_v_cl_buf = __pyx_v_self->model->getCLBuffer(__pyx_v_name);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":33
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":32
  *   def getCLBuffer(self, string name):
  *     cdef void * cl_buf = self.model.getCLBuffer(name)
  *     if not cl_buf:             # <<<<<<<<<<<<<<
@@ -18450,7 +18450,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_6
   __pyx_t_1 = (!(__pyx_v_cl_buf != 0));
   if (__pyx_t_1) {
 
-    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":34
+    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":33
  *     cdef void * cl_buf = self.model.getCLBuffer(name)
  *     if not cl_buf:
  *       return None             # <<<<<<<<<<<<<<
@@ -18461,7 +18461,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_6
     __pyx_r = Py_None; __Pyx_INCREF(Py_None);
     goto __pyx_L0;
 
-    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":33
+    /* "selfdrive/modeld/runners/runmodel_pyx.pyx":32
  *   def getCLBuffer(self, string name):
  *     cdef void * cl_buf = self.model.getCLBuffer(name)
  *     if not cl_buf:             # <<<<<<<<<<<<<<
@@ -18470,7 +18470,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_6
  */
   }
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":35
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":34
  *     if not cl_buf:
  *       return None
  *     return CLMem.create(cl_buf)             # <<<<<<<<<<<<<<
@@ -18478,13 +18478,13 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_6
  *   def execute(self):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __pyx_vtabptr_9selfdrive_6modeld_6models_15commonmodel_pyx_CLMem->create(__pyx_v_cl_buf); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 35, __pyx_L1_error)
+  __pyx_t_2 = __pyx_vtabptr_9selfdrive_6modeld_6models_15commonmodel_pyx_CLMem->create(__pyx_v_cl_buf); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":31
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":30
  *       self.model.setInputBuffer(name, NULL, 0)
  * 
  *   def getCLBuffer(self, string name):             # <<<<<<<<<<<<<<
@@ -18503,7 +18503,7 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_6
   return __pyx_r;
 }
 
-/* "selfdrive/modeld/runners/runmodel_pyx.pyx":37
+/* "selfdrive/modeld/runners/runmodel_pyx.pyx":36
  *     return CLMem.create(cl_buf)
  * 
  *   def execute(self):             # <<<<<<<<<<<<<<
@@ -18556,14 +18556,14 @@ static PyObject *__pyx_pf_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_8
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("execute", 1);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":38
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":37
  * 
  *   def execute(self):
  *     self.model.execute()             # <<<<<<<<<<<<<<
  */
   __pyx_v_self->model->execute();
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":37
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":36
  *     return CLMem.create(cl_buf)
  * 
  *   def execute(self):             # <<<<<<<<<<<<<<
@@ -20213,49 +20213,49 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__18);
   __pyx_codeobj__19 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__18, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_pyx_unpickle_Enum, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__19)) __PYX_ERR(0, 1, __pyx_L1_error)
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":19
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":18
  *     del self.model
  * 
  *   def addInput(self, string name, float[:] buffer):             # <<<<<<<<<<<<<<
  *     if buffer is not None:
  *       self.model.addInput(name, &buffer[0], len(buffer))
  */
-  __pyx_tuple__20 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_name, __pyx_n_s_buffer); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(1, 19, __pyx_L1_error)
+  __pyx_tuple__20 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_name, __pyx_n_s_buffer); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(1, 18, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_selfdrive_modeld_runners_runmode_2, __pyx_n_s_addInput, 19, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(1, 19, __pyx_L1_error)
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_selfdrive_modeld_runners_runmode_2, __pyx_n_s_addInput, 18, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(1, 18, __pyx_L1_error)
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":25
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":24
  *       self.model.addInput(name, NULL, 0)
  * 
  *   def setInputBuffer(self, string name, float[:] buffer):             # <<<<<<<<<<<<<<
  *     if buffer is not None:
  *       self.model.setInputBuffer(name, &buffer[0], len(buffer))
  */
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_selfdrive_modeld_runners_runmode_2, __pyx_n_s_setInputBuffer, 25, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(1, 25, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_selfdrive_modeld_runners_runmode_2, __pyx_n_s_setInputBuffer, 24, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(1, 24, __pyx_L1_error)
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":31
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":30
  *       self.model.setInputBuffer(name, NULL, 0)
  * 
  *   def getCLBuffer(self, string name):             # <<<<<<<<<<<<<<
  *     cdef void * cl_buf = self.model.getCLBuffer(name)
  *     if not cl_buf:
  */
-  __pyx_tuple__23 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_name, __pyx_n_s_cl_buf); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(1, 31, __pyx_L1_error)
+  __pyx_tuple__23 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_name, __pyx_n_s_cl_buf); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(1, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__23);
   __Pyx_GIVEREF(__pyx_tuple__23);
-  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_selfdrive_modeld_runners_runmode_2, __pyx_n_s_getCLBuffer, 31, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(1, 31, __pyx_L1_error)
+  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_selfdrive_modeld_runners_runmode_2, __pyx_n_s_getCLBuffer, 30, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(1, 30, __pyx_L1_error)
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":37
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":36
  *     return CLMem.create(cl_buf)
  * 
  *   def execute(self):             # <<<<<<<<<<<<<<
  *     self.model.execute()
  */
-  __pyx_tuple__25 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(1, 37, __pyx_L1_error)
+  __pyx_tuple__25 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(1, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__25);
   __Pyx_GIVEREF(__pyx_tuple__25);
-  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_selfdrive_modeld_runners_runmode_2, __pyx_n_s_execute, 37, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(1, 37, __pyx_L1_error)
+  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_selfdrive_modeld_runners_runmode_2, __pyx_n_s_execute, 36, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(1, 36, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
@@ -20356,15 +20356,15 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel_spec, NULL); if (unlikely(!__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel)) __PYX_ERR(1, 15, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel_spec, __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel) < 0) __PYX_ERR(1, 15, __pyx_L1_error)
+  __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel_spec, NULL); if (unlikely(!__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel)) __PYX_ERR(1, 14, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel_spec, __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel) < 0) __PYX_ERR(1, 14, __pyx_L1_error)
   #else
   __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel = &__pyx_type_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel) < 0) __PYX_ERR(1, 15, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel) < 0) __PYX_ERR(1, 14, __pyx_L1_error)
   #endif
   #if PY_MAJOR_VERSION < 3
   __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel->tp_print = 0;
@@ -20374,9 +20374,9 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel->tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
   #endif
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_RunModel, (PyObject *) __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel) < 0) __PYX_ERR(1, 15, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_RunModel, (PyObject *) __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel) < 0) __PYX_ERR(1, 14, __pyx_L1_error)
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel) < 0) __PYX_ERR(1, 15, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel) < 0) __PYX_ERR(1, 14, __pyx_L1_error)
   #endif
   __pyx_vtabptr_array = &__pyx_vtable_array;
   __pyx_vtable_array.get_memview = (PyObject *(*)(struct __pyx_array_obj *))__pyx_array_get_memview;
@@ -21367,113 +21367,113 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_Enum, __pyx_t_7) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":10
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":9
  * from selfdrive.modeld.models.commonmodel_pyx cimport CLMem
  * 
  * class Runtime:             # <<<<<<<<<<<<<<
  *   CPU = USE_CPU_RUNTIME
  *   GPU = USE_GPU_RUNTIME
  */
-  __pyx_t_7 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_Runtime, __pyx_n_s_Runtime, (PyObject *) NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, (PyObject *) NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 10, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_Py3MetaclassPrepare((PyObject *) NULL, __pyx_empty_tuple, __pyx_n_s_Runtime, __pyx_n_s_Runtime, (PyObject *) NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, (PyObject *) NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 9, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":11
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":10
  * 
  * class Runtime:
  *   CPU = USE_CPU_RUNTIME             # <<<<<<<<<<<<<<
  *   GPU = USE_GPU_RUNTIME
  *   DSP = USE_DSP_RUNTIME
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(USE_CPU_RUNTIME); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 11, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(USE_CPU_RUNTIME); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_SetNameInClass(__pyx_t_7, __pyx_n_s_CPU, __pyx_t_4) < 0) __PYX_ERR(1, 11, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_7, __pyx_n_s_CPU, __pyx_t_4) < 0) __PYX_ERR(1, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":12
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":11
  * class Runtime:
  *   CPU = USE_CPU_RUNTIME
  *   GPU = USE_GPU_RUNTIME             # <<<<<<<<<<<<<<
  *   DSP = USE_DSP_RUNTIME
  * 
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(USE_GPU_RUNTIME); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(USE_GPU_RUNTIME); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 11, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_SetNameInClass(__pyx_t_7, __pyx_n_s_GPU, __pyx_t_4) < 0) __PYX_ERR(1, 12, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_7, __pyx_n_s_GPU, __pyx_t_4) < 0) __PYX_ERR(1, 11, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":13
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":12
  *   CPU = USE_CPU_RUNTIME
  *   GPU = USE_GPU_RUNTIME
  *   DSP = USE_DSP_RUNTIME             # <<<<<<<<<<<<<<
  * 
  * cdef class RunModel:
  */
-  __pyx_t_4 = __Pyx_PyInt_From_int(USE_DSP_RUNTIME); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 13, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(USE_DSP_RUNTIME); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (__Pyx_SetNameInClass(__pyx_t_7, __pyx_n_s_DSP, __pyx_t_4) < 0) __PYX_ERR(1, 13, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_7, __pyx_n_s_DSP, __pyx_t_4) < 0) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":10
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":9
  * from selfdrive.modeld.models.commonmodel_pyx cimport CLMem
  * 
  * class Runtime:             # <<<<<<<<<<<<<<
  *   CPU = USE_CPU_RUNTIME
  *   GPU = USE_GPU_RUNTIME
  */
-  __pyx_t_4 = __Pyx_Py3ClassCreate(((PyObject*)&PyType_Type), __pyx_n_s_Runtime, __pyx_empty_tuple, __pyx_t_7, NULL, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 10, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_Py3ClassCreate(((PyObject*)&PyType_Type), __pyx_n_s_Runtime, __pyx_empty_tuple, __pyx_t_7, NULL, 0, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 9, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Runtime, __pyx_t_4) < 0) __PYX_ERR(1, 10, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Runtime, __pyx_t_4) < 0) __PYX_ERR(1, 9, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":19
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":18
  *     del self.model
  * 
  *   def addInput(self, string name, float[:] buffer):             # <<<<<<<<<<<<<<
  *     if buffer is not None:
  *       self.model.addInput(name, &buffer[0], len(buffer))
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_3addInput, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_RunModel_addInput, NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 19, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_3addInput, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_RunModel_addInput, NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 18, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel, __pyx_n_s_addInput, __pyx_t_7) < 0) __PYX_ERR(1, 19, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel, __pyx_n_s_addInput, __pyx_t_7) < 0) __PYX_ERR(1, 18, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":25
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":24
  *       self.model.addInput(name, NULL, 0)
  * 
  *   def setInputBuffer(self, string name, float[:] buffer):             # <<<<<<<<<<<<<<
  *     if buffer is not None:
  *       self.model.setInputBuffer(name, &buffer[0], len(buffer))
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_5setInputBuffer, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_RunModel_setInputBuffer, NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 25, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_5setInputBuffer, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_RunModel_setInputBuffer, NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, __pyx_d, ((PyObject *)__pyx_codeobj__22)); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 24, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel, __pyx_n_s_setInputBuffer, __pyx_t_7) < 0) __PYX_ERR(1, 25, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel, __pyx_n_s_setInputBuffer, __pyx_t_7) < 0) __PYX_ERR(1, 24, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":31
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":30
  *       self.model.setInputBuffer(name, NULL, 0)
  * 
  *   def getCLBuffer(self, string name):             # <<<<<<<<<<<<<<
  *     cdef void * cl_buf = self.model.getCLBuffer(name)
  *     if not cl_buf:
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_7getCLBuffer, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_RunModel_getCLBuffer, NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, __pyx_d, ((PyObject *)__pyx_codeobj__24)); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 31, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_7getCLBuffer, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_RunModel_getCLBuffer, NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, __pyx_d, ((PyObject *)__pyx_codeobj__24)); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel, __pyx_n_s_getCLBuffer, __pyx_t_7) < 0) __PYX_ERR(1, 31, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel, __pyx_n_s_getCLBuffer, __pyx_t_7) < 0) __PYX_ERR(1, 30, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel);
 
-  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":37
+  /* "selfdrive/modeld/runners/runmodel_pyx.pyx":36
  *     return CLMem.create(cl_buf)
  * 
  *   def execute(self):             # <<<<<<<<<<<<<<
  *     self.model.execute()
  */
-  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_9execute, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_RunModel_execute, NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, __pyx_d, ((PyObject *)__pyx_codeobj__26)); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 37, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_CyFunction_New(&__pyx_mdef_9selfdrive_6modeld_7runners_12runmodel_pyx_8RunModel_9execute, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_RunModel_execute, NULL, __pyx_n_s_selfdrive_modeld_runners_runmode, __pyx_d, ((PyObject *)__pyx_codeobj__26)); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel, __pyx_n_s_execute, __pyx_t_7) < 0) __PYX_ERR(1, 37, __pyx_L1_error)
+  if (__Pyx_SetItemOnTypeDict((PyObject *)__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel, __pyx_n_s_execute, __pyx_t_7) < 0) __PYX_ERR(1, 36, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_9selfdrive_6modeld_7runners_12runmodel_pyx_RunModel);
 

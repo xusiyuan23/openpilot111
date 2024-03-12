@@ -461,11 +461,6 @@ Credit to krkeegen: https://github.com/krkeegan/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled, Smoother Braking Behind Lead More natural braking behavior when coming up to a slower vehicle. 
-Credit to FrogaAi: https://github.com/FrogAi/FrogPilot/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>On-Screen Personality Button</source>
         <translation type="unfinished"></translation>
     </message>
@@ -555,10 +550,6 @@ Reboot Required.</source>
     </message>
     <message>
         <source>When enabled, openpilot automatically lane change when possible(WARNING: USE IT AT YOUR OWN RISK!!!!).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*α* Enable Smooth Braking</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1106,7 +1097,7 @@ Isso pode levar até um minuto.</translation>
     </message>
     <message>
         <source>System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation type="unfinished">Reinicialização do sistema acionada. Pressione confirmar para apagar todo o conteúdo e configurações. Pressione cancel para retomar a inicialização.</translation>
+        <translation>Reinicialização do sistema acionada. Pressione confirmar para apagar todo o conteúdo e configurações. Pressione cancel para retomar a inicialização.</translation>
     </message>
 </context>
 <context>
@@ -1221,6 +1212,18 @@ Isso pode levar até um minuto.</translation>
     <message>
         <source>Select a language</source>
         <translation>Selecione o Idioma</translation>
+    </message>
+    <message>
+        <source>Choose Software to Install</source>
+        <translation>Escolha o Software a ser Instalado</translation>
+    </message>
+    <message>
+        <source>openpilot</source>
+        <translation>openpilot</translation>
+    </message>
+    <message>
+        <source>Custom Software</source>
+        <translation>Software Customizado</translation>
     </message>
 </context>
 <context>

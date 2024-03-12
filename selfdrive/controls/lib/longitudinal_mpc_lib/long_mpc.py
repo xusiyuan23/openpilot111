@@ -55,11 +55,11 @@ T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 COMFORT_BRAKE = 2.5
-STOP_DISTANCE = 6.0
+STOP_DISTANCE = 5.0
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
-    return 1.0
+    return 1.5
   elif personality==log.LongitudinalPersonality.standard:
     return 1.0
   elif personality==log.LongitudinalPersonality.aggressive:
@@ -80,14 +80,14 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
 
 def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
-    x_vel =  [0.0,  3.0,  8.33,  13.90,  20,    25,    40]
-    y_dist = [1.2,  1.25, 1.40,  1.40,   1.50,  1.85,  2.0]
+    x_vel =  [0.0,  2.8,   8.33,  13.90,  20,    25,    40]
+    y_dist = [1.2,  1.25,  1.60,  1.60,   2.00,  2.2,  2.4]
   elif personality==log.LongitudinalPersonality.standard:
-    x_vel =  [0.0,  3.0,  8.33,  13.90,  20,    25,    40]
-    y_dist = [1.00,  1.00, 1.20,  1.20,   1.25,  1.45,  1.5]
+    x_vel =  [0.0,  2.799, 2.8,   5.55,  5.56,  13.90,  20,    25,    40]
+    y_dist = [1.10, 1.10,  1.25,  1.25,  1.35,  1.30,   1.45,  1.5,  1.5]
   elif personality==log.LongitudinalPersonality.aggressive:
-    x_vel =  [0.0,  4.00, 8.33,  13.89,  20,    25,    40]
-    y_dist = [0.8,  0.80, 0.90,  0.90,   0.9,  1.105, 1.12]
+    x_vel =  [0.0,  1.999,  2.0,  13.89,  20,    25,    40]
+    y_dist = [0.75, 0.75,   0.95, 0.92,   1.12,  1.19,  1.24]
   else:
     raise NotImplementedError("Dynamic Follow personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
@@ -246,7 +246,6 @@ def gen_long_ocp():
 
 class LongitudinalMpc:
   def __init__(self, mode='acc'):
-    self.t_follow_offset = 1
     self.mode = mode
     self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
     self.reset()
@@ -299,7 +298,6 @@ class LongitudinalMpc:
 
   def set_weights(self, prev_accel_constraint=True, personality=log.LongitudinalPersonality.standard):
     jerk_factor = get_jerk_factor(personality)
-    jerk_factor /= np.mean(self.t_follow_offset)
     if self.mode == 'acc':
       a_change_cost = A_CHANGE_COST if prev_accel_constraint else 0
       cost_weights = [X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, jerk_factor * a_change_cost, jerk_factor * J_EGO_COST]
@@ -358,7 +356,7 @@ class LongitudinalMpc:
     self.max_a = max_a
 
   # def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
-  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, use_df_tune=False, use_krkeegen_tune=False, smoother_braking=False):
+  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, use_df_tune=False, use_krkeegen_tune=False):
     # t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
     t_follow = get_T_FOLLOW(personality) if not use_df_tune else get_dynamic_follow(v_ego, personality)
@@ -366,20 +364,6 @@ class LongitudinalMpc:
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
-
-    # Offset by FrogAi for FrogPilot for a more natural takeoff with a lead
-    #if aggressive_acceleration:
-    #  distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
-    #  t_follow_offset = np.clip((lead_xv_0[:,1] - v_ego), 1, distance_factor)
-    #  t_follow = t_follow / t_follow_offset
-
-    # Offset by FrogAi for FrogPilot for a more natural approach to a slower lead
-    if smoother_braking:
-      distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
-      t_follow_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
-      t_follow = t_follow / t_follow_offset
-    else:
-      t_follow_offset = 1
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance

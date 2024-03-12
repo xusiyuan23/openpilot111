@@ -9,7 +9,7 @@
         "language": "c++",
         "name": "common.params_pyx",
         "sources": [
-            "/data/openpilot/common/params_pyx.pyx"
+            "/data/dp-private/common/params_pyx.pyx"
         ]
     },
     "module_name": "common.params_pyx"
@@ -6883,7 +6883,7 @@ static PyObject *__pyx_unpickle___Pyx_EnumMeta__set_state(struct __pyx_obj___Pyx
  * 
  * 
  * def ensure_bytes(v):             # <<<<<<<<<<<<<<
- *   return v.encode() if isinstance(v, str) else v;
+ *   return v.encode() if isinstance(v, str) else v
  * 
  */
 
@@ -7000,7 +7000,7 @@ static PyObject *__pyx_pf_6common_10params_pyx_ensure_bytes(CYTHON_UNUSED PyObje
   /* "common/params_pyx.pyx":32
  * 
  * def ensure_bytes(v):
- *   return v.encode() if isinstance(v, str) else v;             # <<<<<<<<<<<<<<
+ *   return v.encode() if isinstance(v, str) else v             # <<<<<<<<<<<<<<
  * 
  * class UnknownKeyName(Exception):
  */
@@ -7045,7 +7045,7 @@ static PyObject *__pyx_pf_6common_10params_pyx_ensure_bytes(CYTHON_UNUSED PyObje
  * 
  * 
  * def ensure_bytes(v):             # <<<<<<<<<<<<<<
- *   return v.encode() if isinstance(v, str) else v;
+ *   return v.encode() if isinstance(v, str) else v
  * 
  */
 
@@ -10657,7 +10657,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  * 
  * def ensure_bytes(v):             # <<<<<<<<<<<<<<
- *   return v.encode() if isinstance(v, str) else v;
+ *   return v.encode() if isinstance(v, str) else v
  * 
  */
   __pyx_tuple__20 = PyTuple_Pack(1, __pyx_n_s_v); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 31, __pyx_L1_error)
@@ -12161,7 +12161,7 @@ if (!__Pyx_RefNanny) {
  * 
  * 
  * def ensure_bytes(v):             # <<<<<<<<<<<<<<
- *   return v.encode() if isinstance(v, str) else v;
+ *   return v.encode() if isinstance(v, str) else v
  * 
  */
   __pyx_t_8 = __Pyx_CyFunction_New(&__pyx_mdef_6common_10params_pyx_1ensure_bytes, 0, __pyx_n_s_ensure_bytes, NULL, __pyx_kp_s_common_params_pyx, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 31, __pyx_L1_error)
@@ -12170,7 +12170,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
   /* "common/params_pyx.pyx":34
- *   return v.encode() if isinstance(v, str) else v;
+ *   return v.encode() if isinstance(v, str) else v
  * 
  * class UnknownKeyName(Exception):             # <<<<<<<<<<<<<<
  *   pass

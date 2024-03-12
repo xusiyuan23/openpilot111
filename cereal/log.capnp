@@ -33,6 +33,7 @@ struct InitData {
   deviceType @3 :DeviceType;
   version @4 :Text;
   gitCommit @10 :Text;
+  gitCommitDate @21 :Text;
   gitBranch @11 :Text;
   gitRemote @13 :Text;
 
@@ -56,6 +57,7 @@ struct InitData {
     tici @4;
     pc @5;
     tizi @6;
+    mici @7;
   }
 
   struct PandaInfo {
@@ -267,8 +269,8 @@ struct GpsLocationData {
   # Represents heading in degrees.
   bearingDeg @5 :Float32;
 
-  # Represents expected accuracy in meters. (presumably 1 sigma?)
-  accuracy @6 :Float32;
+  # Represents expected horizontal accuracy in meters.
+  horizontalAccuracy @6 :Float32;
 
   unixTimestampMillis @7 :Int64;
 
@@ -356,7 +358,6 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   cpuTempC @26 :List(Float32);
   gpuTempC @27 :List(Float32);
   memoryTempC @28 :Float32;
-  ambientTempC @30 :Float32;
   nvmeTempC @35 :List(Float32);
   modemTempC @36 :List(Float32);
   pmicTempC @39 :List(Float32);
@@ -429,6 +430,7 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   chargingErrorDEPRECATED @17 :Bool;
   chargingDisabledDEPRECATED @18 :Bool;
   usbOnlineDEPRECATED @12 :Bool;
+  ambientTempCDEPRECATED @30 :Float32;
 }
 
 struct PandaState @0xa7649e2575e4591e {
@@ -1877,11 +1879,12 @@ struct QcomGnss @0xde94674b07ae51c1 {
 }
 
 struct Clocks {
-  bootTimeNanos @0 :UInt64;
-  monotonicNanos @1 :UInt64;
-  monotonicRawNanos @2 :UInt64;
-  wallTimeNanos @3 :UInt64;
-  modemUptimeMillis @4 :UInt64;
+  wallTimeNanos @3 :UInt64;  # unix epoch time
+
+  bootTimeNanosDEPRECATED @0 :UInt64;
+  monotonicNanosDEPRECATED @1 :UInt64;
+  monotonicRawNanosDEPRECATD @2 :UInt64;
+  modemUptimeMillisDEPRECATED @4 :UInt64;
 }
 
 struct LiveMpcData {
@@ -2248,6 +2251,7 @@ struct Event {
     liveCalibration @19 :LiveCalibrationData;
     carState @22 :Car.CarState;
     carControl @23 :Car.CarControl;
+    carOutput @127 :Car.CarOutput;
     longitudinalPlan @24 :LongitudinalPlan;
     uiPlan @106 :UiPlan;
     ubloxGnss @34 :UbloxGnss;

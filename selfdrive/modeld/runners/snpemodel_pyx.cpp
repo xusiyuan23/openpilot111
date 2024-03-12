@@ -1719,7 +1719,7 @@ struct __pyx_obj_9selfdrive_6modeld_6models_15commonmodel_pyx_CLContext {
  *   pass
  * 
  * cdef class CLMem:             # <<<<<<<<<<<<<<
- *   cdef cl_mem * mem;
+ *   cdef cl_mem * mem
  * 
  */
 struct __pyx_obj_9selfdrive_6modeld_6models_15commonmodel_pyx_CLMem {
@@ -1848,7 +1848,7 @@ static struct __pyx_vtabstruct_6cereal_9visionipc_13visionipc_pyx_VisionBuf *__p
  *   pass
  * 
  * cdef class CLMem:             # <<<<<<<<<<<<<<
- *   cdef cl_mem * mem;
+ *   cdef cl_mem * mem
  * 
  */
 

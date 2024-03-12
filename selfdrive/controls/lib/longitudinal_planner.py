@@ -80,7 +80,6 @@ class LongitudinalPlanner:
     self.dp_long_taco = self.params.get_bool('dp_long_taco')
     self.dp_long_use_krkeegen_tune = False
     self.dp_long_use_krkeegen_tune_active = False
-    self.dp_long_frogai_smooth_braking_tune = False
 
   def read_param(self):
     try:
@@ -90,7 +89,6 @@ class LongitudinalPlanner:
 
     self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
     self.dp_long_use_krkeegen_tune = self.params.get_bool('dp_long_use_krkeegen_tune')
-    self.dp_long_frogai_smooth_braking_tune = self.params.get_bool('dp_long_frogai_smooth_braking_tune')
 
   @staticmethod
   def parse_model(model_msg, model_error, v_ego, taco=False):
@@ -190,7 +188,7 @@ class LongitudinalPlanner:
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error, v_ego, taco=self.dp_long_taco)
     self.dp_long_use_krkeegen_tune_active = self.dp_long_use_krkeegen_tune and v_ego <= 7.5
-    self.mpc.update(sm['radarState'], v_cruise_sol, x, v, a, j, personality=self.personality, use_df_tune=self.dp_long_use_df_tune, use_krkeegen_tune=self.dp_long_use_krkeegen_tune_active, smoother_braking=self.dp_long_frogai_smooth_braking_tune)
+    self.mpc.update(sm['radarState'], v_cruise_sol, x, v, a, j, personality=self.personality, use_df_tune=self.dp_long_use_df_tune, use_krkeegen_tune=self.dp_long_use_krkeegen_tune_active)
 
     self.v_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.a_solution)

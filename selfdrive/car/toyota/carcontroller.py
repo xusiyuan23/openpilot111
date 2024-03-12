@@ -2,6 +2,7 @@ from cereal import car
 from openpilot.common.numpy_fast import clip, interp
 from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, \
                           create_gas_interceptor_command, make_can_msg
+from openpilot.selfdrive.car.interfaces import CarControllerBase
 from openpilot.selfdrive.car.toyota import toyotacan
 from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR, TSS2_CAR, \
                                         MIN_ACC_SPEED, PEDAL_TRANSITION, CarControllerParams, ToyotaFlags, \
@@ -48,7 +49,7 @@ def poll_blindspot_status(lr):
   m = lr + b'\x02\x21\x69\x00\x00\x00\x00'
   return make_can_msg(0x750, m, 0)
 
-class CarController:
+class CarController(CarControllerBase):
   def __init__(self, dbc_name, CP, VM):
     self.CP = CP
     self.params = CarControllerParams(self.CP)
@@ -152,10 +153,10 @@ class CarController:
     apply_steer = apply_meas_steer_torque_limits(new_steer, self.last_steer, CS.out.steeringTorqueEps, self.params)
 
     # >100 degree/sec steering fault prevention
-    self.steer_rate_counter, apply_steer_req = common_fault_avoidance(abs(CS.out.steeringRateDeg) >= MAX_STEER_RATE, CC.latActive,
+    self.steer_rate_counter, apply_steer_req = common_fault_avoidance(abs(CS.out.steeringRateDeg) >= MAX_STEER_RATE, lat_active,
                                                                       self.steer_rate_counter, MAX_STEER_RATE_FRAMES)
 
-    if not CC.latActive:
+    if not lat_active:
       apply_steer = 0
 
     # *** steer angle ***

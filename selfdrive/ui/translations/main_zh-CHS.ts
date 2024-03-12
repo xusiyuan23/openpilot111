@@ -87,23 +87,23 @@
     </message>
     <message>
         <source>Hidden Network</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏的网络</translation>
     </message>
     <message>
         <source>CONNECT</source>
-        <translation type="unfinished">CONNECT</translation>
+        <translation>连线</translation>
     </message>
     <message>
         <source>Enter SSID</source>
-        <translation type="unfinished">输入SSID</translation>
+        <translation>输入 SSID</translation>
     </message>
     <message>
         <source>Enter password</source>
-        <translation type="unfinished">输入密码</translation>
+        <translation>输入密码</translation>
     </message>
     <message>
         <source>for &quot;%1&quot;</source>
-        <translation type="unfinished">网络名称：&quot;%1&quot;</translation>
+        <translation>网络名称：&quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -461,11 +461,6 @@ Credit to krkeegen: https://github.com/krkeegan/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled, Smoother Braking Behind Lead More natural braking behavior when coming up to a slower vehicle. 
-Credit to FrogaAi: https://github.com/FrogAi/FrogPilot/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>On-Screen Personality Button</source>
         <translation type="unfinished"></translation>
     </message>
@@ -555,10 +550,6 @@ Reboot Required.</source>
     </message>
     <message>
         <source>When enabled, openpilot automatically lane change when possible(WARNING: USE IT AT YOUR OWN RISK!!!!).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*α* Enable Smooth Braking</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1102,7 +1093,7 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation type="unfinished"></translation>
+        <translation>系统重置已触发。按下“确认”以清除所有内容和设置，按下“取消”以继续启动。</translation>
     </message>
 </context>
 <context>
@@ -1217,6 +1208,18 @@ This may take up to a minute.</source>
     <message>
         <source>Select a language</source>
         <translation>选择语言</translation>
+    </message>
+    <message>
+        <source>Choose Software to Install</source>
+        <translation>选择要安装的软件</translation>
+    </message>
+    <message>
+        <source>openpilot</source>
+        <translation>openpilot</translation>
+    </message>
+    <message>
+        <source>Custom Software</source>
+        <translation>定制软件</translation>
     </message>
 </context>
 <context>
