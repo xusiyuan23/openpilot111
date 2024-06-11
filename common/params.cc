@@ -210,6 +210,7 @@ std::unordered_map<std::string, uint32_t> keys = {
 
     // dp
     {"dp_device_display_off_mode", PERSISTENT},
+    {"dp_ui_rainbow", PERSISTENT},
 };
 
 } // namespace

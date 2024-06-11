@@ -43,6 +43,7 @@ def manager_init() -> None:
 
     # dp
     ("dp_device_display_off_mode", "0"),
+    ("dp_ui_rainbow", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
