@@ -297,6 +297,12 @@ Device::Device(QObject *parent) : brightness_filter(BACKLIGHT_OFFROAD, BACKLIGHT
   resetInteractiveTimeout();
 
   QObject::connect(uiState(), &UIState::uiUpdate, this, &Device::update);
+  #ifdef DP
+  display_mode_handler = new DisplayModeHandler;
+  QObject::connect(display_mode_handler, &DisplayModeHandler::reset_interactive_timeout, [=](bool timeout) {
+    resetInteractiveTimeout(timeout);
+  });
+  #endif
 }
 
 void Device::update(const UIState &s) {
@@ -359,7 +365,11 @@ void Device::updateWakefulness(const UIState &s) {
     emit interactiveTimeout();
   }
 
+  #ifdef DP
+  setAwake(display_mode_handler->get_awake(s, interactive_timeout));
+  #else
   setAwake(s.scene.ignition || interactive_timeout > 0);
+  #endif
 }
 
 UIState *uiState() {

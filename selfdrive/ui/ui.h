@@ -16,6 +16,11 @@
 #include "common/timing.h"
 #include "system/hardware/hw.h"
 
+#ifdef DP
+#include "dp_priv/selfdrive/ui/ui.h"
+class DisplayModeHandler;
+#endif
+
 const int UI_BORDER_SIZE = 30;
 const int UI_HEADER_HEIGHT = 420;
 
@@ -128,6 +133,9 @@ public:
 
   QTransform car_space_transform;
 
+  // dp
+  QString gps_service = "gpsLocationExternal";
+
 signals:
   void uiUpdate(const UIState &s);
   void offroadTransition(bool offroad);
@@ -169,6 +177,10 @@ private:
   void updateBrightness(const UIState &s);
   void updateWakefulness(const UIState &s);
   void setAwake(bool on);
+
+  #ifdef DP
+  DisplayModeHandler *display_mode_handler;
+  #endif
 
 signals:
   void displayPowerChanged(bool on);
