@@ -3,6 +3,11 @@ import json
 Import('qt_env', 'arch', 'common', 'messaging', 'visionipc',
        'cereal', 'transformations')
 
+def insert_src(list, after_src, src):
+  return list[:list.index(after_src)+1] + src + list[list.index(after_src)+1:]
+
+dp_priv = len(os.listdir(Dir(f"#dp_priv/").abspath)) > 2
+
 base_libs = [common, messaging, cereal, visionipc, transformations, 'zmq',
              'capnp', 'kj', 'm', 'OpenCL', 'ssl', 'crypto', 'pthread'] + qt_env["LIBS"]
 

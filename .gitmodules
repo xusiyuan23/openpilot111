@@ -19,3 +19,6 @@
 [submodule "tinygrad"]
   path = tinygrad_repo
   url = https://github.com/geohot/tinygrad.git
+[submodule "dp_priv"]
+	path = dp_priv
+	url = https://github.com/dragonpilot-community/dp_priv.git

@@ -165,6 +165,10 @@ else:
   ccflags = []
   ldflags = []
 
+if len(os.listdir(Dir(f"#dp_priv/").abspath)) > 2:
+  cflags += ["-DDP"]
+  cxxflags += ["-DDP"]
+
 # no --as-needed on mac linker
 if arch != "Darwin":
   ldflags += ["-Wl,--as-needed", "-Wl,--no-undefined"]
