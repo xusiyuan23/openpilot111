@@ -22,3 +22,6 @@
 [submodule "dp_priv"]
 	path = dp_priv
 	url = https://github.com/dragonpilot-community/dp_priv.git
+[submodule "dp_ext"]
+	path = dp_ext
+	url = https://github.com/dragonpilot-community/dp_ext
