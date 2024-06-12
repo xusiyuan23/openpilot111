@@ -52,6 +52,8 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   #ifdef DP
   border_indicator = new BorderIndicator;
   #endif
+  // rick - read full screen param
+  dp_nav_full_screen = Params().getBool("dp_nav_full_screen");
 }
 
 void OnroadWindow::updateState(const UIState &s) {
@@ -104,7 +106,11 @@ void OnroadWindow::createMapWidget() {
   QObject::connect(nvg->map_settings_btn, &MapSettingsButton::clicked, m, &MapPanel::toggleMapSettings);
   nvg->map_settings_btn->setEnabled(true);
 
-  m->setFixedWidth(topWidget(this)->width() / 2 - UI_BORDER_SIZE);
+  if (dp_nav_full_screen) {
+    m->setFixedWidth(topWidget(this)->width());
+  } else {
+    m->setFixedWidth(topWidget(this)->width() / 2 - UI_BORDER_SIZE);
+  }
   split->insertWidget(0, m);
   // hidden by default, made visible when navRoute is published
   m->setVisible(false);
