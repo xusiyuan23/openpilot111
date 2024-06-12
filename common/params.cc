@@ -211,6 +211,10 @@ std::unordered_map<std::string, uint32_t> keys = {
     // dp
     {"dp_device_display_off_mode", PERSISTENT},
     {"dp_ui_rainbow", PERSISTENT},
+    {"dp_ui_flight_panel", PERSISTENT},
+    {"dp_long_de2e", PERSISTENT},
+    {"dp_long_personality_btn", PERSISTENT},
+    {"dp_nav_full_screen", PERSISTENT},
 };
 
 } // namespace

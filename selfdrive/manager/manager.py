@@ -44,6 +44,10 @@ def manager_init() -> None:
     # dp
     ("dp_device_display_off_mode", "0"),
     ("dp_ui_rainbow", "0"),
+    ("dp_ui_flight_panel", "0"),
+    ("dp_long_de2e", "0"),
+    ("dp_long_personality_btn", "0"),
+    ("dp_nav_full_screen", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
