@@ -24,6 +24,11 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   main_layout->addWidget(map_settings_btn, 0, Qt::AlignBottom | Qt::AlignRight);
 
   dm_img = loadPixmap("../assets/img_driver_face.png", {img_size + 5, img_size + 5});
+
+  #ifdef DP
+  rainbow_path = new RainbowPath;
+  #endif
+
 }
 
 void AnnotatedCameraWidget::updateState(const UIState &s) {
@@ -76,6 +81,10 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
     map_settings_btn->setVisible(!hideBottomIcons);
     main_layout->setAlignment(map_settings_btn, (rightHandDM ? Qt::AlignLeft : Qt::AlignRight) | Qt::AlignBottom);
   }
+
+  #ifdef DP
+  rainbow_path->update_states(s);
+  #endif
 }
 
 void AnnotatedCameraWidget::drawHud(QPainter &p) {
@@ -233,7 +242,14 @@ void AnnotatedCameraWidget::drawLaneLines(QPainter &painter, const UIState *s) {
 
   // paint path
   QLinearGradient bg(0, height(), 0, 0);
+  #ifdef DP
+  if (rainbow_path->is_enabled()) {
+    rainbow_path->paint(bg);
+  }
+  else if (sm["controlsState"].getControlsState().getExperimentalMode()) {
+  #else
   if (sm["controlsState"].getControlsState().getExperimentalMode()) {
+  #endif
     // The first half of track_vertices are the points for the right side of the path
     // and the indices match the positions of accel from uiPlan
     const auto &acceleration = sm["uiPlan"].getUiPlan().getAccel();
