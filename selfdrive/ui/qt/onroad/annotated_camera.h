@@ -42,6 +42,7 @@ private:
 
   #ifdef DP
   FlightPanel *flight_panel;
+  PersonalityButton *personality_btn;
   KnightScanner *knight_scanner;
   RainbowPath *rainbow_path;
   ChevronExt * chevron_ext;

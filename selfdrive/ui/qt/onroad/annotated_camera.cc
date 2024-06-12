@@ -20,8 +20,31 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   experimental_btn = new ExperimentalButton(this);
   main_layout->addWidget(experimental_btn, 0, Qt::AlignTop | Qt::AlignRight);
 
+  #ifdef DP
+  // Create a spacer item to push the following layout to the bottom
+  QSpacerItem* vSpacer = new QSpacerItem(1, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  main_layout->addSpacerItem(vSpacer);
+
+  // Create a horizontal layout for map_settings_btn, accel_btn, and personality_btn
+  QHBoxLayout* horizontalLayout = new QHBoxLayout();
+
+  // Add the spacer item to push the buttons to the right
+  QSpacerItem* hSpacer = new QSpacerItem(1, 1, QSizePolicy::Expanding);
+  horizontalLayout->addItem(hSpacer);
+
+  personality_btn = new PersonalityButton(this);
+  horizontalLayout->addWidget(personality_btn);
+  horizontalLayout->addSpacing(UI_BORDER_SIZE);
+
+  map_settings_btn = new MapSettingsButton(this);
+  horizontalLayout->addWidget(map_settings_btn);
+
+  // Add the horizontal layout to the main_layout
+  main_layout->addLayout(horizontalLayout);
+  #else
   map_settings_btn = new MapSettingsButton(this);
   main_layout->addWidget(map_settings_btn, 0, Qt::AlignBottom | Qt::AlignRight);
+  #endif
 
   dm_img = loadPixmap("../assets/img_driver_face.png", {img_size + 5, img_size + 5});
 
@@ -86,6 +109,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   }
 
   #ifdef DP
+  personality_btn->update_states(s);
   rainbow_path->update_states(s);
   flight_panel->update_states(s, is_metric);
   chevron_ext->update_states(s, is_metric);
