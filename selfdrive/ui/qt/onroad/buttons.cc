@@ -4,6 +4,11 @@
 
 #include "selfdrive/ui/qt/util.h"
 
+#ifdef DP
+#include "dp_priv/selfdrive/ui/qt/util.h"
+#endif
+
+
 void drawIcon(QPainter &p, const QPoint &center, const QPixmap &img, const QBrush &bg, float opacity) {
   p.setRenderHint(QPainter::Antialiasing);
   p.setOpacity(1.0);  // bg dictates opacity of ellipse

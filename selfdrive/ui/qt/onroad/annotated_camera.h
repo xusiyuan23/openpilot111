@@ -6,6 +6,10 @@
 #include "selfdrive/ui/qt/onroad/buttons.h"
 #include "selfdrive/ui/qt/widgets/cameraview.h"
 
+#ifdef DP
+#include "dp_priv/selfdrive/ui/qt/onroad/annotated_camera.h"
+#endif
+
 class AnnotatedCameraWidget : public CameraWidget {
   Q_OBJECT
 
