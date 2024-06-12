@@ -215,6 +215,9 @@ static void update_state(UIState *s) {
                                  sm.rcv_frame("liveCalibration") > scene.started_frame &&
                                  sm.rcv_frame("modelV2") > scene.started_frame &&
                                  sm.rcv_frame("uiPlan") > scene.started_frame);
+
+  // dp
+  scene.alka_enabled = sm["controlsStateExt"].getControlsStateExt().getAlkaEnabled();
 }
 
 void ui_update_params(UIState *s) {
@@ -251,6 +254,10 @@ UIState::UIState(QObject *parent) : QObject(parent) {
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState",
     "pandaStates", "carParams", "driverMonitoringState", "carState", "liveLocationKalman", "driverStateV2",
     "wideRoadCameraState", "managerState", "navInstruction", "navRoute", "uiPlan",
+
+    // dp
+    // alka
+    "carControl", "controlsStateExt",
   });
 
   Params params;
