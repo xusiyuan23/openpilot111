@@ -43,6 +43,7 @@ private:
   #ifdef DP
   KnightScanner *knight_scanner;
   RainbowPath *rainbow_path;
+  ChevronExt * chevron_ext;
   #endif
 
 protected:

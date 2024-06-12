@@ -28,6 +28,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   #ifdef DP
   knight_scanner = new KnightScanner;
   rainbow_path = new RainbowPath;
+  chevron_ext = new ChevronExt;
   #endif
 
 }
@@ -85,6 +86,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
 
   #ifdef DP
   rainbow_path->update_states(s);
+  chevron_ext->update_states(s, is_metric);
   #endif
 }
 
@@ -366,6 +368,9 @@ void AnnotatedCameraWidget::drawLead(QPainter &painter, const cereal::RadarState
   painter.setBrush(redColor(fillAlpha));
   painter.drawPolygon(chevron, std::size(chevron));
 
+  #ifdef DP
+  chevron_ext->paint(painter, d_rel, x, y);
+  #endif
   painter.restore();
 }
 
