@@ -258,6 +258,8 @@ UIState::UIState(QObject *parent) : QObject(parent) {
     // dp
     // alka
     "carControl", "controlsStateExt",
+    // de2e
+    "longitudinalPlanExt",
   });
 
   Params params;

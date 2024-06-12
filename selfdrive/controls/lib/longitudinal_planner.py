@@ -15,6 +15,10 @@ from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDX
 from openpilot.selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N, get_speed_error
 from openpilot.common.swaglog import cloudlog
 
+# dp
+from openpilot.common.params import Params
+from openpilot.dp_ext.selfdrive.controls.lib.dynamic_endtoend_controller import DynamicEndtoEndController
+
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MIN = -1.2
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
@@ -60,6 +64,11 @@ class LongitudinalPlanner:
     self.j_desired_trajectory = np.zeros(CONTROL_N)
     self.solverExecutionTime = 0.0
 
+    # dp
+    self.params = Params()
+    self._frame = 0
+    self._dynamic_endtoend_controller = DynamicEndtoEndController()
+
   @staticmethod
   def parse_model(model_msg, model_error):
     if (len(model_msg.position.x) == 33 and
@@ -77,7 +86,16 @@ class LongitudinalPlanner:
     return x, v, a, j
 
   def update(self, sm):
-    self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
+    if self._frame % 50 == 0:
+      self._dynamic_endtoend_controller.set_enabled(self.params.get_bool("dp_long_de2e"))
+
+    self._frame += 1
+
+    if self._dynamic_endtoend_controller.is_enabled():
+      self._dynamic_endtoend_controller.set_mpc_fcw_crash_cnt(self.mpc.crash_cnt)
+      self.mpc.mode = self._dynamic_endtoend_controller.get_mpc_mode(self.CP.radarUnavailable, sm['carState'], sm['radarState'].leadOne, sm['modelV2'], sm['controlsState'], sm['navInstruction'].maneuverDistance)
+    else:
+      self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
 
     v_ego = sm['carState'].vEgo
     v_cruise_kph = min(sm['controlsState'].vCruise, V_CRUISE_MAX)
@@ -157,3 +175,17 @@ class LongitudinalPlanner:
     longitudinalPlan.solverExecutionTime = self.mpc.solve_time
 
     pm.send('longitudinalPlan', plan_send)
+
+
+    # dp - extension
+    plan_ext_send = messaging.new_message('longitudinalPlanExt')
+    plan_ext_send.valid = True
+
+    longitudinalPlanExt = plan_ext_send.longitudinalPlanExt
+    # longitudinalPlanExt.visionTurnControllerState = self.vision_turn_controller.state
+    # longitudinalPlanExt.visionTurnSpeed = float(self.vision_turn_controller.v_turn)
+    longitudinalPlanExt.de2eIsBlended = self.mpc.mode == 'blended'
+    longitudinalPlanExt.de2eIsEnabled = self._dynamic_endtoend_controller.is_enabled()
+    # longitudinalPlanExt.longitudinalPlanExtSource = self.mpc.source if self.mpc.source != 'cruise' else self.cruise_source
+
+    pm.send('longitudinalPlanExt', plan_ext_send)

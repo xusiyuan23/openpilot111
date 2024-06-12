@@ -381,7 +381,10 @@ void AnnotatedCameraWidget::paintGL() {
       } else if (v_ego > 15) {
         wide_cam_requested = false;
       }
-      wide_cam_requested = wide_cam_requested && sm["controlsState"].getControlsState().getExperimentalMode();
+      // rick - reduce de2e screen flickering, just use speed to decide when to use wide/normal cam
+      if (!sm["longitudinalPlanExt"].getLongitudinalPlanExt().getDe2eIsEnabled()) {
+        wide_cam_requested = wide_cam_requested && sm["controlsState"].getControlsState().getExperimentalMode();
+      }
       // for replay of old routes, never go to widecam
       wide_cam_requested = wide_cam_requested && s->scene.calibration_wide_valid;
     }
