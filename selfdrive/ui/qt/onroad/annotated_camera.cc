@@ -28,6 +28,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   #ifdef DP
   knight_scanner = new KnightScanner;
   rainbow_path = new RainbowPath;
+  flight_panel = new FlightPanel;
   chevron_ext = new ChevronExt;
   #endif
 
@@ -86,6 +87,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
 
   #ifdef DP
   rainbow_path->update_states(s);
+  flight_panel->update_states(s, is_metric);
   chevron_ext->update_states(s, is_metric);
   #endif
 }
@@ -433,6 +435,10 @@ void AnnotatedCameraWidget::paintGL() {
   if (s->scene.world_objects_visible) {
     update_model(s, model, sm["uiPlan"].getUiPlan());
     drawLaneLines(painter, s);
+
+    #ifdef DP
+    flight_panel->paint(painter, width(), height());
+    #endif
 
     if (s->scene.longitudinal_control && sm.rcv_frame("radarState") > s->scene.started_frame) {
       auto radar_state = sm["radarState"].getRadarState();

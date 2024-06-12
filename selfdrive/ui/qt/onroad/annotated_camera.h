@@ -41,6 +41,7 @@ private:
   bool wide_cam_requested = false;
 
   #ifdef DP
+  FlightPanel *flight_panel;
   KnightScanner *knight_scanner;
   RainbowPath *rainbow_path;
   ChevronExt * chevron_ext;
