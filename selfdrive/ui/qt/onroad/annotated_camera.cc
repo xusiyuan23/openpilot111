@@ -26,6 +26,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   dm_img = loadPixmap("../assets/img_driver_face.png", {img_size + 5, img_size + 5});
 
   #ifdef DP
+  knight_scanner = new KnightScanner;
   rainbow_path = new RainbowPath;
   #endif
 
@@ -284,6 +285,9 @@ void AnnotatedCameraWidget::drawLaneLines(QPainter &painter, const UIState *s) {
 
   painter.setBrush(bg);
   painter.drawPolygon(scene.track_vertices);
+  #ifdef DP
+  knight_scanner->paint(painter, rect().height());
+  #endif
 
   painter.restore();
 }

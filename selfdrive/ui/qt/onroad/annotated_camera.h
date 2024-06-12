@@ -41,6 +41,7 @@ private:
   bool wide_cam_requested = false;
 
   #ifdef DP
+  KnightScanner *knight_scanner;
   RainbowPath *rainbow_path;
   #endif
 
