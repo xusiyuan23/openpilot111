@@ -24,6 +24,11 @@ private:
   QWidget *map = nullptr;
   QHBoxLayout* split;
 
+  // dp
+  #ifdef DP
+  BorderIndicator *border_indicator;
+  #endif
+
 private slots:
   void offroadTransition(bool offroad);
   void primeChanged(bool prime);

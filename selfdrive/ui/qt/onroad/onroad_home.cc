@@ -48,6 +48,10 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   QObject::connect(uiState(), &UIState::uiUpdate, this, &OnroadWindow::updateState);
   QObject::connect(uiState(), &UIState::offroadTransition, this, &OnroadWindow::offroadTransition);
   QObject::connect(uiState(), &UIState::primeChanged, this, &OnroadWindow::primeChanged);
+
+  #ifdef DP
+  border_indicator = new BorderIndicator;
+  #endif
 }
 
 void OnroadWindow::updateState(const UIState &s) {
@@ -68,7 +72,12 @@ void OnroadWindow::updateState(const UIState &s) {
   const SubMaster &sm = *(s.sm);
   bool alka_active = sm["carControl"].getCarControl().getLatActive() && sm["controlsStateExt"].getControlsStateExt().getAlkaActive();
   QColor bgColor = bg_colors[alka_active && s.status == STATUS_DISENGAGED? STATUS_ALKA : s.status];
+  #ifdef DP
+  border_indicator->update_states(s);
+  if (bg != bgColor || border_indicator->should_repaint()) {
+  #else
   if (bg != bgColor) {
+  #endif
     // repaint border
     bg = bgColor;
     update();
@@ -128,5 +137,13 @@ void OnroadWindow::primeChanged(bool prime) {
 
 void OnroadWindow::paintEvent(QPaintEvent *event) {
   QPainter p(this);
+  #ifdef DP
+  p.fillRect(rect(), QColor(bg.red(), bg.green(), bg.blue(), 180));
+
+  border_indicator->paint_bottom(p, QRect(0, height() - UI_BORDER_SIZE, width(), 30));
+  border_indicator->paint_left(p, QRect(0, 0, width()*0.2, height()));
+  border_indicator->paint_right(p, QRect(width()*0.8, 0, width()*0.2, height()));
+  #else
   p.fillRect(rect(), QColor(bg.red(), bg.green(), bg.blue(), 255));
+  #endif
 }
