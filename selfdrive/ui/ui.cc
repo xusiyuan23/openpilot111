@@ -241,12 +241,15 @@ void UIState::updateStatus() {
 }
 
 UIState::UIState(QObject *parent) : QObject(parent) {
+  gps_service = Params().getBool("UbloxAvailable")? "gpsLocationExternal" : "gpsLocation";
   sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState",
     "pandaStates", "carParams", "driverMonitoringState", "carState", "liveLocationKalman", "driverStateV2",
     "wideRoadCameraState", "managerState", "navInstruction", "navRoute", "clocks",
 
     // dp
+    // flight panel
+    gps_service.toStdString().c_str(),
     // alka
     "carControl", "controlsStateExt",
     // de2e
