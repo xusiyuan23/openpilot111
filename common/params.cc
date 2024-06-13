@@ -216,6 +216,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_long_personality_btn", PERSISTENT},
     {"dp_nav_full_screen", PERSISTENT},
     {"dp_alka", PERSISTENT},
+    {"dp_device_reset_conf", CLEAR_ON_MANAGER_START},
 };
 
 } // namespace
