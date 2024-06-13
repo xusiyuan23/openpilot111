@@ -4,6 +4,12 @@
 
 #include "selfdrive/ui/qt/util.h"
 
+#ifdef DP
+#include "dp_priv/selfdrive/ui/qt/util.h"
+#endif
+// dp - for satellite fmin
+#include <cmath>
+
 void Sidebar::drawMetric(QPainter &p, const QPair<QString, QString> &label, QColor c, int y) {
   const QRect rect = {30, y, 240, 126};
 
@@ -102,8 +108,13 @@ void Sidebar::updateState(const UIState &s) {
   ItemStatus pandaStatus = {{tr("VEHICLE"), tr("ONLINE")}, good_color};
   if (s.scene.pandaType == cereal::PandaState::PandaType::UNKNOWN) {
     pandaStatus = {{tr("NO"), tr("PANDA")}, danger_color};
-  } else if (s.scene.started && !sm["liveLocationKalman"].getLiveLocationKalman().getGpsOK()) {
-    pandaStatus = {{tr("GPS"), tr("SEARCH")}, warning_color};
+//  } else if (s.scene.started && !sm["liveLocationKalman"].getLiveLocationKalman().getGpsOK()) {
+//    pandaStatus = {{tr("GPS"), tr("SEARCH")}, warning_color};
+  } else if (s.scene.started) { //} && sm["liveLocationKalman"].getLiveLocationKalman().getGpsOK()) {
+    auto gpsReader = s.gps_service == "gpsLocationExternal"? sm["gpsLocationExternal"].getGpsLocationExternal() : sm["gpsLocation"].getGpsLocation();
+    float gpsAccuracy = gpsReader.getVerticalAccuracy();
+    bool gps_ok = sm["liveLocationKalman"].getLiveLocationKalman().getGpsOK() && gpsAccuracy < 10;
+    pandaStatus = {{tr("GPS"), gps_ok? QString("%1 m").arg(fmin(99, gpsAccuracy), 0, 'f', 2) : "N/A"}, gps_ok? good_color : warning_color};
   }
   setProperty("pandaStatus", QVariant::fromValue(pandaStatus));
   // rick - update every 5 secs

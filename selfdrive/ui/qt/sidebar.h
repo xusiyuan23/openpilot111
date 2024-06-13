@@ -6,6 +6,9 @@
 #include <QMap>
 
 #include "selfdrive/ui/ui.h"
+#ifdef DP
+#include "dp_priv/selfdrive/ui/qt/sidebar.h"
+#endif
 
 typedef QPair<QPair<QString, QString>, QColor> ItemStatus;
 Q_DECLARE_METATYPE(ItemStatus);
