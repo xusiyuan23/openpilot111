@@ -48,6 +48,7 @@ def manager_init() -> None:
     ("dp_long_de2e", "0"),
     ("dp_long_personality_btn", "0"),
     ("dp_nav_full_screen", "0"),
+    ("dp_alka", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))
