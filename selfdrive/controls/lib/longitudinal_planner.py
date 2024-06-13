@@ -93,7 +93,12 @@ class LongitudinalPlanner:
 
     if self._dynamic_endtoend_controller.is_enabled():
       self._dynamic_endtoend_controller.set_mpc_fcw_crash_cnt(self.mpc.crash_cnt)
-      self.mpc.mode = self._dynamic_endtoend_controller.get_mpc_mode(self.CP.radarUnavailable, sm['carState'], sm['radarState'].leadOne, sm['modelV2'], sm['controlsState'], sm['navInstruction'].maneuverDistance)
+      self.mpc.mode = self._dynamic_endtoend_controller.get_mpc_mode(self.CP.radarUnavailable,
+                                                                     sm['carState'],
+                                                                     sm['radarState'].leadOne,
+                                                                     sm['modelV2'],
+                                                                     sm['controlsState']
+                                                                     ) #, sm['navInstruction'].maneuverDistance)
     else:
       self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
 
