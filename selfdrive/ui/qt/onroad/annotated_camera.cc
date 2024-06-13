@@ -457,11 +457,12 @@ void AnnotatedCameraWidget::paintGL() {
 
   if (s->scene.world_objects_visible) {
     update_model(s, model);
-    drawLaneLines(painter, s);
 
     #ifdef DP
     flight_panel->paint(painter, width(), height());
     #endif
+
+    drawLaneLines(painter, s);
 
     if (s->scene.longitudinal_control && sm.rcv_frame("radarState") > s->scene.started_frame) {
       auto radar_state = sm["radarState"].getRadarState();
