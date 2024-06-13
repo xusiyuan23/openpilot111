@@ -109,6 +109,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   }
 
   #ifdef DP
+  knight_scanner->update_states(s);
   personality_btn->update_states(s);
   rainbow_path->update_states(s);
   flight_panel->update_states(s, is_metric);
@@ -274,8 +275,7 @@ void AnnotatedCameraWidget::drawLaneLines(QPainter &painter, const UIState *s) {
   #ifdef DP
   if (rainbow_path->is_enabled()) {
     rainbow_path->paint(bg);
-  }
-  else if (sm["controlsState"].getControlsState().getExperimentalMode()) {
+  } else if (sm["controlsState"].getControlsState().getExperimentalMode()) {
   #else
   if (sm["controlsState"].getControlsState().getExperimentalMode()) {
   #endif
