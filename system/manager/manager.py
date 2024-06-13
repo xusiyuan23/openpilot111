@@ -50,6 +50,7 @@ def manager_init() -> None:
     ("dp_nav_full_screen", "0"),
     ("dp_alka", "0"),
     ("dp_device_ip_addr", ""),
+    ("dp_vag_sng", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))

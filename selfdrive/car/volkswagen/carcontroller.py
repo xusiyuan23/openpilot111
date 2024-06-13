@@ -7,6 +7,7 @@ from openpilot.selfdrive.car import apply_driver_steer_torque_limits
 from openpilot.selfdrive.car.interfaces import CarControllerBase
 from openpilot.selfdrive.car.volkswagen import mqbcan, pqcan
 from openpilot.selfdrive.car.volkswagen.values import CANBUS, CarControllerParams, VolkswagenFlags
+from openpilot.common.params import Params
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 LongCtrlState = car.CarControl.Actuators.LongControlState
@@ -26,6 +27,9 @@ class CarController(CarControllerBase):
     self.eps_timer_soft_disable_alert = False
     self.hca_frame_timer_running = 0
     self.hca_frame_same_torque = 0
+
+    # dp
+    self.dp_vag_sng = Params().get("dp_vag_sng")
 
   def update(self, CC, CS, now_nanos):
     actuators = CC.actuators
@@ -107,9 +111,22 @@ class CarController(CarControllerBase):
 
     # **** Stock ACC Button Controls **************************************** #
 
-    gra_send_ready = self.CP.pcmCruise and CS.gra_stock_values["COUNTER"] != self.gra_acc_counter_last
-    if gra_send_ready and (CC.cruiseControl.cancel or CC.cruiseControl.resume):
-      can_sends.append(self.CCS.create_acc_buttons_control(self.packer_pt, self.ext_bus, CS.gra_stock_values,
+    if self.dp_vag_sng:
+      if self.CP.pcmCruise and CS.gra_stock_values["COUNTER"] != self.gra_acc_counter_last:
+        standing_resume_spam = CS.out.standstill
+        spam_window = self.frame % 50 < 15
+
+        send_cancel = CC.cruiseControl.cancel
+        send_resume = CC.cruiseControl.resume or (standing_resume_spam and spam_window)
+
+        if send_cancel or send_resume:
+          can_sends.append(self.CCS.create_acc_buttons_control(self.packer_pt, self.ext_bus, CS.gra_stock_values,
+                                                               cancel=send_cancel, resume=send_resume))
+    else:
+      # rick - un-touched
+      gra_send_ready = self.CP.pcmCruise and CS.gra_stock_values["COUNTER"] != self.gra_acc_counter_last
+      if gra_send_ready and (CC.cruiseControl.cancel or CC.cruiseControl.resume):
+        can_sends.append(self.CCS.create_acc_buttons_control(self.packer_pt, self.ext_bus, CS.gra_stock_values,
                                                            cancel=CC.cruiseControl.cancel, resume=CC.cruiseControl.resume))
 
     new_actuators = actuators.as_builder()
