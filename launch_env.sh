@@ -11,3 +11,12 @@ if [ -z "$AGNOS_VERSION" ]; then
 fi
 
 export STAGING_ROOT="/data/safe_staging"
+
+### dp_stock_begin ###
+if [ -f /data/media/0/dp_nav_mapbox_token ]; then
+  token=$(cat /data/media/0/dp_nav_mapbox_token)
+  if [ "$token" != "" ]; then
+    export MAPBOX_TOKEN=$token
+  fi
+fi
+### dp_stock_end ###
