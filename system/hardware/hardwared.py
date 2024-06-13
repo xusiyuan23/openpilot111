@@ -25,6 +25,8 @@ from openpilot.system.hardware.power_monitoring import PowerMonitoring
 from openpilot.system.hardware.fan_controller import TiciFanController
 from openpilot.system.version import terms_version, training_version
 
+from openpilot.dp_ext.utils import get_ip_addr
+
 ThermalStatus = log.DeviceState.ThermalStatus
 NetworkType = log.DeviceState.NetworkType
 NetworkStrength = log.DeviceState.NetworkStrength
@@ -441,6 +443,12 @@ def hardware_thread(end_event, hw_queue) -> None:
           cloudlog.exception("failed to save offroad status")
 
     params.put_bool_nonblocking("NetworkMetered", msg.deviceState.networkMetered)
+
+    # rick - update IP every 10s
+    if count % int(10. / DT_HW) == 0:
+      ip = get_ip_addr()
+      ip = '' if ip is None else ip
+      params.put('dp_device_ip_addr', ip)
 
     count += 1
     should_start_prev = should_start

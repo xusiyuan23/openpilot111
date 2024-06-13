@@ -106,6 +106,11 @@ void Sidebar::updateState(const UIState &s) {
     pandaStatus = {{tr("GPS"), tr("SEARCH")}, warning_color};
   }
   setProperty("pandaStatus", QVariant::fromValue(pandaStatus));
+  // rick - update every 5 secs
+  if (sm.frame % UI_FREQ*5 == 0) {
+    QString ip_addr = QString::fromStdString(Params().get("dp_device_ip_addr"));
+    setProperty("ipAddr", ip_addr);
+  }
 }
 
 void Sidebar::paintEvent(QPaintEvent *event) {
@@ -135,6 +140,12 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.setPen(QColor(0xff, 0xff, 0xff));
   const QRect r = QRect(50, 247, 100, 50);
   p.drawText(r, Qt::AlignCenter, net_type);
+
+  // IP
+  p.setFont(InterFont(30));
+  p.setPen(QColor(0xff, 0xff, 0xff));
+  const QRect ip = QRect(40, 260, 230, 100);
+  p.drawText(ip, Qt::AlignCenter, ipAddr);
 
   // metrics
   drawMetric(p, temp_status.first, temp_status.second, 338);
