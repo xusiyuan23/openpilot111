@@ -53,7 +53,7 @@ qt_src = ["main.cc", "qt/sidebar.cc", "qt/body.cc",
           "qt/onroad/buttons.cc", "qt/onroad/alerts.cc"]
 
 if dp_priv:
-#  qt_src = insert_src(qt_src, "qt/sidebar.cc", ["#dp_priv/selfdrive/ui/qt/sidebar.cc", "#dp_priv/selfdrive/ui/qt/onroad.cc"])
+  qt_src = insert_src(qt_src, "qt/sidebar.cc", ["#dp_priv/selfdrive/ui/qt/sidebar.cc"])
   qt_src = insert_src(qt_src, "qt/offroad/settings.cc", ["#dp_priv/selfdrive/ui/qt/offroad/settings.cc", "#dp_priv/selfdrive/ui/qt/offroad/settings_dp.cc"])
   qt_src = insert_src(qt_src, "qt/onroad/onroad_home.cc", ["#dp_priv/selfdrive/ui/qt/onroad/onroad_home.cc"])
   qt_src = insert_src(qt_src, "qt/onroad/annotated_camera.cc", ["#dp_priv/selfdrive/ui/qt/onroad/annotated_camera.cc"])

@@ -14,14 +14,22 @@
 #include "system/hardware/hw.h"
 #include "selfdrive/ui/qt/qt_window.h"
 #include "selfdrive/ui/qt/util.h"
+#ifdef DP
+#include "dp_priv/selfdrive/ui/qt/util.h"
+#endif
 
 TrackWidget::TrackWidget(QWidget *parent) : QWidget(parent) {
   setAttribute(Qt::WA_OpaquePaintEvent);
   setFixedSize(spinner_size);
 
   // pre-compute all the track imgs. make this a gif instead?
-  QPixmap comma_img = loadPixmap("../assets/img_spinner_comma.png", spinner_size);
-  QPixmap track_img = loadPixmap("../assets/img_spinner_track.png", spinner_size);
+  #ifdef DP
+  QPixmap comma_img = get_dp_image(spinner_size);
+  QPixmap track_img = get_dp_track_image(spinner_size);
+  #else
+  QPixmap comma_img = loadPixmap("../../dp_ext/selfdrive/assets/img_spinner_comma.png", spinner_size);
+  QPixmap track_img = loadPixmap("../../dp_ext/selfdrive/assets/img_spinner_track.png", spinner_size);
+  #endif
 
   QTransform transform(1, 0, 0, 1, width() / 2, height() / 2);
   QPixmap pm(spinner_size);

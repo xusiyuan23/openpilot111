@@ -31,8 +31,13 @@ void Sidebar::drawMetric(QPainter &p, const QPair<QString, QString> &label, QCol
 }
 
 Sidebar::Sidebar(QWidget *parent) : QFrame(parent), onroad(false), flag_pressed(false), settings_pressed(false) {
-  home_img = loadPixmap("../assets/images/button_home.png", home_btn.size());
+  #ifdef DP
+  home_img = get_dp_image(home_btn.size());
+  flag_img = get_dp_image(home_btn.size());
+  #else
+  home_img = loadPixmap("../../dp_ext/selfdrive/assets/images/button_home.png", home_btn.size());
   flag_img = loadPixmap("../assets/images/button_flag.png", home_btn.size());
+  #endif
   settings_img = loadPixmap("../assets/images/button_settings.png", settings_btn.size(), Qt::IgnoreAspectRatio);
 
   connect(this, &Sidebar::valueChanged, [=] { update(); });
