@@ -209,9 +209,6 @@ static void update_state(UIState *s) {
                                 (scene.started &&
                                  sm.rcv_frame("liveCalibration") > scene.started_frame &&
                                  sm.rcv_frame("modelV2") > scene.started_frame);
-
-  // dp
-  scene.alka_enabled = sm["controlsStateExt"].getControlsStateExt().getAlkaEnabled();
 }
 
 void ui_update_params(UIState *s) {
