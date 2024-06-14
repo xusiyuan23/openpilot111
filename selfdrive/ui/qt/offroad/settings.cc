@@ -272,6 +272,8 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   QObject::connect(uiState(), &UIState::primeTypeChanged, [this] (PrimeType type) {
     pair_device->setVisible(type == PrimeType::UNPAIRED);
   });
+  #if 0
+  // rick - allowing toggle changes
   QObject::connect(uiState(), &UIState::offroadTransition, [=](bool offroad) {
     for (auto btn : findChildren<ButtonControl *>()) {
       if (btn != pair_device) {
@@ -279,6 +281,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
       }
     }
   });
+  #endif
 
   // power buttons
   QHBoxLayout *power_layout = new QHBoxLayout();
