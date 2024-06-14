@@ -62,7 +62,7 @@ void OnroadWindow::updateState(const UIState &s) {
     return;
   }
 
-  if (s.scene.map_on_left) {
+  if (s.scene.map_on_left || dp_ui_map_full) {
     split->setDirection(QBoxLayout::LeftToRight);
   } else {
     split->setDirection(QBoxLayout::RightToLeft);
