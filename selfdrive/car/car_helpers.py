@@ -117,6 +117,13 @@ def fingerprint(logcan, sendcan, num_pandas):
   ecu_rx_addrs = set()
   params = Params()
 
+  # dp - vehicle selector
+  dp_vehicle_assigned = params.get('dp_vehicle_assigned', encoding='utf8')
+  if dp_vehicle_assigned is not None:
+    fixed_fingerprint = dp_vehicle_assigned
+    skip_fw_query = True
+
+
   start_time = time.monotonic()
   if not skip_fw_query:
     cached_params = params.get("CarParamsCache")

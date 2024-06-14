@@ -51,9 +51,13 @@ def manager_init() -> None:
     ("dp_alka", "0"),
     ("dp_device_ip_addr", ""),
     ("dp_vag_sng", "0"),
+    ("dp_vehicle_list", ""),
+    ("dp_vehicle_assigned", ""),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))
+
+  params.put("dp_vehicle_list", get_support_vehicle_list())
 
   if params.get_bool("RecordFrontLock"):
     params.put_bool("RecordFront", True)
@@ -214,6 +218,21 @@ def main() -> None:
   elif params.get_bool("DoShutdown"):
     cloudlog.warning("shutdown")
     HARDWARE.shutdown()
+
+def get_support_vehicle_list():
+  from openpilot.selfdrive.car.fingerprints import all_known_cars, all_legacy_fingerprint_cars
+  import json
+  cars = dict({"cars": []})
+  list = []
+  for car in all_known_cars():
+    list.append(str(car))
+
+  for car in all_legacy_fingerprint_cars():
+    name = str(car)
+    if name not in list:
+      list.append(name)
+  cars["cars"] = sorted(list)
+  return json.dumps(cars)
 
 
 if __name__ == "__main__":

@@ -455,7 +455,11 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
 
   sidebar_widget->setFixedWidth(500);
   main_layout->addWidget(sidebar_widget);
+  #ifdef DP
+  main_layout->addWidget(new DPSettingsPanel(panel_widget, this));
+  #else
   main_layout->addWidget(panel_widget);
+  #endif
 
   setStyleSheet(R"(
     * {

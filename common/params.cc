@@ -219,6 +219,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_device_reset_conf", CLEAR_ON_MANAGER_START},
     {"dp_device_ip_addr", PERSISTENT},
     {"dp_vag_sng", PERSISTENT},
+    {"dp_vehicle_list", PERSISTENT},
+    {"dp_vehicle_assigned", PERSISTENT},
 };
 
 } // namespace
