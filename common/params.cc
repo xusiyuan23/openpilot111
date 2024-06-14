@@ -214,7 +214,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_ui_flight_panel", PERSISTENT},
     {"dp_long_de2e", PERSISTENT},
     {"dp_long_personality_btn", PERSISTENT},
-    {"dp_nav_full_screen", PERSISTENT},
+    {"dp_ui_map_full", PERSISTENT},
     {"dp_alka", PERSISTENT},
     {"dp_device_reset_conf", CLEAR_ON_MANAGER_START},
     {"dp_device_ip_addr", PERSISTENT},

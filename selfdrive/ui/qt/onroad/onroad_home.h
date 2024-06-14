@@ -29,7 +29,7 @@ private:
   QHBoxLayout* split;
 
   // dp
-  bool dp_nav_full_screen = false;
+  bool dp_ui_map_full = false;
   bool dp_ui_map_panel = false;
   #ifdef DP
   BorderIndicator *border_indicator;

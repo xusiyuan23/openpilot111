@@ -47,7 +47,7 @@ def manager_init() -> None:
     ("dp_ui_flight_panel", "0"),
     ("dp_long_de2e", "0"),
     ("dp_long_personality_btn", "0"),
-    ("dp_nav_full_screen", "0"),
+    ("dp_ui_map_full", "0"),
     ("dp_alka", "0"),
     ("dp_device_ip_addr", ""),
     ("dp_vag_sng", "0"),
