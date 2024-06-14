@@ -215,6 +215,9 @@ void ui_update_params(UIState *s) {
   auto params = Params();
   s->scene.is_metric = params.getBool("IsMetric");
   s->scene.map_on_left = params.getBool("NavSettingLeftSide");
+
+  // dp
+  s->scene.dp_ui_map_panel = params.getBool("dp_ui_map_panel");
 }
 
 void UIState::updateStatus() {

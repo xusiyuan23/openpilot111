@@ -54,6 +54,7 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   #endif
   // rick - read full screen param
   dp_nav_full_screen = Params().getBool("dp_nav_full_screen");
+  dp_ui_map_panel = Params().getBool("dp_ui_map_panel");
 }
 
 void OnroadWindow::updateState(const UIState &s) {
@@ -114,13 +115,18 @@ void OnroadWindow::createMapWidget() {
   split->insertWidget(0, m);
   // hidden by default, made visible when navRoute is published
   m->setVisible(false);
+
+  if (dp_ui_map_panel) {
+    nvg->map_settings_btn->setEnabled(false);
+    nvg->map_settings_btn->setVisible(false);
+  }
 #endif
 }
 
 void OnroadWindow::offroadTransition(bool offroad) {
 #ifdef ENABLE_MAPS
   if (!offroad) {
-    if (map == nullptr && (uiState()->hasPrime() || !MAPBOX_TOKEN.isEmpty())) {
+    if (map == nullptr && (dp_ui_map_panel || uiState()->hasPrime() || !MAPBOX_TOKEN.isEmpty())) {
       createMapWidget();
     }
   }
@@ -130,12 +136,12 @@ void OnroadWindow::offroadTransition(bool offroad) {
 
 void OnroadWindow::primeChanged(bool prime) {
 #ifdef ENABLE_MAPS
-  if (map && (!prime && MAPBOX_TOKEN.isEmpty())) {
+  if (map && (!dp_ui_map_panel && !prime && MAPBOX_TOKEN.isEmpty())) {
     nvg->map_settings_btn->setEnabled(false);
     nvg->map_settings_btn->setVisible(false);
     map->deleteLater();
     map = nullptr;
-  } else if (!map && (prime || !MAPBOX_TOKEN.isEmpty())) {
+  } else if (!map && (dp_ui_map_panel || prime || !MAPBOX_TOKEN.isEmpty())) {
     createMapWidget();
   }
 #endif

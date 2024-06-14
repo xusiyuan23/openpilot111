@@ -37,7 +37,8 @@ if maps:
   base_libs += ['QMapLibre']
   widgets_src += ["qt/maps/map_helpers.cc", "qt/maps/map_settings.cc", "qt/maps/map.cc", "qt/maps/map_panel.cc",
                   "qt/maps/map_eta.cc", "qt/maps/map_instructions.cc"]
-#  if dp_priv:
+  if dp_priv:
+    widgets_src = insert_src(widgets_src, "qt/maps/map_helpers.cc", ["#dp_priv/selfdrive/ui/qt/maps/map_helpers.cc"])
 #      widgets_src = insert_src(widgets_src, "qt/maps/map_settings.cc", ["#dp_priv/selfdrive/ui/qt/maps/map_settings.cc"])
   qt_env['CPPDEFINES'] += ["ENABLE_MAPS"]
 

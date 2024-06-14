@@ -10,6 +10,7 @@
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/ui.h"
 
+#include "dp_priv/selfdrive/ui/qt/maps/map_helpers.h"
 
 const int INTERACTION_TIMEOUT = 100;
 
@@ -261,6 +262,12 @@ void MapWindow::initializeGL() {
   m_map->setMargins({0, 350, 0, 50});
   m_map->setPitch(MIN_PITCH);
   m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj");
+
+  #ifdef DP
+  if (uiState()->scene.dp_ui_map_panel) {
+    ReconfigureMapPanel(m_map);
+  }
+  #endif
 
   QObject::connect(m_map.data(), &QMapLibre::Map::mapChanged, [=](QMapLibre::Map::MapChange change) {
     // set global animation duration to 0 ms so visibility changes are instant
