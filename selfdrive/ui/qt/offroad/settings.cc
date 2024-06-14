@@ -205,7 +205,12 @@ void TogglesPanel::updateToggles() {
 }
 
 DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
+  #ifdef DP
+  addItem(new DPTmuxButtonWidget(this));
+  #else
   setSpacing(50);
+  #endif
+
   addItem(new LabelControl(tr("Dongle ID"), getDongleId().value_or(tr("N/A"))));
   addItem(new LabelControl(tr("Serial"), params.get("HardwareSerial").c_str()));
 
