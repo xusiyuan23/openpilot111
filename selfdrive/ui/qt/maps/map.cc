@@ -96,7 +96,7 @@ void MapWindow::initLayers() {
   }
   if (!m_map->layerExists("carPosLayer")) {
     qDebug() << "Initializing carPosLayer";
-    m_map->addImage("label-arrow", QImage("../assets/images/triangle.svg"));
+    m_map->addImage("label-arrow", QImage("../../dp_ext/selfdrive/assets/images/triangle.svg"));
 
     QVariantMap carPos;
     carPos["type"] = "symbol";
