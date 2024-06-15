@@ -24,6 +24,10 @@
 #include "selfdrive/ui/qt/maps/map_eta.h"
 #include "selfdrive/ui/qt/maps/map_instructions.h"
 
+#ifdef DP
+#include "dp_priv/selfdrive/ui/qt/maps/map_helpers.h"
+#endif
+
 class MapWindow : public QOpenGLWidget {
   Q_OBJECT
 
@@ -73,6 +77,11 @@ private:
   void clearRoute();
   void updateDestinationMarker();
   uint64_t route_rcv_frame = 0;
+
+  // dp
+  #ifdef DP
+  MapWindowExt *map_window_ext;
+  #endif
 
 private slots:
   void updateState(const UIState &s);

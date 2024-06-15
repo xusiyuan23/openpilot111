@@ -53,7 +53,9 @@ def manager_init() -> None:
     ("dp_vag_sng", "0"),
     ("dp_vehicle_list", ""),
     ("dp_vehicle_assigned", ""),
-    ("dp_ui_map_panel", "0"),
+    ("dp_nav_free_map", "0"),
+    ("dp_nav_name", "0"),
+    ("dp_nav_traffic", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))

@@ -30,7 +30,7 @@ private:
 
   // dp
   bool dp_ui_map_full = false;
-  bool dp_ui_map_panel = false;
+  bool dp_nav_free_map = false;
   #ifdef DP
   BorderIndicator *border_indicator;
   #endif

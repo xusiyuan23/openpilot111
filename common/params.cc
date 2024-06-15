@@ -221,7 +221,9 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_vag_sng", PERSISTENT},
     {"dp_vehicle_list", PERSISTENT},
     {"dp_vehicle_assigned", PERSISTENT},
-    {"dp_ui_map_panel", PERSISTENT},
+    {"dp_nav_free_map", PERSISTENT},
+    {"dp_nav_name", PERSISTENT},
+    {"dp_nav_traffic", PERSISTENT},
 };
 
 } // namespace

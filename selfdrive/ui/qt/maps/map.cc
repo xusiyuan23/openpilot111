@@ -10,7 +10,6 @@
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/ui.h"
 
-#include "dp_priv/selfdrive/ui/qt/maps/map_helpers.h"
 
 const int INTERACTION_TIMEOUT = 100;
 
@@ -48,6 +47,9 @@ MapWindow::MapWindow(const QMapLibre::Settings &settings) : m_settings(settings)
   last_position = coordinate_from_param("LastGPSPosition");
   grabGesture(Qt::GestureType::PinchGesture);
   qDebug() << "MapWindow initialized";
+  #ifdef DP
+  map_window_ext = new MapWindowExt();
+  #endif
 }
 
 MapWindow::~MapWindow() {
@@ -55,6 +57,9 @@ MapWindow::~MapWindow() {
 }
 
 void MapWindow::initLayers() {
+  #ifdef DP
+  map_window_ext->reconfigure_layer(m_map);
+  #endif
   // This doesn't work from initializeGL
   if (!m_map->layerExists("modelPathLayer")) {
     qDebug() << "Initializing modelPathLayer";
@@ -264,9 +269,7 @@ void MapWindow::initializeGL() {
   m_map->setStyleUrl("mapbox://styles/commaai/clkqztk0f00ou01qyhsa5bzpj");
 
   #ifdef DP
-  if (uiState()->scene.dp_ui_map_panel) {
-    ReconfigureMapPanel(m_map);
-  }
+  map_window_ext->reconfigure_map(m_map);
   #endif
 
   QObject::connect(m_map.data(), &QMapLibre::Map::mapChanged, [=](QMapLibre::Map::MapChange change) {
