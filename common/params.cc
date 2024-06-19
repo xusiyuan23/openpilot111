@@ -226,6 +226,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_nav_traffic", PERSISTENT},
     {"dp_toyota_auto_lock", PERSISTENT},
     {"dp_toyota_auto_unlock", PERSISTENT},
+    {"dp_device_disable_onroad_uploads", PERSISTENT},
 };
 
 } // namespace

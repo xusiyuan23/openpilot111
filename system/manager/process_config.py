@@ -7,6 +7,8 @@ from openpilot.system.manager.process import PythonProcess, NativeProcess, Daemo
 
 WEBCAM = os.getenv("USE_WEBCAM") is not None
 
+dp_device_disable_onroad_uploads = Params().get_bool("dp_device_disable_onroad_uploads")
+
 def driverview(started: bool, params: Params, CP: car.CarParams) -> bool:
   return started or params.get_bool("IsDriverViewEnabled")
 
@@ -80,6 +82,7 @@ procs = [
   PythonProcess("tombstoned", "system.tombstoned", always_run, enabled=not PC),
   PythonProcess("updated", "system.updated.updated", only_offroad, enabled=not PC),
   PythonProcess("uploader", "system.loggerd.uploader", always_run),
+  PythonProcess("uploader", "system.loggerd.uploader", only_offroad if dp_device_disable_onroad_uploads else always_run),
   PythonProcess("statsd", "system.statsd", always_run),
 
   # debug procs
