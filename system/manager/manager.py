@@ -56,6 +56,8 @@ def manager_init() -> None:
     ("dp_nav_free_map", "0"),
     ("dp_nav_name", "0"),
     ("dp_nav_traffic", "0"),
+    ("dp_toyota_auto_lock", "0"),
+    ("dp_toyota_auto_unlock", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))
