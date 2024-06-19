@@ -59,6 +59,7 @@ def manager_init() -> None:
     ("dp_toyota_auto_lock", "0"),
     ("dp_toyota_auto_unlock", "0"),
     ("dp_device_disable_onroad_uploads", "0"),
+    ("dp_toyota_zss", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))

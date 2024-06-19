@@ -11,6 +11,8 @@ from openpilot.selfdrive.car.interfaces import CarStateBase
 from openpilot.selfdrive.car.toyota.values import ToyotaFlags, CAR, DBC, STEER_THRESHOLD, NO_STOP_TIMER_CAR, \
                                                   TSS2_CAR, RADAR_ACC_CAR, EPS_SCALE, UNSUPPORTED_DSU_CAR
 
+from dp_ext.selfdrive.car.toyota.zss_controller import ZSSController
+
 SteerControlType = car.CarParams.SteerControlType
 
 # These steering fault definitions seem to be common across LKA (torque) and LTA (angle):
@@ -49,6 +51,8 @@ class CarState(CarStateBase):
     self.acc_type = 1
     self.lkas_hud = {}
 
+    self.zssc = ZSSController()
+
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
 
@@ -77,6 +81,9 @@ class CarState(CarStateBase):
     ret.steeringAngleDeg = cp.vl["STEER_ANGLE_SENSOR"]["STEER_ANGLE"] + cp.vl["STEER_ANGLE_SENSOR"]["STEER_FRACTION"]
     ret.steeringRateDeg = cp.vl["STEER_ANGLE_SENSOR"]["STEER_RATE"]
     torque_sensor_angle_deg = cp.vl["STEER_TORQUE_SENSOR"]["STEER_ANGLE"]
+
+    # dp - zss controller
+    ret.steeringAngleDeg = self.zssc.get_steering_angle_deg(cp.vl["PCM_CRUISE_2"]["MAIN_ON"], cp.vl["PCM_CRUISE"]["CRUISE_ACTIVE"], ret.steeringAngleDeg)
 
     # On some cars, the angle measurement is non-zero while initializing
     if abs(torque_sensor_angle_deg) > 1e-3 and not bool(cp.vl["STEER_TORQUE_SENSOR"]["STEER_ANGLE_INITIALIZING"]):
