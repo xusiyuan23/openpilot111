@@ -38,7 +38,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
 
   // Add the horizontal layout to the main_layout
   main_layout->addLayout(horizontalLayout);
-  #else
+  #endif
 
   dm_img = loadPixmap("../assets/img_driver_face.png", {img_size + 5, img_size + 5});
 
