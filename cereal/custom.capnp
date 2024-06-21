@@ -16,7 +16,14 @@ struct ControlsStateExt @0x81c2f05a394cf4af {
 struct LongitudinalPlanExt @0xaedffd8f31e7b55d {
   de2eIsBlended @0 :Bool;
   de2eIsEnabled @1 :Bool;
-  lowSpeedAggressiveModeActive @2 :Bool;
+  altDrivingPersonalityIsActive @2 :Bool;
+}
+
+enum LaneChangeAssistMode {
+  disabled @0;
+  latOff @1;
+  prompt @2;
+  auto @3;
 }
 
 struct CustomReserved2 @0xf35cc4560bbf6ec2 {
