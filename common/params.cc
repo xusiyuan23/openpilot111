@@ -223,6 +223,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_toyota_zss", PERSISTENT},
     {"dp_hkg_canfd_low_speed_turn_enhancer", PERSISTENT},
     {"dp_long_low_speed_aggressive_mode", PERSISTENT},
+    {"dp_long_alt_personality_mode", PERSISTENT},
+    {"dp_long_alt_personality_speed", PERSISTENT},
 };
 
 } // namespace

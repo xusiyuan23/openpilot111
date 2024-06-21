@@ -61,7 +61,8 @@ def manager_init() -> None:
     ("dp_device_disable_onroad_uploads", "0"),
     ("dp_toyota_zss", "0"),
     ("dp_hkg_canfd_low_speed_turn_enhancer", "0"),
-    ("dp_long_low_speed_aggressive_mode", "0"),
+    ("dp_long_alt_personality_mode", "0"),
+    ("dp_long_alt_personality_speed", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))

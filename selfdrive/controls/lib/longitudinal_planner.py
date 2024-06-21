@@ -18,7 +18,7 @@ from openpilot.common.swaglog import cloudlog
 # dp
 from openpilot.common.params import Params
 from openpilot.dp_ext.selfdrive.controls.lib.dynamic_endtoend_controller import DynamicEndtoEndController
-from cereal import log
+from openpilot.dp_ext.selfdrive.controls.lib.alt_driving_personality_controller import AlternativeDrivingPersonalityController
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MIN = -1.2
@@ -88,8 +88,7 @@ class LongitudinalPlanner:
     self.params = Params()
     self._frame = 0
     self._dynamic_endtoend_controller = DynamicEndtoEndController()
-    self._dp_long_low_speed_aggressive_mode = self.params.get_bool("dp_long_low_speed_aggressive_mode")
-    self._dp_long_low_speed_aggressive_mode_active = False
+    self._adp_controller = AlternativeDrivingPersonalityController()
 
   @staticmethod
   def parse_model(model_msg, model_error):
@@ -161,8 +160,8 @@ class LongitudinalPlanner:
     accel_limits_turns[1] = max(accel_limits_turns[1], self.a_desired - 0.05)
 
     # dp
-    self._dp_long_low_speed_aggressive_mode_active = self._dp_long_low_speed_aggressive_mode and v_ego < 10
-    personality = log.LongitudinalPersonality.aggressive if self._dp_long_low_speed_aggressive_mode_active else sm['controlsState'].personality
+    self._adp_controller.update(v_ego)
+    personality = self._adp_controller.get_personality(sm['controlsState'].personality)
 
     self.mpc.set_weights(prev_accel_constraint, personality=personality)
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
@@ -225,7 +224,7 @@ class LongitudinalPlanner:
     # longitudinalPlanExt.visionTurnSpeed = float(self.vision_turn_controller.v_turn)
     longitudinalPlanExt.de2eIsBlended = self.mpc.mode == 'blended'
     longitudinalPlanExt.de2eIsEnabled = self._dynamic_endtoend_controller.is_enabled()
-    longitudinalPlanExt.altDrivingPersonalityIsActive = self._dp_long_low_speed_aggressive_mode_active
+    longitudinalPlanExt.altDrivingPersonalityIsActive = self._adp_controller.is_active()
     # longitudinalPlanExt.longitudinalPlanExtSource = self.mpc.source if self.mpc.source != 'cruise' else self.cruise_source
 
     pm.send('longitudinalPlanExt', plan_ext_send)
