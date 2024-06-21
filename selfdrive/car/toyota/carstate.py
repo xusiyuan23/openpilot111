@@ -11,7 +11,7 @@ from openpilot.selfdrive.car.interfaces import CarStateBase
 from openpilot.selfdrive.car.toyota.values import ToyotaFlags, CAR, DBC, STEER_THRESHOLD, NO_STOP_TIMER_CAR, \
                                                   TSS2_CAR, RADAR_ACC_CAR, EPS_SCALE, UNSUPPORTED_DSU_CAR
 
-from dp_ext.selfdrive.car.toyota.zss_controller import ZSSController
+from openpilot.dp_ext.selfdrive.car.toyota.zss_controller import ZSSController
 
 SteerControlType = car.CarParams.SteerControlType
 

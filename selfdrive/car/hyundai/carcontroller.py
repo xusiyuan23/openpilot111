@@ -10,7 +10,7 @@ from openpilot.selfdrive.car.hyundai.values import HyundaiFlags, Buttons, CarCon
 from openpilot.selfdrive.car.interfaces import CarControllerBase
 
 # dp
-from dp_ext.selfdrive.car.hyundai.taco_car_controller_params import TacoCarControllerParams
+from openpilot.dp_ext.selfdrive.car.hyundai.taco_car_controller_params import TacoCarControllerParams
 from openpilot.common.params import Params
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert

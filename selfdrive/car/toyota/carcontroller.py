@@ -8,7 +8,7 @@ from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_
                                         UNSUPPORTED_DSU_CAR
 from opendbc.can.packer import CANPacker
 
-from dp_ext.selfdrive.car.toyota.door_lock_controller import DoorLockController
+from openpilot.dp_ext.selfdrive.car.toyota.door_lock_controller import DoorLockController
 
 SteerControlType = car.CarParams.SteerControlType
 VisualAlert = car.CarControl.HUDControl.VisualAlert
