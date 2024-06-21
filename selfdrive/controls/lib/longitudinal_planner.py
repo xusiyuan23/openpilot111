@@ -19,6 +19,7 @@ from openpilot.common.swaglog import cloudlog
 from openpilot.common.params import Params
 from openpilot.dp_ext.selfdrive.controls.lib.dynamic_endtoend_controller import DynamicEndtoEndController
 from openpilot.dp_ext.selfdrive.controls.lib.alt_driving_personality_controller import AlternativeDrivingPersonalityController
+from openpilot.dp_ext.selfdrive.controls.lib.curve_speed_limiter import CurveSpeedLimiter
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MIN = -1.2
@@ -89,6 +90,7 @@ class LongitudinalPlanner:
     self._frame = 0
     self._dynamic_endtoend_controller = DynamicEndtoEndController()
     self._adp_controller = AlternativeDrivingPersonalityController()
+    self._curve_speed_limiter = CurveSpeedLimiter()
 
   @staticmethod
   def parse_model(model_msg, model_error):
@@ -167,7 +169,10 @@ class LongitudinalPlanner:
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
-    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, personality=sm['controlsState'].personality)
+    # dp
+    self._curve_speed_limiter.update(v_ego, sm['modelV2'].orientationRate.z, v)
+    v = self._curve_speed_limiter.get_v(v)
+
     self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, personality=personality)
 
     self.v_desired_trajectory = np.interp(CONTROL_N_T_IDX, T_IDXS_MPC, self.mpc.v_solution)
