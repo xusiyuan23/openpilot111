@@ -225,7 +225,7 @@ class LongitudinalPlanner:
     # longitudinalPlanExt.visionTurnSpeed = float(self.vision_turn_controller.v_turn)
     longitudinalPlanExt.de2eIsBlended = self.mpc.mode == 'blended'
     longitudinalPlanExt.de2eIsEnabled = self._dynamic_endtoend_controller.is_enabled()
-    longitudinalPlanExt.lowSpeedAggressiveModeActive = self._dp_long_low_speed_aggressive_mode_active
+    longitudinalPlanExt.altDrivingPersonalityIsActive = self._dp_long_low_speed_aggressive_mode_active
     # longitudinalPlanExt.longitudinalPlanExtSource = self.mpc.source if self.mpc.source != 'cruise' else self.cruise_source
 
     pm.send('longitudinalPlanExt', plan_ext_send)
