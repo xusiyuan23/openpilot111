@@ -223,8 +223,20 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_toyota_zss", PERSISTENT},
     {"dp_hkg_canfd_low_speed_turn_enhancer", PERSISTENT},
     {"dp_long_curve_speed_limiter", PERSISTENT},
-    {"dp_long_alt_personality_mode", PERSISTENT},
-    {"dp_long_alt_personality_speed", PERSISTENT},
+    {"dp_long_alt_driving_personality_mode", PERSISTENT},
+    {"dp_long_alt_driving_personality_speed", PERSISTENT},
+    {"dp_lat_lane_change_assist_mode", PERSISTENT},
+
+    {"dp_nav_avoid_toll", PERSISTENT},
+    {"dp_nav_avoid_highway", PERSISTENT},
+    {"dp_nav_free_routing", PERSISTENT},
+    {"dp_nav_amap_enable", PERSISTENT},
+    {"dp_nav_gmap_enable", PERSISTENT},
+    {"dp_nav_amap_key", PERSISTENT},
+    {"dp_nav_amap_key_2", PERSISTENT},
+    {"dp_nav_gmap_key", PERSISTENT},
+    {"dp_nav_mapbox_token_pk", PERSISTENT},
+    {"dp_nav_mapbox_token_sk", PERSISTENT},
 };
 
 } // namespace
