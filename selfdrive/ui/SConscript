@@ -1,6 +1,6 @@
 import os
 import json
-Import('qt_env', 'arch', 'common', 'messaging', 'visionipc', 'transformations', 'UBUNTU_FOCAL')
+Import('qt_env', 'arch', 'common', 'messaging', 'visionipc', 'transformations')
 
 base_libs = [common, messaging, visionipc, transformations,
              'm', 'OpenCL', 'ssl', 'crypto', 'pthread'] + qt_env["LIBS"]
@@ -12,8 +12,6 @@ dp_priv = len(os.listdir(Dir(f"#dp_priv/").abspath)) > 2
 
 if arch == 'larch64':
   base_libs.append('EGL')
-
-maps = arch in ['larch64', 'aarch64', 'x86_64'] and not UBUNTU_FOCAL
 
 if arch == "Darwin":
   del base_libs[base_libs.index('OpenCL')]
@@ -31,16 +29,6 @@ widgets_src = ["ui.cc", "qt/widgets/input.cc", "qt/widgets/wifi.cc",
 if dp_priv:
   widgets_src = insert_src(widgets_src, "ui.cc", ["#dp_priv/selfdrive/ui/ui.cc"])
   widgets_src = insert_src(widgets_src, "qt/widgets/controls.cc", ["#dp_priv/selfdrive/ui/qt/widgets/controls.cc"])
-
-qt_env['CPPDEFINES'] = []
-if maps:
-  base_libs += ['QMapLibre']
-  widgets_src += ["qt/maps/map_helpers.cc", "qt/maps/map_settings.cc", "qt/maps/map.cc", "qt/maps/map_panel.cc",
-                  "qt/maps/map_eta.cc", "qt/maps/map_instructions.cc"]
-  if dp_priv:
-    widgets_src = insert_src(widgets_src, "qt/maps/map_helpers.cc", ["#dp_priv/selfdrive/ui/qt/maps/map_helpers.cc"])
-#      widgets_src = insert_src(widgets_src, "qt/maps/map_settings.cc", ["#dp_priv/selfdrive/ui/qt/maps/map_settings.cc"])
-  qt_env['CPPDEFINES'] += ["ENABLE_MAPS"]
 
 widgets = qt_env.Library("qt_widgets", widgets_src, LIBS=base_libs)
 Export('widgets')

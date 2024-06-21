@@ -36,15 +36,9 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   horizontalLayout->addWidget(personality_btn);
   horizontalLayout->addSpacing(UI_BORDER_SIZE);
 
-  map_settings_btn = new MapSettingsButton(this);
-  horizontalLayout->addWidget(map_settings_btn);
-
   // Add the horizontal layout to the main_layout
   main_layout->addLayout(horizontalLayout);
   #else
-  map_settings_btn = new MapSettingsButton(this);
-  main_layout->addWidget(map_settings_btn, 0, Qt::AlignBottom | Qt::AlignRight);
-  #endif
 
   dm_img = loadPixmap("../assets/img_driver_face.png", {img_size + 5, img_size + 5});
 
@@ -101,12 +95,6 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   rightHandDM = dm_state.getIsRHD();
   // DM icon transition
   dm_fade_state = std::clamp(dm_fade_state+0.2*(0.5-dmActive), 0.0, 1.0);
-
-  // hide map settings button for alerts and flip for right hand DM
-  if (map_settings_btn->isEnabled()) {
-    map_settings_btn->setVisible(!hideBottomIcons);
-    main_layout->setAlignment(map_settings_btn, (rightHandDM ? Qt::AlignLeft : Qt::AlignRight) | Qt::AlignBottom);
-  }
 
   #ifdef DP
   knight_scanner->update_states(s);
