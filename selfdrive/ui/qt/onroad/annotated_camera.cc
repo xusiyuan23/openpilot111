@@ -275,7 +275,10 @@ void AnnotatedCameraWidget::drawLaneLines(QPainter &painter, const UIState *s) {
   #ifdef DP
   if (rainbow_path->is_enabled()) {
     rainbow_path->paint(bg);
-  } else if (sm["longitudinalPlanExt"].getLongitudinalPlanExt().getDe2eIsBlended() || sm["controlsState"].getControlsState().getExperimentalMode()) {
+  } else if (
+  (sm["longitudinalPlanExt"].getLongitudinalPlanExt().getDe2eIsEnabled() && sm["longitudinalPlanExt"].getLongitudinalPlanExt().getDe2eIsBlended()) ||
+  (!sm["longitudinalPlanExt"].getLongitudinalPlanExt().getDe2eIsEnabled() && sm["controlsState"].getControlsState().getExperimentalMode())
+  ) {
   #else
   if (sm["controlsState"].getControlsState().getExperimentalMode()) {
   #endif
