@@ -116,12 +116,13 @@ class LongitudinalPlanner:
 
     if self._dynamic_endtoend_controller.is_enabled():
       self._dynamic_endtoend_controller.set_mpc_fcw_crash_cnt(self.mpc.crash_cnt)
-      self.mpc.mode = self._dynamic_endtoend_controller.get_mpc_mode(self.CP.radarUnavailable,
+      self._dynamic_endtoend_controller.update(self.CP.radarUnavailable,
                                                                      sm['carState'],
                                                                      sm['radarState'].leadOne,
                                                                      sm['modelV2'],
                                                                      sm['controlsState']
                                                                      ) #, sm['navInstruction'].maneuverDistance)
+      self.mpc.mode = self._dynamic_endtoend_controller.get_mpc_mode()
     else:
       self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
 
@@ -134,6 +135,10 @@ class LongitudinalPlanner:
 
     # Reset current state when not engaged, or user is controlling the speed
     reset_state = long_control_off if self.CP.openpilotLongitudinalControl else not sm['controlsState'].enabled
+
+    # dp
+    if not reset_state:
+      reset_state = self._dynamic_endtoend_controller.has_changed()
 
     # No change cost when user is controlling the speed, or when standstill
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
