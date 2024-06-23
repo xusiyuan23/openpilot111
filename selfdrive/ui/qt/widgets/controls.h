@@ -190,10 +190,10 @@ public:
                      const std::vector<QString> &button_texts, const int minimum_button_width = 225) : AbstractControl(title, desc, icon) {
     const QString style = R"(
       QPushButton {
-        border-radius: 50px;
-        font-size: 40px;
+        border-radius: 40px;
+        font-size: 32px;
         font-weight: 500;
-        height:100px;
+        height:80px;
         padding: 0 25 0 25;
         color: #E4E4E4;
         background-color: #393939;
