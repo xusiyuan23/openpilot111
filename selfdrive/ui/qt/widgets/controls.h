@@ -225,6 +225,7 @@ public:
 
     QObject::connect(button_group, QOverload<int>::of(&QButtonGroup::buttonClicked), [=](int id) {
       params.put(key, std::to_string(id));
+      emit paramChanged(QString::fromStdString(key), id);  // Emit signal on parameter change
     });
   }
 
@@ -246,6 +247,9 @@ public:
   void showEvent(QShowEvent *event) override {
     refresh();
   }
+
+signals:
+  void paramChanged(const QString &key, int value);  // Signal for parameter change
 
 private:
   std::string key;
