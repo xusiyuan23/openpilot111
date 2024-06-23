@@ -7,7 +7,7 @@ from typing import SupportsFloat
 
 import cereal.messaging as messaging
 
-from cereal import car, log
+from cereal import car, log, custom
 from msgq.visionipc import VisionIpcClient, VisionStreamType
 
 
@@ -65,6 +65,8 @@ class Controls:
     # dp
     self._dp_alka = self.params.get_bool("dp_alka")
     self._dp_alka_active = True
+    self._dp_lat_lane_change_assist_mode = int(self.params.get("dp_lat_lane_change_assist_mode"))
+    self._dp_lat_lane_change_assist_mode_disable_active = False
 
     if CI is None:
       cloudlog.info("controlsd is waiting for CarParams")
@@ -262,7 +264,9 @@ class Controls:
         self.events.add(EventName.calibrationInvalid)
 
     # Handle lane change
-    if self.sm['modelV2'].meta.laneChangeState == LaneChangeState.preLaneChange:
+    if self._dp_lat_lane_change_assist_mode in [custom.LaneChangeAssistMode.disable, custom.LaneChangeAssistMode.hold]:
+      pass
+    elif self.sm['modelV2'].meta.laneChangeState == LaneChangeState.preLaneChange:
       direction = self.sm['modelV2'].meta.laneChangeDirection
       if (CS.leftBlindspot and direction == LaneChangeDirection.left) or \
          (CS.rightBlindspot and direction == LaneChangeDirection.right):
@@ -576,6 +580,20 @@ class Controls:
 
     if CS.leftBlinker or CS.rightBlinker:
       self.last_blinker_frame = self.sm.frame
+
+    # dp alc - disable
+    if self._dp_lat_lane_change_assist_mode == custom.LaneChangeAssistMode.disable:
+      # keep the state until blinker is off
+      if not (CS.leftBlinker and CS.rightBlinker):
+        self._dp_lat_lane_change_assist_mode_disable_active = False
+
+      if CS.steeringPressed and \
+              ((CS.steeringTorque > 0 and CS.leftBlinker) or
+               (CS.steeringTorque < 0 and CS.rightBlinker)):
+        self._dp_lat_lane_change_assist_mode_disable_active = True
+
+      if self._dp_lat_lane_change_assist_mode_disable_active:
+        CC.latActive = False
 
     # State specific actions
 

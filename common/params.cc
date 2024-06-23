@@ -226,6 +226,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_long_alt_driving_personality_mode", PERSISTENT},
     {"dp_long_alt_driving_personality_speed", PERSISTENT},
     {"dp_lat_lane_change_assist_mode", PERSISTENT},
+    {"dp_lat_lane_change_assist_speed", PERSISTENT},
+    {"dp_lat_lane_change_assist_auto_timer", PERSISTENT},
 
     {"dp_nav_avoid_toll", PERSISTENT},
     {"dp_nav_avoid_highway", PERSISTENT},

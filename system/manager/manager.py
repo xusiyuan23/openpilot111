@@ -64,6 +64,9 @@ def manager_init() -> None:
     ("dp_long_alt_driving_personality_mode", "0"),
     ("dp_long_alt_driving_personality_speed", "0"),
     ("dp_long_curve_speed_limiter", "0"),
+    ("dp_lat_lane_change_assist_mode", "0"),
+    ("dp_lat_lane_change_assist_speed", "32"),
+    ("dp_lat_lane_change_assist_auto_timer", "1.5"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))
