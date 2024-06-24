@@ -2,6 +2,7 @@ from cereal import log
 from openpilot.common.conversions import Conversions as CV
 from openpilot.common.realtime import DT_MDL
 from dp_ext.selfdrive.controls.lib.lane_change_assist_controller import LaneChangeAssistController
+from openpilot.dp_ext.selfdrive.controls.lib.road_edge_detector import RoadEdgeDetector
 
 LaneChangeState = log.LaneChangeState
 LaneChangeDirection = log.LaneChangeDirection
@@ -43,6 +44,13 @@ class DesireHelper:
 
     # dp
     self.lca_controller = LaneChangeAssistController()
+    self._road_edge_stds = list()
+    self._lane_line_probs = list()
+    self._red = RoadEdgeDetector()
+
+  def update_road_edge_states(self, road_edge_stds, lane_line_probs):
+    self._road_edge_stds = road_edge_stds
+    self._lane_line_probs = lane_line_probs
 
   def update(self, carstate, lateral_active, lane_change_prob):
     v_ego = carstate.vEgo
@@ -72,6 +80,12 @@ class DesireHelper:
 
         blindspot_detected = ((carstate.leftBlindspot and self.lane_change_direction == LaneChangeDirection.left) or
                               (carstate.rightBlindspot and self.lane_change_direction == LaneChangeDirection.right))
+
+        blindspot_detected = self._red.get_road_edge_detected(blindspot_detected,
+                                                              self._road_edge_stds,
+                                                              self._lane_line_probs,
+                                                              carstate.leftBlinker,
+                                                              carstate.rightBlinker)
 
         # dp
         self.lca_controller.update_pre_change(blindspot_detected)
