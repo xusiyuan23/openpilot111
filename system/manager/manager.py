@@ -68,6 +68,7 @@ def manager_init() -> None:
     ("dp_lat_lane_change_assist_speed", "32"),
     ("dp_lat_lane_change_assist_auto_timer", "1.5"),
     ("dp_lat_road_edge_detection", "0"),
+    ("dp_device_disable_logging", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))
