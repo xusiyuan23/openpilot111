@@ -20,9 +20,9 @@ struct LongitudinalPlanExt @0xaedffd8f31e7b55d {
 }
 
 enum LaneChangeAssistMode {
-  disabled @0;
-  latOff @1;
-  prompt @2;
+  stock @0;
+  disable @1;
+  hold @2;
   auto @3;
 }
 
