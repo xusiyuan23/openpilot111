@@ -584,7 +584,7 @@ class Controls:
     # dp alc - disable
     if self._dp_lat_lane_change_assist_mode == custom.LaneChangeAssistMode.disable:
       # keep the state until blinker is off
-      if not (CS.leftBlinker and CS.rightBlinker):
+      if not CS.leftBlinker and not CS.rightBlinker:
         self._dp_lat_lane_change_assist_mode_disable_active = False
 
       if CS.steeringPressed and \
