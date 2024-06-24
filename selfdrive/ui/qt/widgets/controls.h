@@ -191,9 +191,9 @@ public:
     const QString style = R"(
       QPushButton {
         border-radius: 30px;
-        font-size: 28px;
+        font-size: 36px;
         font-weight: 500;
-        height:60px;
+        height:64px;
         padding: 0 25 0 25;
         color: #E4E4E4;
         background-color: #393939;
