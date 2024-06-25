@@ -7,6 +7,9 @@ from openpilot.selfdrive.car import create_button_events, get_safety_config
 from openpilot.selfdrive.car.disable_ecu import disable_ecu
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase
 
+# dp
+from openpilot.common.params import Params
+
 ButtonType = car.CarState.ButtonEvent.Type
 EventName = car.CarEvent.EventName
 SteerControlType = car.CarParams.SteerControlType
@@ -142,7 +145,19 @@ class CarInterface(CarInterfaceBase):
     ret.minEnableSpeed = -1. if stop_and_go else MIN_ACC_SPEED
 
     tune = ret.longitudinalTuning
-    if candidate in TSS2_CAR:
+    # dp
+    if Params().get_bool("dp_toyota_pcm_compensation"):
+      # on stock Toyota this is -2.5
+      ret.stopAccel = -2.5
+
+      tune.deadzoneBP = [0., 16., 20., 30.]
+      tune.deadzoneV = [.04, .05, .08, .15]
+      ret.stoppingDecelRate = 0.17
+      tune.kpBP = [0., 5.]
+      tune.kpV = [0.8, 1.]
+      tune.kiBP = [0., 5.]
+      tune.kiV = [0.3, 1.]
+    elif candidate in TSS2_CAR:
       tune.kpV = [0.0]
       tune.kiV = [0.5]
       ret.vEgoStopping = 0.25
