@@ -1,4 +1,10 @@
-dragonpilot beta3 2024.02.13
+dragonpilot 0.9.8
+=======================
+* Up to comma.ai openpilot master branch commit 442e9f4ae492901a5698b3188741c97c053026c4 (2024-06-21)
+* DP HIGHLIGHT:
+  * Restart from scratch.
+
+dragonpilot beta3 [2024.02.13]
 =======================
 * Comma 0.9.6 release
   * New driving model (Los Angles V2)

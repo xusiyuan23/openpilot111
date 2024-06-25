@@ -17,25 +17,6 @@
     </message>
 </context>
 <context>
-    <name>AccelButton</name>
-    <message>
-        <source>OP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ECO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NOR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SPT</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>AdvancedNetworking</name>
     <message>
         <source>Back</source>
@@ -128,29 +109,6 @@
         <source>LIMIT</source>
         <translation>LIMIT</translation>
     </message>
-    <message>
-        <source>km</source>
-        <translation type="obsolete">km</translation>
-    </message>
-    <message>
-        <source>m</source>
-        <translation type="obsolete">m</translation>
-    </message>
-    <message>
-        <source>mi</source>
-        <translation type="obsolete">mi</translation>
-    </message>
-    <message>
-        <source>ft</source>
-        <translation type="obsolete">ft</translation>
-    </message>
-</context>
-<context>
-    <name>CarSelectionPanel</name>
-    <message>
-        <source>[AUTO SELECT]</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ConfirmationDialog</name>
@@ -161,405 +119,6 @@
     <message>
         <source>Cancel</source>
         <translation>취소</translation>
-    </message>
-</context>
-<context>
-    <name>DPCtrlPanel</name>
-    <message>
-        <source>Ctrl - Lateral</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable ALKA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot lateral Control will be always on when ACC MAIN is ON.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ctrl - Longitudinal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Device</source>
-        <translation type="unfinished">장치</translation>
-    </message>
-    <message>
-        <source>Disable Temp Check</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will disable device temperature check.
-**NOTED** An overheated device may result in random shutdowns or lag.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Auto Shutdown</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will shutdown the device automatically.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Miscellaneous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable File server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, you will be able to access log data using browser through port 9000.
-Needs to be in the same network. (e.g. LAN)
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Standard</source>
-        <translation type="unfinished">표준</translation>
-    </message>
-    <message>
-        <source>On-Road</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>MAIN</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On-Road - When driving, the display will be off (excl. warning).
-MAIN - When ACC MAIN is on, the display will be off (excl. warning).
-OP - When OP is enabled, the display will be off (excl. warning).
-Off - the display will be off completely (incl. warning).
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Audible Alert Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning - Only emits sound when there is a warning.
-Off - Does not emit any sound at all.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto Shutdown In</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust your shutdown waiting period.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Immediately</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toyota / Lexus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Stop and Go (SnG) Hack</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will stop sending standstill signal when the car is fully stopped.
-ONLY WORK ON SOME VEHICLES.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Enhanced BSM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use debugging CAN messages to receive unfiltered BSM signals, allowing detection of more objects.
-Tested on Prius TSS2 and RAV4 TSS1.
-ONLY WORK ON SOME VEHICLES.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Door Auto Locking</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will attempt to lock the doors when drive above 10 km/h (6.2 mph).
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Door Auto Unlocking</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will attempt to unlock the doors when shift to gear P.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Road Edge Detection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will block lane change if road edge is detected.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable TACO Tune</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use slow down for turns from taco2 branch.
-See https://github.com/commaai/openpilot/commit/7b97ddb3aacb222bfaf0b978c49cb5b756903ef7 for more information.
-This is tune for KIA EV6 and may not work on your vehicle.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Dynamic Following</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will dynamically adjust following distance based on your &quot;Driving Personality&quot; setting.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Dynamic End-to-End Longitudinal Control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will dynamically change between End-to-End or ACC mode.
-Your vehicle must support openpilot longitudinal control.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Turn Speed Control - Vision</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use path predictions from camera vision to estimate the appropriate speed to drive through turns ahead.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ECO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NOR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SPT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acceleration Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OP - Stock tune.
-ECO - Eco tune.
-NOR - Normal tune.
-SPT - Sport tune.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*α* Enable Otisserv</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*α* Enable NOO Voice Guidance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Enhanced longitudinal Tune</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, TSS2 car will use special tune which will result in smoother and natural breaking. Works best with accel dynamic follow + accel profile. 
-ONLY FOR TSS2.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Zorro-Steering-Sensor (ZSS) Support</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use sensor outputs from ZSS for more accurate steering control.
-DO NOT ENABLE unless you have ZSS installed.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Stock Longitudinal Control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will not handle longitudinal control.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lane Change Assist Activate Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust the lane change assist activate speed.
-Off = Disable lane change assistance.
-1 mph = 1.6 kph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> kph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable krkeegan Tune (SNG Boost)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, it will apply an offset to get_stopped_equivalence_factor in longitudinal MPC resulting in an early demand for acceleration.
-Activate only when speed belows 27 km/h.
-Credit to krkeegen: https://github.com/krkeegan/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, Smoother Braking Behind Lead More natural braking behavior when coming up to a slower vehicle. 
-Credit to FrogaAi: https://github.com/FrogAi/FrogPilot/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On-Screen Personality Button</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will display an on-screen personality button.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On-Screen Accel Button</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will display an on-screen accel profile button.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Flight Panel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will show information such as pitch angle, altitude, compass on the driving screen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Tesla-style Rainbow Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot driving path will be replaced with rainbow path and color will change based on the speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Disable OnRoad Upload</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will not upload driving log/videos to comma connect when driving. 
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Full Screen Navigation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will display navigation in full screen.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Cruise Speed Override</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will let you set your cruise speed below vehicle standard. (usually at 26~40 km/h).
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>  Override Speed When Below</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Override feature will be enabled when set cruise speed is lower than this value.
-1 km/h = 0.62 mph.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset dragonpilot settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation type="unfinished">초기화</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reset all dp settings?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="unfinished">초기화</translation>
-    </message>
-    <message>
-        <source>Enable Auto Lane Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot automatically lane change when possible(WARNING: USE IT AT YOUR OWN RISK!!!!).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*α* Enable Smooth Braking</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -575,33 +134,6 @@ Reboot Required.</source>
     <message>
         <source>Decline, uninstall %1</source>
         <translation>거절, %1 제거</translation>
-    </message>
-</context>
-<context>
-    <name>DestinationWidget</name>
-    <message>
-        <source>Home</source>
-        <translation>집</translation>
-    </message>
-    <message>
-        <source>Work</source>
-        <translation>회사</translation>
-    </message>
-    <message>
-        <source>No destination set</source>
-        <translation>목적지가 설정되지 않았습니다</translation>
-    </message>
-    <message>
-        <source>No %1 location set</source>
-        <translation>%1 위치가 설정되지 않았습니다</translation>
-    </message>
-    <message>
-        <source>home</source>
-        <translation>집</translation>
-    </message>
-    <message>
-        <source>work</source>
-        <translation>회사</translation>
     </message>
 </context>
 <context>
@@ -735,12 +267,16 @@ Reboot Required.</source>
         <translation>다시보기</translation>
     </message>
     <message>
-        <source>Debug Console</source>
-        <translation type="unfinished"></translation>
+        <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
+        <translation>장치를 comma connect (connect.comma.ai)에서 페어링하고 comma prime 무료 이용권을 사용하세요.</translation>
     </message>
     <message>
-        <source>Error displaying tmux output.</source>
-        <translation type="unfinished"></translation>
+        <source>Pair Device</source>
+        <translation>장치 동기화</translation>
+    </message>
+    <message>
+        <source>PAIR</source>
+        <translation>동기화</translation>
     </message>
 </context>
 <context>
@@ -779,47 +315,6 @@ Reboot Required.</source>
     <message>
         <source>Installing...</source>
         <translation>설치 중...</translation>
-    </message>
-</context>
-<context>
-    <name>MapETA</name>
-    <message>
-        <source>eta</source>
-        <translation>도착</translation>
-    </message>
-    <message>
-        <source>min</source>
-        <translation>분</translation>
-    </message>
-    <message>
-        <source>hr</source>
-        <translation>시간</translation>
-    </message>
-</context>
-<context>
-    <name>MapSettings</name>
-    <message>
-        <source>NAVIGATION</source>
-        <translation>내비게이션</translation>
-    </message>
-    <message>
-        <source>Manage at connect.comma.ai</source>
-        <translation>connect.comma.ai에서 관리하세요</translation>
-    </message>
-</context>
-<context>
-    <name>MapWindow</name>
-    <message>
-        <source>Map Loading</source>
-        <translation>지도 로딩 중</translation>
-    </message>
-    <message>
-        <source>Waiting for GPS</source>
-        <translation>GPS 수신 중</translation>
-    </message>
-    <message>
-        <source>Waiting for route</source>
-        <translation>경로를 기다리는 중</translation>
     </message>
 </context>
 <context>
@@ -867,10 +362,6 @@ Reboot Required.</source>
 %1</source>
         <translation>업데이트를 다운로드할 수 없습니다
 %1</translation>
-    </message>
-    <message>
-        <source>Invalid date and time settings, system won&apos;t start. Connect to internet to set time.</source>
-        <translation>날짜 및 시간 설정이 잘못되어 시스템이 시작되지 않습니다. 날짜와 시간을 동기화하려면 인터넷에 연결하세요.</translation>
     </message>
     <message>
         <source>Taking camera snapshots. System won&apos;t start until finished.</source>
@@ -925,10 +416,33 @@ Reboot Required.</source>
     </message>
 </context>
 <context>
+    <name>OnroadAlerts</name>
+    <message>
+        <source>openpilot Unavailable</source>
+        <translation>오픈파일럿을 사용할수없습니다</translation>
+    </message>
+    <message>
+        <source>Waiting for controls to start</source>
+        <translation>프로세스가 준비중입니다</translation>
+    </message>
+    <message>
+        <source>TAKE CONTROL IMMEDIATELY</source>
+        <translation>핸들을 잡아주세요</translation>
+    </message>
+    <message>
+        <source>Controls Unresponsive</source>
+        <translation>프로세스가 응답하지않습니다</translation>
+    </message>
+    <message>
+        <source>Reboot Device</source>
+        <translation>장치를 재부팅하세요</translation>
+    </message>
+</context>
+<context>
     <name>PairingPopup</name>
     <message>
         <source>Pair your device to your comma account</source>
-        <translation>장치를 comma 계정에 페어링합니다</translation>
+        <translation>장치를 comma 계정에 동기화합니다</translation>
     </message>
     <message>
         <source>Go to https://connect.comma.ai on your phone</source>
@@ -955,21 +469,6 @@ Reboot Required.</source>
     </message>
 </context>
 <context>
-    <name>PersonalityButton</name>
-    <message>
-        <source>Aggressive</source>
-        <translation type="unfinished">공격적</translation>
-    </message>
-    <message>
-        <source>Standard</source>
-        <translation type="unfinished">표준</translation>
-    </message>
-    <message>
-        <source>Relaxed</source>
-        <translation type="unfinished">편안한</translation>
-    </message>
-</context>
-<context>
     <name>PrimeAdWidget</name>
     <message>
         <source>Upgrade Now</source>
@@ -992,12 +491,12 @@ Reboot Required.</source>
         <translation>항상 LTE 연결</translation>
     </message>
     <message>
-        <source>Turn-by-turn navigation</source>
-        <translation>내비게이션 경로안내</translation>
-    </message>
-    <message>
         <source>1 year of drive storage</source>
         <translation>1년간 드라이브 로그 저장</translation>
+    </message>
+    <message>
+        <source>Remote snapshots</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1009,10 +508,6 @@ Reboot Required.</source>
     <message>
         <source>comma prime</source>
         <translation>comma prime</translation>
-    </message>
-    <message>
-        <source>✓ ENABLED</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1048,20 +543,8 @@ Reboot Required.</source>
         </translation>
     </message>
     <message>
-        <source>km</source>
-        <translation>km</translation>
-    </message>
-    <message>
-        <source>m</source>
-        <translation>m</translation>
-    </message>
-    <message>
-        <source>mi</source>
-        <translation>mi</translation>
-    </message>
-    <message>
-        <source>ft</source>
-        <translation>ft</translation>
+        <source>now</source>
+        <translation>now</translation>
     </message>
 </context>
 <context>
@@ -1102,7 +585,7 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation type="unfinished"></translation>
+        <translation>시스템 재설정이 시작되었습니다. 모든 콘텐츠와 설정을 지우려면 확인을 누르시고 부팅을 재개하려면 취소를 누르세요.</translation>
     </message>
 </context>
 <context>
@@ -1126,14 +609,6 @@ This may take up to a minute.</source>
     <message>
         <source>Software</source>
         <translation>소프트웨어</translation>
-    </message>
-    <message>
-        <source>Vehicle Model:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[AUTO SELECT]</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1218,6 +693,18 @@ This may take up to a minute.</source>
         <source>Select a language</source>
         <translation>언어를 선택하세요</translation>
     </message>
+    <message>
+        <source>Choose Software to Install</source>
+        <translation>설치할 소프트웨어 선택</translation>
+    </message>
+    <message>
+        <source>openpilot</source>
+        <translation>openpilot</translation>
+    </message>
+    <message>
+        <source>Custom Software</source>
+        <translation>커스텀 소프트웨어</translation>
+    </message>
 </context>
 <context>
     <name>SetupWidget</name>
@@ -1238,7 +725,7 @@ This may take up to a minute.</source>
     <name>Sidebar</name>
     <message>
         <source>CONNECT</source>
-        <translation>연결됨</translation>
+        <translation>커넥트</translation>
     </message>
     <message>
         <source>OFFLINE</source>
@@ -1500,22 +987,6 @@ This may take up to a minute.</source>
         <translation>활성화된 경우 가속 페달을 밟으면 openpilot이 해제됩니다.</translation>
     </message>
     <message>
-        <source>Show ETA in 24h Format</source>
-        <translation>24시간 형식으로 도착 예정 시간 표시</translation>
-    </message>
-    <message>
-        <source>Use 24h format instead of am/pm</source>
-        <translation>오전/오후 대신 24시간 형식 사용</translation>
-    </message>
-    <message>
-        <source>Show Map on Left Side of UI</source>
-        <translation>UI 왼쪽에 지도 표시</translation>
-    </message>
-    <message>
-        <source>Show map on left side when in split screen view.</source>
-        <translation>분할 화면 보기에서 지도를 왼쪽에 표시합니다.</translation>
-    </message>
-    <message>
         <source>Experimental Mode</source>
         <translation>실험 모드</translation>
     </message>
@@ -1568,16 +1039,8 @@ This may take up to a minute.</source>
         <translation>주행 모드</translation>
     </message>
     <message>
-        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars.</source>
-        <translation>표준 모드를 권장합니다. 공격적 모드에서 openpilot은 앞 차량을 더 가까이 따라가며 적극적으로 가감속합니다. 편안한 모드에서 openpilot은 앞 차량을 더 멀리서 따라갑니다.</translation>
-    </message>
-    <message>
         <source>An alpha version of openpilot longitudinal control can be tested, along with Experimental mode, on non-release branches.</source>
         <translation>openpilot 가감속 제어 알파 버전은 비 릴리즈 브랜치에서 실험 모드와 함께 테스트할 수 있습니다.</translation>
-    </message>
-    <message>
-        <source>Navigate on openpilot</source>
-        <translation>openpilot 내비게이트</translation>
     </message>
     <message>
         <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
@@ -1588,12 +1051,20 @@ This may take up to a minute.</source>
         <translation>E2E 가감속 제어</translation>
     </message>
     <message>
-        <source>When navigation has a destination, openpilot will input the map information into the model. This provides useful context for the model and allows openpilot to keep left or right appropriately at forks/exits. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected, particularly around exits and forks. These mistakes can include unintended laneline crossings, late exit taking, driving towards dividing barriers in the gore areas, etc.</source>
-        <translation>내비게이션에 목적지가 설정되어 있으면 openpilot이 지도 정보를 주행 모델에 입력합니다. 이는 모델에 유용한 정보를 제공하고 openpilot이 진출입로 및 램프에서 적절하게 왼쪽 또는 오른쪽을 유지할 수 있도록 해 줍니다. 차선 변경 기능은 여전히 운전자의 조작에 의해 활성화됩니다. 이 기능은 알파 버전입니다. 특히 진출입로 및 분기점 주변에서 실수가 발생할 수 있으며 이러한 실수에는 의도하지 않은 차선 이탈, 늦은 진출, 도로 가장자리의 분리대 또는 경계석을 향해 운전하는 행동 등이 포함됩니다.</translation>
+        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button.</source>
+        <translation>표준 모드를 권장합니다. 공격적 모드의 openpilot은 선두 차량을 더 가까이 따라가고 가감속제어를 사용하여 더욱 공격적으로 움직입니다. 편안한 모드의 openpilot은 선두 차량으로부터 더 멀리 떨어져 있습니다. 지원되는 차량에서는 스티어링 휠 거리 버튼을 사용하여 이러한 특성을 순환할 수 있습니다.</translation>
     </message>
     <message>
-        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
-        <translation>주행 시각화는 저속으로 주행 시 도로를 향한 광각 카메라로 자동 전환되어 일부 곡선 경로를 더 잘 보여줍니다. 실험 모드 로고는 우측 상단에 표시됩니다. 내비게이션 목적지가 설정되고 주행 모델에 입력되면 지도의 주행 경로가 녹색으로 바뀝니다.</translation>
+        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always-On Driver Monitoring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable driver monitoring even when openpilot is not engaged.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

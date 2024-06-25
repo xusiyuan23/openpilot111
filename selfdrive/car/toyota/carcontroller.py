@@ -1,14 +1,14 @@
 from cereal import car
-from openpilot.common.numpy_fast import clip, interp
-from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, \
-                          create_gas_interceptor_command, make_can_msg
+from openpilot.common.numpy_fast import clip
+from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_can_msg
+from openpilot.selfdrive.car.interfaces import CarControllerBase
 from openpilot.selfdrive.car.toyota import toyotacan
 from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR, TSS2_CAR, \
-                                        MIN_ACC_SPEED, PEDAL_TRANSITION, CarControllerParams, ToyotaFlags, \
+                                        CarControllerParams, ToyotaFlags, \
                                         UNSUPPORTED_DSU_CAR
 from opendbc.can.packer import CANPacker
-from common.conversions import Conversions as CV
-from openpilot.common.params import Params
+
+from openpilot.dp_ext.selfdrive.car.toyota.door_lock_controller import DoorLockController
 
 SteerControlType = car.CarParams.SteerControlType
 VisualAlert = car.CarControl.HUDControl.VisualAlert
@@ -26,29 +26,8 @@ MAX_USER_TORQUE = 500
 MAX_LTA_ANGLE = 94.9461  # deg
 MAX_LTA_DRIVER_TORQUE_ALLOWANCE = 150  # slightly above steering pressed allows some resistance when changing lanes
 
-# rick - toyota auto lock / unlock
-GearShifter = car.CarState.GearShifter
-UNLOCK_CMD = b'\x40\x05\x30\x11\x00\x40\x00\x00'
-LOCK_CMD = b'\x40\x05\x30\x11\x00\x80\x00\x00'
-LOCK_AT_SPEED = 10 * CV.KPH_TO_MS
 
-# Blindspot codes
-LEFT_BLINDSPOT = b'\x41'
-RIGHT_BLINDSPOT = b'\x42'
-
-def set_blindspot_debug_mode(lr,enable):
-  if enable:
-    m = lr + b'\x02\x10\x60\x00\x00\x00\x00'
-  else:
-    m = lr + b'\x02\x10\x01\x00\x00\x00\x00'
-  return make_can_msg(0x750, m, 0)
-
-
-def poll_blindspot_status(lr):
-  m = lr + b'\x02\x21\x69\x00\x00\x00\x00'
-  return make_can_msg(0x750, m, 0)
-
-class CarController:
+class CarController(CarControllerBase):
   def __init__(self, dbc_name, CP, VM):
     self.CP = CP
     self.params = CarControllerParams(self.CP)
@@ -59,30 +38,13 @@ class CarController:
     self.last_standstill = False
     self.standstill_req = False
     self.steer_rate_counter = 0
+    self.distance_button = 0
 
     self.packer = CANPacker(dbc_name)
     self.gas = 0
     self.accel = 0
-
-    p = Params()
-    # dp - auto lock / unlock
-    self.dp_toyota_auto_lock = p.get_bool("dp_toyota_auto_lock")
-    self.dp_toyota_auto_unlock = p.get_bool("dp_toyota_auto_unlock")
-    self.dp_toyota_sng = p.get_bool("dp_toyota_sng")
-    self.dp_toyota_auto_lock_gear_prev = GearShifter.park
-    self.dp_toyota_auto_lock_once = False
-
-    # dp - bsm
-    self.dp_toyota_enhanced_bsm = p.get_bool("dp_toyota_enhanced_bsm")
-    self._blindspot_debug_enabled_left = False
-    self._blindspot_debug_enabled_right = False
-    self._blindspot_frame = 0
-    if self.CP.carFingerprint in TSS2_CAR: # tss2 can do higher hz then tss1 and can be on at all speed/standstill
-      self._blindspot_rate = 2
-      self._blindspot_always_on = True
-    else:
-      self._blindspot_rate = 20
-      self._blindspot_always_on = False
+    # dp
+    self.dlc = DoorLockController()
 
   def update(self, CC, CS, now_nanos):
     actuators = CC.actuators
@@ -93,69 +55,19 @@ class CarController:
     # *** control msgs ***
     can_sends = []
 
-    # dp - door auto lock / unlock logic
-    # thanks to AlexandreSato & cydia2020
-    # https://github.com/AlexandreSato/animalpilot/blob/personal/doors.py
-    if not CS.out.doorOpen:
-      gear = CS.out.gearShifter
-      if gear == GearShifter.park and self.dp_toyota_auto_lock_gear_prev != gear:
-        if self.dp_toyota_auto_unlock:
-          can_sends.append(make_can_msg(0x750, UNLOCK_CMD, 0))
-        self.dp_toyota_auto_lock_once = False
-      elif gear == GearShifter.drive and not self.dp_toyota_auto_lock_once and CS.out.vEgo >= LOCK_AT_SPEED:
-        if self.dp_toyota_auto_lock:
-          can_sends.append(make_can_msg(0x750, LOCK_CMD, 0))
-        self.dp_toyota_auto_lock_once = True
-      self.dp_toyota_auto_lock_gear_prev = gear
-
-    # Enable blindspot debug mode once (@arne182)
-    # let's keep all the commented out code for easy debug purpose for future.
-    if self.dp_toyota_enhanced_bsm:
-      #if self.frame > 200:
-        #left bsm
-        if not self._blindspot_debug_enabled_left:
-          if (self._blindspot_always_on or (CS.out.leftBlinker and CS.out.vEgo > 6)): # eagle eye camera will stop working if right bsm is switched on under 6m/s
-            can_sends.append(set_blindspot_debug_mode(LEFT_BLINDSPOT, True))
-            self._blindspot_debug_enabled_left = True
-            # print("bsm debug left, on")
-        else:
-          if not self._blindspot_always_on and not CS.out.leftBlinker and self.frame - self._blindspot_frame > 50:
-            can_sends.append(set_blindspot_debug_mode(LEFT_BLINDSPOT, False))
-            self._blindspot_debug_enabled_left = False
-            # print("bsm debug left, off")
-          if self.frame % self._blindspot_rate == 0:
-            can_sends.append(poll_blindspot_status(LEFT_BLINDSPOT))
-            if CS.out.leftBlinker:
-              self._blindspot_frame = self.frame
-              # print(self._blindspot_frame)
-            # print("bsm poll left")
-        #right bsm
-        if not self._blindspot_debug_enabled_right:
-          if (self._blindspot_always_on or (CS.out.rightBlinker and CS.out.vEgo > 6)): # eagle eye camera will stop working if right bsm is switched on under 6m/s
-            can_sends.append(set_blindspot_debug_mode(RIGHT_BLINDSPOT, True))
-            self._blindspot_debug_enabled_right = True
-            # print("bsm debug right, on")
-        else:
-          if not self._blindspot_always_on and not CS.out.rightBlinker and self.frame - self._blindspot_frame > 50:
-            can_sends.append(set_blindspot_debug_mode(RIGHT_BLINDSPOT, False))
-            self._blindspot_debug_enabled_right = False
-            # print("bsm debug right, off")
-          if self.frame % self._blindspot_rate == self._blindspot_rate/2:
-            can_sends.append(poll_blindspot_status(RIGHT_BLINDSPOT))
-            if CS.out.rightBlinker:
-              self._blindspot_frame = self.frame
-              # print(self._blindspot_frame)
-            # print("bsm poll right")
+    result = self.dlc.process(CS.out.gearShifter, CS.out.vEgo, CS.out.doorOpen)
+    if result:
+      can_sends.append(make_can_msg(result[0], result[1], result[2]))
 
     # *** steer torque ***
     new_steer = int(round(actuators.steer * self.params.STEER_MAX))
     apply_steer = apply_meas_steer_torque_limits(new_steer, self.last_steer, CS.out.steeringTorqueEps, self.params)
 
     # >100 degree/sec steering fault prevention
-    self.steer_rate_counter, apply_steer_req = common_fault_avoidance(abs(CS.out.steeringRateDeg) >= MAX_STEER_RATE, CC.latActive,
+    self.steer_rate_counter, apply_steer_req = common_fault_avoidance(abs(CS.out.steeringRateDeg) >= MAX_STEER_RATE, lat_active,
                                                                       self.steer_rate_counter, MAX_STEER_RATE_FRAMES)
 
-    if not CC.latActive:
+    if not lat_active:
       apply_steer = 0
 
     # *** steer angle ***
@@ -196,35 +108,13 @@ class CarController:
                                                           lta_active, self.frame // 2, torque_wind_down))
 
     # *** gas and brake ***
-    if self.CP.enableGasInterceptor and CC.longActive:
-      MAX_INTERCEPTOR_GAS = 0.5
-      # RAV4 has very sensitive gas pedal
-      if self.CP.carFingerprint in (CAR.RAV4, CAR.RAV4H, CAR.HIGHLANDER):
-        PEDAL_SCALE = interp(CS.out.vEgo, [0.0, MIN_ACC_SPEED, MIN_ACC_SPEED + PEDAL_TRANSITION], [0.15, 0.3, 0.0])
-      elif self.CP.carFingerprint in (CAR.COROLLA,):
-        PEDAL_SCALE = interp(CS.out.vEgo, [0.0, MIN_ACC_SPEED, MIN_ACC_SPEED + PEDAL_TRANSITION], [0.3, 0.4, 0.0])
-      else:
-        PEDAL_SCALE = interp(CS.out.vEgo, [0.0, MIN_ACC_SPEED, MIN_ACC_SPEED + PEDAL_TRANSITION], [0.4, 0.5, 0.0])
-      # offset for creep and windbrake
-      pedal_offset = interp(CS.out.vEgo, [0.0, 2.3, MIN_ACC_SPEED + PEDAL_TRANSITION], [-.4, 0.0, 0.2])
-      pedal_command = PEDAL_SCALE * (actuators.accel + pedal_offset)
-      interceptor_gas_cmd = clip(pedal_command, 0., MAX_INTERCEPTOR_GAS)
-    else:
-      interceptor_gas_cmd = 0.
     pcm_accel_cmd = clip(actuators.accel, self.params.ACCEL_MIN, self.params.ACCEL_MAX)
 
-    # TODO: probably can delete this. CS.pcm_acc_status uses a different signal
-    # than CS.cruiseState.enabled. confirm they're not meaningfully different
-    if not CC.enabled and CS.pcm_acc_status:
-      pcm_cancel_cmd = 1
-
     # on entering standstill, send standstill request
-    if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor):
+    if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR):
       self.standstill_req = True
     if CS.pcm_acc_status != 8:
       # pcm entered standstill or it's disabled
-      self.standstill_req = False
-    if self.dp_toyota_sng:
       self.standstill_req = False
 
     self.last_standstill = CS.out.standstill
@@ -237,23 +127,26 @@ class CarController:
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
 
+      # Press distance button until we are at the correct bar length. Only change while enabled to avoid skipping startup popup
+      if self.frame % 6 == 0 and self.CP.openpilotLongitudinalControl:
+        desired_distance = 4 - hud_control.leadDistanceBars
+        if CS.out.cruiseState.enabled and CS.pcm_follow_distance != desired_distance:
+          self.distance_button = not self.distance_button
+        else:
+          self.distance_button = 0
+
       # Lexus IS uses a different cancellation message
       if pcm_cancel_cmd and self.CP.carFingerprint in UNSUPPORTED_DSU_CAR:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
-        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, fcw_alert))
+        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, fcw_alert,
+                                                        self.distance_button))
         self.accel = pcm_accel_cmd
       else:
-        can_sends.append(toyotacan.create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False))
-
-    if self.frame % 2 == 0 and self.CP.enableGasInterceptor and self.CP.openpilotLongitudinalControl:
-      # send exactly zero if gas cmd is zero. Interceptor will send the max between read value and gas cmd.
-      # This prevents unexpected pedal range rescaling
-      can_sends.append(create_gas_interceptor_command(self.packer, interceptor_gas_cmd, self.frame // 2))
-      self.gas = interceptor_gas_cmd
+        can_sends.append(toyotacan.create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, self.distance_button))
 
     # *** hud ui ***
-    if self.CP.carFingerprint != CAR.PRIUS_V:
+    if self.CP.carFingerprint != CAR.TOYOTA_PRIUS_V:
       # ui mesg is at 1Hz but we send asap if:
       # - there is something to display
       # - there is something to stop displaying
@@ -283,7 +176,7 @@ class CarController:
     if self.frame % 20 == 0 and self.CP.flags & ToyotaFlags.DISABLE_RADAR.value:
       can_sends.append([0x750, 0, b"\x0F\x02\x3E\x00\x00\x00\x00\x00", 0])
 
-    new_actuators = actuators.copy()
+    new_actuators = actuators.as_builder()
     new_actuators.steer = apply_steer / self.params.STEER_MAX
     new_actuators.steerOutputCan = apply_steer
     new_actuators.steeringAngleDeg = self.last_angle

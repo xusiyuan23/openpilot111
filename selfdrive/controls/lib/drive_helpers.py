@@ -12,7 +12,7 @@ V_CRUISE_MIN = 8
 V_CRUISE_MAX = 145
 V_CRUISE_UNSET = 255
 V_CRUISE_INITIAL = 40
-V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 55
+V_CRUISE_INITIAL_EXPERIMENTAL_MODE = 105
 IMPERIAL_INCREMENT = 1.6  # should be CV.MPH_TO_KPH, but this causes rounding errors
 
 MIN_SPEED = 1.0
@@ -35,6 +35,7 @@ CRUISE_INTERVAL_SIGN = {
   ButtonType.decelCruise: -1,
 }
 
+
 class VCruiseHelper:
   def __init__(self, CP):
     self.CP = CP
@@ -43,15 +44,12 @@ class VCruiseHelper:
     self.v_cruise_kph_last = 0
     self.button_timers = {ButtonType.decelCruise: 0, ButtonType.accelCruise: 0}
     self.button_change_states = {btn: {"standstill": False, "enabled": False} for btn in self.button_timers}
-    self.dp_override_v_cruise_kph = V_CRUISE_UNSET
-    self.dp_override_cruise_speed_last = V_CRUISE_UNSET
-    self.dp_override_enabled_last = False
 
   @property
   def v_cruise_initialized(self):
     return self.v_cruise_kph != V_CRUISE_UNSET
 
-  def update_v_cruise(self, CS, enabled, is_metric, dp_override_speed):
+  def update_v_cruise(self, CS, enabled, is_metric):
     self.v_cruise_kph_last = self.v_cruise_kph
 
     if CS.cruiseState.available:
@@ -61,29 +59,9 @@ class VCruiseHelper:
         self.v_cruise_cluster_kph = self.v_cruise_kph
         self.update_button_timers(CS, enabled)
       else:
-        if enabled and dp_override_speed and CS.cruiseState.speed * CV.MS_TO_KPH < dp_override_speed:
-          if self.dp_override_v_cruise_kph == V_CRUISE_UNSET:
-            self.dp_override_v_cruise_kph = max(CS.vEgo * CV.MS_TO_KPH, V_CRUISE_MIN)
-        else:
-          self.dp_override_v_cruise_kph = V_CRUISE_UNSET
-
-        # when we have an override_speed, use it
-        if self.dp_override_v_cruise_kph != V_CRUISE_UNSET:
-          self.v_cruise_kph = self.dp_override_v_cruise_kph
-          self.v_cruise_cluster_kph = self.dp_override_v_cruise_kph
-        else:
-          self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
-          self.v_cruise_cluster_kph = CS.cruiseState.speedCluster * CV.MS_TO_KPH
-
-          #print("dp_override_v_cruise_kph:", self.dp_override_v_cruise_kph)
-          #print("v_cruise_kph:", self.v_cruise_kph)
-          #print("v_cruise_cluster_kph:", self.v_cruise_cluster_kph)
-
-        self.dp_override_cruise_speed_last = CS.cruiseState.speed
-        self.dp_override_enabled_last = enabled
-
+        self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
+        self.v_cruise_cluster_kph = CS.cruiseState.speedCluster * CV.MS_TO_KPH
     else:
-      self.dp_override_v_cruise_kph = V_CRUISE_UNSET
       self.v_cruise_kph = V_CRUISE_UNSET
       self.v_cruise_cluster_kph = V_CRUISE_UNSET
 
@@ -161,16 +139,6 @@ class VCruiseHelper:
       self.v_cruise_kph = int(round(clip(CS.vEgo * CV.MS_TO_KPH, initial, V_CRUISE_MAX)))
 
     self.v_cruise_cluster_kph = self.v_cruise_kph
-
-
-def apply_deadzone(error, deadzone):
-  if error > deadzone:
-    error -= deadzone
-  elif error < - deadzone:
-    error += deadzone
-  else:
-    error = 0.
-  return error
 
 
 def apply_center_deadzone(error, deadzone):

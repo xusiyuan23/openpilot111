@@ -17,25 +17,6 @@
     </message>
 </context>
 <context>
-    <name>AccelButton</name>
-    <message>
-        <source>OP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ECO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NOR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SPT</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>AdvancedNetworking</name>
     <message>
         <source>Back</source>
@@ -128,29 +109,6 @@
         <source>LIMIT</source>
         <translation>VELO</translation>
     </message>
-    <message>
-        <source>km</source>
-        <translation type="obsolete">km</translation>
-    </message>
-    <message>
-        <source>m</source>
-        <translation type="obsolete">m</translation>
-    </message>
-    <message>
-        <source>mi</source>
-        <translation type="obsolete">milha</translation>
-    </message>
-    <message>
-        <source>ft</source>
-        <translation type="obsolete">pés</translation>
-    </message>
-</context>
-<context>
-    <name>CarSelectionPanel</name>
-    <message>
-        <source>[AUTO SELECT]</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>ConfirmationDialog</name>
@@ -161,405 +119,6 @@
     <message>
         <source>Cancel</source>
         <translation>Cancelar</translation>
-    </message>
-</context>
-<context>
-    <name>DPCtrlPanel</name>
-    <message>
-        <source>Ctrl - Lateral</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable ALKA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot lateral Control will be always on when ACC MAIN is ON.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Ctrl - Longitudinal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Device</source>
-        <translation type="unfinished">Dispositivo</translation>
-    </message>
-    <message>
-        <source>Disable Temp Check</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will disable device temperature check.
-**NOTED** An overheated device may result in random shutdowns or lag.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Auto Shutdown</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will shutdown the device automatically.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Miscellaneous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable File server</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, you will be able to access log data using browser through port 9000.
-Needs to be in the same network. (e.g. LAN)
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Standard</source>
-        <translation type="unfinished">Neutro</translation>
-    </message>
-    <message>
-        <source>On-Road</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>MAIN</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Off</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On-Road - When driving, the display will be off (excl. warning).
-MAIN - When ACC MAIN is on, the display will be off (excl. warning).
-OP - When OP is enabled, the display will be off (excl. warning).
-Off - the display will be off completely (incl. warning).
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Audible Alert Mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning - Only emits sound when there is a warning.
-Off - Does not emit any sound at all.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto Shutdown In</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust your shutdown waiting period.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> mins</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Immediately</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toyota / Lexus</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Stop and Go (SnG) Hack</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will stop sending standstill signal when the car is fully stopped.
-ONLY WORK ON SOME VEHICLES.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Enhanced BSM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use debugging CAN messages to receive unfiltered BSM signals, allowing detection of more objects.
-Tested on Prius TSS2 and RAV4 TSS1.
-ONLY WORK ON SOME VEHICLES.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Door Auto Locking</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will attempt to lock the doors when drive above 10 km/h (6.2 mph).
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Door Auto Unlocking</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will attempt to unlock the doors when shift to gear P.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Road Edge Detection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will block lane change if road edge is detected.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable TACO Tune</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use slow down for turns from taco2 branch.
-See https://github.com/commaai/openpilot/commit/7b97ddb3aacb222bfaf0b978c49cb5b756903ef7 for more information.
-This is tune for KIA EV6 and may not work on your vehicle.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Dynamic Following</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will dynamically adjust following distance based on your &quot;Driving Personality&quot; setting.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Dynamic End-to-End Longitudinal Control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will dynamically change between End-to-End or ACC mode.
-Your vehicle must support openpilot longitudinal control.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Turn Speed Control - Vision</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use path predictions from camera vision to estimate the appropriate speed to drive through turns ahead.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>ECO</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>NOR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>SPT</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Acceleration Profile</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OP - Stock tune.
-ECO - Eco tune.
-NOR - Normal tune.
-SPT - Sport tune.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*α* Enable Otisserv</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, you will be able to access some features remotely through dragonpilot.org.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*α* Enable NOO Voice Guidance</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled and NOO is active, dragonpilot will audibly instruct the driver when and where to turn.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Enhanced longitudinal Tune</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, TSS2 car will use special tune which will result in smoother and natural breaking. Works best with accel dynamic follow + accel profile. 
-ONLY FOR TSS2.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Zorro-Steering-Sensor (ZSS) Support</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will use sensor outputs from ZSS for more accurate steering control.
-DO NOT ENABLE unless you have ZSS installed.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Stock Longitudinal Control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will not handle longitudinal control.
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lane Change Assist Activate Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Adjust the lane change assist activate speed.
-Off = Disable lane change assistance.
-1 mph = 1.6 kph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> kph</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable krkeegan Tune (SNG Boost)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, it will apply an offset to get_stopped_equivalence_factor in longitudinal MPC resulting in an early demand for acceleration.
-Activate only when speed belows 27 km/h.
-Credit to krkeegen: https://github.com/krkeegan/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, Smoother Braking Behind Lead More natural braking behavior when coming up to a slower vehicle. 
-Credit to FrogaAi: https://github.com/FrogAi/FrogPilot/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On-Screen Personality Button</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will display an on-screen personality button.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>On-Screen Accel Button</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will display an on-screen accel profile button.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Flight Panel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will show information such as pitch angle, altitude, compass on the driving screen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Tesla-style Rainbow Path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot driving path will be replaced with rainbow path and color will change based on the speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Disable OnRoad Upload</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will not upload driving log/videos to comma connect when driving. 
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display Full Screen Navigation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will display navigation in full screen.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Cruise Speed Override</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will let you set your cruise speed below vehicle standard. (usually at 26~40 km/h).
-Reboot Required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>  Override Speed When Below</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Override feature will be enabled when set cruise speed is lower than this value.
-1 km/h = 0.62 mph.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset dragonpilot settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation type="unfinished">RESET</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reset all dp settings?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reset</source>
-        <translation type="unfinished">Resetar</translation>
-    </message>
-    <message>
-        <source>Enable Auto Lane Change</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot automatically lane change when possible(WARNING: USE IT AT YOUR OWN RISK!!!!).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>*α* Enable Smooth Braking</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -575,33 +134,6 @@ Reboot Required.</source>
     <message>
         <source>Decline, uninstall %1</source>
         <translation>Rejeitar, desintalar %1</translation>
-    </message>
-</context>
-<context>
-    <name>DestinationWidget</name>
-    <message>
-        <source>Home</source>
-        <translation>Casa</translation>
-    </message>
-    <message>
-        <source>Work</source>
-        <translation>Trabalho</translation>
-    </message>
-    <message>
-        <source>No destination set</source>
-        <translation>Nenhum destino definido</translation>
-    </message>
-    <message>
-        <source>No %1 location set</source>
-        <translation>Endereço de %1 não definido</translation>
-    </message>
-    <message>
-        <source>home</source>
-        <translation>casa</translation>
-    </message>
-    <message>
-        <source>work</source>
-        <translation>trabalho</translation>
     </message>
 </context>
 <context>
@@ -735,12 +267,16 @@ Reboot Required.</source>
         <translation>Revisar</translation>
     </message>
     <message>
-        <source>Debug Console</source>
-        <translation type="unfinished"></translation>
+        <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
+        <translation>Pareie seu dispositivo com comma connect (connect.comma.ai) e reivindique sua oferta de comma prime.</translation>
     </message>
     <message>
-        <source>Error displaying tmux output.</source>
-        <translation type="unfinished"></translation>
+        <source>Pair Device</source>
+        <translation>Parear Dispositivo</translation>
+    </message>
+    <message>
+        <source>PAIR</source>
+        <translation>PAREAR</translation>
     </message>
 </context>
 <context>
@@ -780,47 +316,6 @@ Reboot Required.</source>
     <message>
         <source>Installing...</source>
         <translation>Instalando...</translation>
-    </message>
-</context>
-<context>
-    <name>MapETA</name>
-    <message>
-        <source>eta</source>
-        <translation>eta</translation>
-    </message>
-    <message>
-        <source>min</source>
-        <translation>min</translation>
-    </message>
-    <message>
-        <source>hr</source>
-        <translation>hr</translation>
-    </message>
-</context>
-<context>
-    <name>MapSettings</name>
-    <message>
-        <source>NAVIGATION</source>
-        <translation>NAVEGAÇÃO</translation>
-    </message>
-    <message>
-        <source>Manage at connect.comma.ai</source>
-        <translation>Gerencie em connect.comma.ai</translation>
-    </message>
-</context>
-<context>
-    <name>MapWindow</name>
-    <message>
-        <source>Map Loading</source>
-        <translation>Carregando Mapa</translation>
-    </message>
-    <message>
-        <source>Waiting for GPS</source>
-        <translation>Aguardando GPS</translation>
-    </message>
-    <message>
-        <source>Waiting for route</source>
-        <translation>Aguardando rota</translation>
     </message>
 </context>
 <context>
@@ -868,10 +363,6 @@ Reboot Required.</source>
 %1</source>
         <translation>Não é possível baixar atualizações
 %1</translation>
-    </message>
-    <message>
-        <source>Invalid date and time settings, system won&apos;t start. Connect to internet to set time.</source>
-        <translation>Configurações de data e hora inválidas, o sistema não será iniciado. Conecte-se à internet para definir o horário.</translation>
     </message>
     <message>
         <source>Taking camera snapshots. System won&apos;t start until finished.</source>
@@ -926,6 +417,29 @@ Reboot Required.</source>
     </message>
 </context>
 <context>
+    <name>OnroadAlerts</name>
+    <message>
+        <source>openpilot Unavailable</source>
+        <translation>openpilot Indisponível</translation>
+    </message>
+    <message>
+        <source>Waiting for controls to start</source>
+        <translation>Aguardando controles para iniciar</translation>
+    </message>
+    <message>
+        <source>TAKE CONTROL IMMEDIATELY</source>
+        <translation>ASSUMA IMEDIATAMENTE</translation>
+    </message>
+    <message>
+        <source>Controls Unresponsive</source>
+        <translation>Controles Não Respondem</translation>
+    </message>
+    <message>
+        <source>Reboot Device</source>
+        <translation>Reinicie o Dispositivo</translation>
+    </message>
+</context>
+<context>
     <name>PairingPopup</name>
     <message>
         <source>Pair your device to your comma account</source>
@@ -956,21 +470,6 @@ Reboot Required.</source>
     </message>
 </context>
 <context>
-    <name>PersonalityButton</name>
-    <message>
-        <source>Aggressive</source>
-        <translation type="unfinished">Disputa</translation>
-    </message>
-    <message>
-        <source>Standard</source>
-        <translation type="unfinished">Neutro</translation>
-    </message>
-    <message>
-        <source>Relaxed</source>
-        <translation type="unfinished">Calmo</translation>
-    </message>
-</context>
-<context>
     <name>PrimeAdWidget</name>
     <message>
         <source>Upgrade Now</source>
@@ -993,12 +492,12 @@ Reboot Required.</source>
         <translation>Conectividade LTE (só nos EUA)</translation>
     </message>
     <message>
-        <source>Turn-by-turn navigation</source>
-        <translation>Navegação passo a passo</translation>
-    </message>
-    <message>
         <source>1 year of drive storage</source>
         <translation>1 ano de dados em nuvem</translation>
+    </message>
+    <message>
+        <source>Remote snapshots</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1010,10 +509,6 @@ Reboot Required.</source>
     <message>
         <source>comma prime</source>
         <translation>comma prime</translation>
-    </message>
-    <message>
-        <source>✓ ENABLED</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1052,20 +547,8 @@ Reboot Required.</source>
         </translation>
     </message>
     <message>
-        <source>km</source>
-        <translation>km</translation>
-    </message>
-    <message>
-        <source>m</source>
-        <translation>m</translation>
-    </message>
-    <message>
-        <source>mi</source>
-        <translation>milha</translation>
-    </message>
-    <message>
-        <source>ft</source>
-        <translation>pés</translation>
+        <source>now</source>
+        <translation>agora</translation>
     </message>
 </context>
 <context>
@@ -1106,7 +589,7 @@ Isso pode levar até um minuto.</translation>
     </message>
     <message>
         <source>System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation type="unfinished">Reinicialização do sistema acionada. Pressione confirmar para apagar todo o conteúdo e configurações. Pressione cancel para retomar a inicialização.</translation>
+        <translation>Reinicialização do sistema acionada. Pressione confirmar para apagar todo o conteúdo e configurações. Pressione cancel para retomar a inicialização.</translation>
     </message>
 </context>
 <context>
@@ -1130,14 +613,6 @@ Isso pode levar até um minuto.</translation>
     <message>
         <source>Software</source>
         <translation>Software</translation>
-    </message>
-    <message>
-        <source>Vehicle Model:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[AUTO SELECT]</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1221,6 +696,18 @@ Isso pode levar até um minuto.</translation>
     <message>
         <source>Select a language</source>
         <translation>Selecione o Idioma</translation>
+    </message>
+    <message>
+        <source>Choose Software to Install</source>
+        <translation>Escolha o Software a ser Instalado</translation>
+    </message>
+    <message>
+        <source>openpilot</source>
+        <translation>openpilot</translation>
+    </message>
+    <message>
+        <source>Custom Software</source>
+        <translation>Software Customizado</translation>
     </message>
 </context>
 <context>
@@ -1504,22 +991,6 @@ Isso pode levar até um minuto.</translation>
         <translation>Quando ativado, pressionar o pedal do acelerador desacionará o openpilot.</translation>
     </message>
     <message>
-        <source>Show ETA in 24h Format</source>
-        <translation>Mostrar ETA em Formato 24h</translation>
-    </message>
-    <message>
-        <source>Use 24h format instead of am/pm</source>
-        <translation>Use o formato 24h em vez de am/pm</translation>
-    </message>
-    <message>
-        <source>Show Map on Left Side of UI</source>
-        <translation>Exibir Mapa no Lado Esquerdo</translation>
-    </message>
-    <message>
-        <source>Show map on left side when in split screen view.</source>
-        <translation>Exibir mapa do lado esquerdo quando a tela for dividida.</translation>
-    </message>
-    <message>
         <source>Experimental Mode</source>
         <translation>Modo Experimental</translation>
     </message>
@@ -1572,16 +1043,8 @@ Isso pode levar até um minuto.</translation>
         <translation>Temperamento de Direção</translation>
     </message>
     <message>
-        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars.</source>
-        <translation>Neutro é o recomendado. No modo disputa o openpilot seguirá o carro da frente mais de perto e será mais agressivo com a aceleração e frenagem. No modo calmo o openpilot se manterá mais longe do carro da frente.</translation>
-    </message>
-    <message>
         <source>An alpha version of openpilot longitudinal control can be tested, along with Experimental mode, on non-release branches.</source>
         <translation>Uma versão embrionária do controle longitudinal openpilot pode ser testada em conjunto com o modo Experimental, em branches que não sejam de produção.</translation>
-    </message>
-    <message>
-        <source>Navigate on openpilot</source>
-        <translation>Navegação no openpilot</translation>
     </message>
     <message>
         <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
@@ -1592,12 +1055,20 @@ Isso pode levar até um minuto.</translation>
         <translation>Controle Longitudinal de Ponta a Ponta</translation>
     </message>
     <message>
-        <source>When navigation has a destination, openpilot will input the map information into the model. This provides useful context for the model and allows openpilot to keep left or right appropriately at forks/exits. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected, particularly around exits and forks. These mistakes can include unintended laneline crossings, late exit taking, driving towards dividing barriers in the gore areas, etc.</source>
-        <translation>Quando a navegação tem um destino, o openpilot insere as informações do mapa no modelo. Isso fornece contexto útil para o modelo e permite que o openpilot mantenha a esquerda ou a direita apropriadamente em bifurcações/saídas. O comportamento de mudança de faixa permanece inalterado e ainda é ativado somente pelo motorista. Este é um recurso de qualidade embrionária; erros devem ser esperados, principalmente em torno de saídas e bifurcações. Esses erros podem incluir travessias não intencionais na faixa de rodagem, saída tardia, condução em direção a barreiras divisórias nas áreas de marcas de canalização, etc.</translation>
+        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button.</source>
+        <translation>Neutro é o recomendado. No modo disputa o openpilot seguirá o carro da frente mais de perto e será mais agressivo com a aceleração e frenagem. No modo calmo o openpilot se manterá mais longe do carro da frente. Em carros compatíveis, você pode alternar esses temperamentos com o botão de distância do volante.</translation>
     </message>
     <message>
-        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
-        <translation>A visualização de condução fará a transição para a câmera grande angular voltada para a estrada em baixas velocidades para mostrar melhor algumas curvas. O logotipo do modo Experimental também será mostrado no canto superior direito. Quando um destino de navegação é definido e o modelo de condução o utiliza como entrada o caminho de condução no mapa fica verde.</translation>
+        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.</source>
+        <translation>A visualização de condução fará a transição para a câmera grande angular voltada para a estrada em baixas velocidades para mostrar melhor algumas curvas. O logotipo do modo Experimental também será mostrado no canto superior direito.</translation>
+    </message>
+    <message>
+        <source>Always-On Driver Monitoring</source>
+        <translation>Monitoramento do Motorista Sempre Ativo</translation>
+    </message>
+    <message>
+        <source>Enable driver monitoring even when openpilot is not engaged.</source>
+        <translation>Habilite o monitoramento do motorista mesmo quando o openpilot não estiver acionado.</translation>
     </message>
 </context>
 <context>

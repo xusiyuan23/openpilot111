@@ -4,7 +4,7 @@ import time
 import numpy as np
 from cereal import log
 from openpilot.common.numpy_fast import clip
-from openpilot.common.conversions import Conversions as CV
+from openpilot.common.realtime import DT_MDL
 from openpilot.common.swaglog import cloudlog
 # WARNING: imports outside of constants will not trigger a rebuild
 from openpilot.selfdrive.modeld.constants import index_function
@@ -78,33 +78,8 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
-def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
-  if personality==log.LongitudinalPersonality.relaxed:
-    x_vel =  [0.0,  3.0,  8.33,  13.90,  20,    25,    40]
-    y_dist = [1.2,  1.25, 1.40,  1.40,   1.50,  1.85,  2.0]
-  elif personality==log.LongitudinalPersonality.standard:
-    x_vel =  [0.0,  3.0,  8.33,  13.90,  20,    25,    40]
-    y_dist = [1.00,  1.00, 1.20,  1.20,   1.25,  1.45,  1.5]
-  elif personality==log.LongitudinalPersonality.aggressive:
-    x_vel =  [0.0,  4.00, 8.33,  13.89,  20,    25,    40]
-    y_dist = [0.8,  0.80, 0.90,  0.90,   0.9,  1.105, 1.12]
-  else:
-    raise NotImplementedError("Dynamic Follow personality not supported")
-  return np.interp(v_ego, x_vel, y_dist)
-
 def get_stopped_equivalence_factor(v_lead):
   return (v_lead**2) / (2 * COMFORT_BRAKE)
-
-def get_stopped_equivalence_factor_krkeegen(v_lead, v_ego):
-  # KRKeegan this offset rapidly decreases the following distance when the lead pulls
-  # away, resulting in an early demand for acceleration.
-  v_diff_offset = 0
-  if np.all(v_lead - v_ego > 0):
-    v_diff_offset = ((v_lead - v_ego) * 1.)
-    v_diff_offset = np.clip(v_diff_offset, 0, STOP_DISTANCE / 2)
-    v_diff_offset = np.maximum(v_diff_offset * ((10 - v_ego)/10), 0)
-  distance = (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
-  return distance
 
 def get_safe_obstacle_distance(v_ego, t_follow):
   return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + STOP_DISTANCE
@@ -113,6 +88,7 @@ def desired_follow_distance(v_ego, v_lead, t_follow=None):
   if t_follow is None:
     t_follow = get_T_FOLLOW()
   return get_safe_obstacle_distance(v_ego, t_follow) - get_stopped_equivalence_factor(v_lead)
+
 
 def gen_long_model():
   model = AcadosModel()
@@ -245,9 +221,9 @@ def gen_long_ocp():
 
 
 class LongitudinalMpc:
-  def __init__(self, mode='acc'):
-    self.t_follow_offset = 1
+  def __init__(self, mode='acc', dt=DT_MDL):
     self.mode = mode
+    self.dt = dt
     self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
     self.reset()
     self.source = SOURCES[2]
@@ -299,7 +275,6 @@ class LongitudinalMpc:
 
   def set_weights(self, prev_accel_constraint=True, personality=log.LongitudinalPersonality.standard):
     jerk_factor = get_jerk_factor(personality)
-    jerk_factor /= np.mean(self.t_follow_offset)
     if self.mode == 'acc':
       a_change_cost = A_CHANGE_COST if prev_accel_constraint else 0
       cost_weights = [X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, jerk_factor * a_change_cost, jerk_factor * J_EGO_COST]
@@ -357,39 +332,19 @@ class LongitudinalMpc:
     self.cruise_min_a = min_a
     self.max_a = max_a
 
-  # def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
-  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, use_df_tune=False, use_krkeegen_tune=False, smoother_braking=False):
-    # t_follow = get_T_FOLLOW(personality)
+  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
+    t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
-    t_follow = get_T_FOLLOW(personality) if not use_df_tune else get_dynamic_follow(v_ego, personality)
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
 
-    # Offset by FrogAi for FrogPilot for a more natural takeoff with a lead
-    #if aggressive_acceleration:
-    #  distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
-    #  t_follow_offset = np.clip((lead_xv_0[:,1] - v_ego), 1, distance_factor)
-    #  t_follow = t_follow / t_follow_offset
-
-    # Offset by FrogAi for FrogPilot for a more natural approach to a slower lead
-    if smoother_braking:
-      distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
-      t_follow_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
-      t_follow = t_follow / t_follow_offset
-    else:
-      t_follow_offset = 1
-
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
     # and then treat that as a stopped car/obstacle at this new distance.
-    if use_krkeegen_tune:
-      lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor_krkeegen(lead_xv_0[:,1], v_ego)
-      lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor_krkeegen(lead_xv_1[:,1], v_ego)
-    else:
-      lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
-      lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
+    lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
+    lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
 
     self.params[:,0] = ACCEL_MIN
     self.params[:,1] = self.max_a
@@ -487,7 +442,7 @@ class LongitudinalMpc:
     self.a_solution = self.x_sol[:,2]
     self.j_solution = self.u_sol[:,0]
 
-    self.prev_a = np.interp(T_IDXS + 0.05, T_IDXS, self.a_solution)
+    self.prev_a = np.interp(T_IDXS + self.dt, T_IDXS, self.a_solution)
 
     t = time.monotonic()
     if self.solution_status != 0:

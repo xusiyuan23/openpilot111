@@ -2,8 +2,6 @@
 import math
 import numpy as np
 from openpilot.common.numpy_fast import clip, interp
-from openpilot.common.params import Params
-from cereal import log
 
 import cereal.messaging as messaging
 from openpilot.common.conversions import Conversions as CV
@@ -16,15 +14,18 @@ from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import Longi
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
 from openpilot.selfdrive.controls.lib.drive_helpers import V_CRUISE_MAX, CONTROL_N, get_speed_error
 from openpilot.common.swaglog import cloudlog
-from openpilot.selfdrive.controls.lib.accel_controller import AccelController
-from openpilot.selfdrive.controls.lib.dynamic_endtoend_controller import DynamicEndtoEndController
 
-from openpilot.selfdrive.controls.lib.vision_turn_controller import VisionTurnController
+# dp
+from openpilot.common.params import Params
+from openpilot.dp_ext.selfdrive.controls.lib.dynamic_endtoend_controller import DynamicEndtoEndController
+from openpilot.dp_ext.selfdrive.controls.lib.alt_driving_personality_controller import AlternativeDrivingPersonalityController
+from openpilot.dp_ext.selfdrive.controls.lib.curve_speed_limiter import CurveSpeedLimiter
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MIN = -1.2
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
 A_CRUISE_MAX_BP = [0., 10.0, 25., 40.]
+CONTROL_N_T_IDX = ModelConstants.T_IDXS[:CONTROL_N]
 
 # Lookup table for turns
 _A_TOTAL_MAX_V = [1.7, 3.2]
@@ -40,7 +41,6 @@ def limit_accel_in_turns(v_ego, angle_steers, a_target, CP):
   This function returns a limited long acceleration allowed, depending on the existing lateral acceleration
   this should avoid accelerating when losing the target in turns
   """
-
   # FIXME: This function to calculate lateral accel is incorrect and should use the VehicleModel
   # The lookup table for turns should also be updated if we do this
   a_total_max = interp(v_ego, _A_TOTAL_MAX_BP, _A_TOTAL_MAX_V)
@@ -50,17 +50,29 @@ def limit_accel_in_turns(v_ego, angle_steers, a_target, CP):
   return [a_target[0], min(a_target[1], a_x_allowed)]
 
 
+def get_accel_from_plan(CP, speeds, accels):
+    if len(speeds) == CONTROL_N:
+      v_target_now = interp(DT_MDL, CONTROL_N_T_IDX, speeds)
+      a_target_now = interp(DT_MDL, CONTROL_N_T_IDX, accels)
+
+      v_target = interp(CP.longitudinalActuatorDelay + DT_MDL, CONTROL_N_T_IDX, speeds)
+      a_target = 2 * (v_target - v_target_now) / CP.longitudinalActuatorDelay - a_target_now
+
+      v_target_1sec = interp(CP.longitudinalActuatorDelay + DT_MDL + 1.0, CONTROL_N_T_IDX, speeds)
+    else:
+      v_target = 0.0
+      v_target_now = 0.0
+      v_target_1sec = 0.0
+      a_target = 0.0
+    should_stop = (v_target < CP.vEgoStopping and
+                    v_target_1sec < CP.vEgoStopping)
+    return a_target, should_stop
+
+
 class LongitudinalPlanner:
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
-    # DP:
-    self.accel_controller = AccelController()
-    self.dynamic_endtoend_controller = DynamicEndtoEndController()
-    # mapd
-    self.cruise_source = 'cruise'
-    self.vision_turn_controller = VisionTurnController(CP)
-
     self.CP = CP
-    self.mpc = LongitudinalMpc()
+    self.mpc = LongitudinalMpc(dt=dt)
     self.fcw = False
     self.dt = dt
 
@@ -72,31 +84,19 @@ class LongitudinalPlanner:
     self.a_desired_trajectory = np.zeros(CONTROL_N)
     self.j_desired_trajectory = np.zeros(CONTROL_N)
     self.solverExecutionTime = 0.0
+
+    # dp
     self.params = Params()
-    self.param_read_counter = 0
-    self.read_param()
-    self.personality = log.LongitudinalPersonality.standard
-    self.dp_long_use_df_tune = False
-    self.dp_long_taco = self.params.get_bool('dp_long_taco')
-    self.dp_long_use_krkeegen_tune = False
-    self.dp_long_use_krkeegen_tune_active = False
-    self.dp_long_frogai_smooth_braking_tune = False
-
-  def read_param(self):
-    try:
-      self.personality = int(self.params.get('LongitudinalPersonality'))
-    except (ValueError, TypeError):
-      self.personality = log.LongitudinalPersonality.standard
-
-    self.dp_long_use_df_tune = self.params.get_bool('dp_long_use_df_tune')
-    self.dp_long_use_krkeegen_tune = self.params.get_bool('dp_long_use_krkeegen_tune')
-    self.dp_long_frogai_smooth_braking_tune = self.params.get_bool('dp_long_frogai_smooth_braking_tune')
+    self._frame = 0
+    self._dynamic_endtoend_controller = DynamicEndtoEndController()
+    self._adp_controller = AlternativeDrivingPersonalityController()
+    self._curve_speed_limiter = CurveSpeedLimiter()
 
   @staticmethod
-  def parse_model(model_msg, model_error, v_ego, taco=False):
-    if (len(model_msg.position.x) == 33 and
-       len(model_msg.velocity.x) == 33 and
-       len(model_msg.acceleration.x) == 33):
+  def parse_model(model_msg, model_error):
+    if (len(model_msg.position.x) == ModelConstants.IDX_N and
+       len(model_msg.velocity.x) == ModelConstants.IDX_N and
+       len(model_msg.acceleration.x) == ModelConstants.IDX_N):
       x = np.interp(T_IDXS_MPC, ModelConstants.T_IDXS, model_msg.position.x) - model_error * T_IDXS_MPC
       v = np.interp(T_IDXS_MPC, ModelConstants.T_IDXS, model_msg.velocity.x) - model_error
       a = np.interp(T_IDXS_MPC, ModelConstants.T_IDXS, model_msg.acceleration.x)
@@ -106,27 +106,23 @@ class LongitudinalPlanner:
       v = np.zeros(len(T_IDXS_MPC))
       a = np.zeros(len(T_IDXS_MPC))
       j = np.zeros(len(T_IDXS_MPC))
-
-    # rick - taco tune
-    if taco:
-      max_lat_accel = interp(v_ego, [5, 10, 20], [1.5, 2.0, 3.0])
-      curvatures = np.interp(T_IDXS_MPC, ModelConstants.T_IDXS, model_msg.orientationRate.z) / np.clip(v, 0.3, 100.0)
-      max_v = np.sqrt(max_lat_accel / (np.abs(curvatures) + 1e-3)) - 2.0
-      v = np.minimum(max_v, v)
     return x, v, a, j
 
   def update(self, sm):
-    if self.param_read_counter % 50 == 0:
-      self.read_param()
+    if self._frame % 50 == 0:
+      self._dynamic_endtoend_controller.set_enabled(self.params.get_bool("dp_long_de2e"))
 
-      self.accel_controller.set_profile(self.params.get("dp_long_accel_profile", encoding='utf-8'))
-      self.dynamic_endtoend_controller.set_enabled(self.params.get_bool("dp_long_de2e"))
-      self.vision_turn_controller.set_enabled(self.params.get_bool("dp_mapd_vision_turn_control"))
+    self._frame += 1
 
-    self.param_read_counter += 1
-    if self.dynamic_endtoend_controller.is_enabled():
-      self.dynamic_endtoend_controller.set_mpc_fcw_crash_cnt(self.mpc.crash_cnt)
-      self.mpc.mode = self.dynamic_endtoend_controller.get_mpc_mode(self.CP.radarUnavailable, sm['carState'], sm['radarState'].leadOne, sm['modelV2'], sm['controlsState'], sm['navInstruction'].maneuverDistance)
+    if self._dynamic_endtoend_controller.is_enabled():
+      self._dynamic_endtoend_controller.set_mpc_fcw_crash_cnt(self.mpc.crash_cnt)
+      self._dynamic_endtoend_controller.update(self.CP.radarUnavailable,
+                                                                     sm['carState'],
+                                                                     sm['radarState'].leadOne,
+                                                                     sm['modelV2'],
+                                                                     sm['controlsState']
+                                                                     ) #, sm['navInstruction'].maneuverDistance)
+      self.mpc.mode = self._dynamic_endtoend_controller.get_mpc_mode()
     else:
       self.mpc.mode = 'blended' if sm['controlsState'].experimentalMode else 'acc'
 
@@ -140,6 +136,10 @@ class LongitudinalPlanner:
     # Reset current state when not engaged, or user is controlling the speed
     reset_state = long_control_off if self.CP.openpilotLongitudinalControl else not sm['controlsState'].enabled
 
+    # dp
+    if not reset_state:
+      reset_state = self._dynamic_endtoend_controller.has_changed()
+
     # No change cost when user is controlling the speed, or when standstill
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
 
@@ -149,22 +149,6 @@ class LongitudinalPlanner:
     else:
       accel_limits = [ACCEL_MIN, ACCEL_MAX]
       accel_limits_turns = [ACCEL_MIN, ACCEL_MAX]
-
-    # dp - override accel using dp_long_accel_profile
-    if self.accel_controller.is_enabled():
-      # get min, max from accel controller
-      min_limit, max_limit = self.accel_controller.get_accel_limits(v_ego, accel_limits)
-      if self.mpc.mode == 'acc':
-        # voacc car, just give it max min (-1.2) so I can brake harder
-        if self.CP.radarUnavailable:
-          accel_limits = [A_CRUISE_MIN, max_limit]
-        else:
-          accel_limits = [min_limit, max_limit]
-        # recalculate limit turn according to the new min, max
-        accel_limits_turns = limit_accel_in_turns(v_ego, sm['carState'].steeringAngleDeg, accel_limits, self.CP)
-      else:
-        # blended, just give it max min (-3.5) and max from accel controller
-        accel_limits = accel_limits_turns = [ACCEL_MIN, max_limit]
 
     if reset_state:
       self.v_desired_filter.x = v_ego
@@ -176,27 +160,29 @@ class LongitudinalPlanner:
     # Compute model v_ego error
     self.v_model_error = get_speed_error(sm['modelV2'], v_ego)
 
-    # Get acceleration and active solutions for custom long mpc.
-    self.cruise_source, a_min_sol, v_cruise_sol = self.cruise_solutions(not reset_state, self.v_desired_filter.x,
-                                                                        self.a_desired, v_cruise, sm)
     if force_slow_decel:
-      v_cruise_sol = 0.0
+      v_cruise = 0.0
     # clip limits, cannot init MPC outside of bounds
-    accel_limits_turns[0] = min(accel_limits_turns[0], self.a_desired + 0.05, a_min_sol)
+    accel_limits_turns[0] = min(accel_limits_turns[0], self.a_desired + 0.05)
     accel_limits_turns[1] = max(accel_limits_turns[1], self.a_desired - 0.05)
 
-    self.mpc.set_weights(prev_accel_constraint, personality=self.personality)
+    # dp
+    self._adp_controller.update(v_ego)
+    personality = self._adp_controller.get_personality(sm['controlsState'].personality)
+
+    self.mpc.set_weights(prev_accel_constraint, personality=personality)
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
-    x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error, v_ego, taco=self.dp_long_taco)
-    self.dp_long_use_krkeegen_tune_active = self.dp_long_use_krkeegen_tune and v_ego <= 7.5
-    self.mpc.update(sm['radarState'], v_cruise_sol, x, v, a, j, personality=self.personality, use_df_tune=self.dp_long_use_df_tune, use_krkeegen_tune=self.dp_long_use_krkeegen_tune_active, smoother_braking=self.dp_long_frogai_smooth_braking_tune)
+    x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
+    # dp
+    self._curve_speed_limiter.update(v_ego, sm['modelV2'].orientationRate.z, v)
+    v = self._curve_speed_limiter.get_v(v)
 
-    self.v_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
-    self.a_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
-    self.v_desired_trajectory = self.v_desired_trajectory_full[:CONTROL_N]
-    self.a_desired_trajectory = self.a_desired_trajectory_full[:CONTROL_N]
-    self.j_desired_trajectory = np.interp(ModelConstants.T_IDXS[:CONTROL_N], T_IDXS_MPC[:-1], self.mpc.j_solution)
+    self.mpc.update(sm['radarState'], v_cruise, x, v, a, j, personality=personality)
+
+    self.v_desired_trajectory = np.interp(CONTROL_N_T_IDX, T_IDXS_MPC, self.mpc.v_solution)
+    self.a_desired_trajectory = np.interp(CONTROL_N_T_IDX, T_IDXS_MPC, self.mpc.a_solution)
+    self.j_desired_trajectory = np.interp(CONTROL_N_T_IDX, T_IDXS_MPC[:-1], self.mpc.j_solution)
 
     # TODO counter is only needed because radar is glitchy, remove once radar is gone
     self.fcw = self.mpc.crash_cnt > 2 and not sm['carState'].standstill
@@ -205,7 +191,7 @@ class LongitudinalPlanner:
 
     # Interpolate 0.05 seconds and save as starting point for next iteration
     a_prev = self.a_desired
-    self.a_desired = float(interp(self.dt, ModelConstants.T_IDXS[:CONTROL_N], self.a_desired_trajectory))
+    self.a_desired = float(interp(self.dt, CONTROL_N_T_IDX, self.a_desired_trajectory))
     self.v_desired_filter.x = self.v_desired_filter.x + self.dt * (self.a_desired + a_prev) / 2.0
 
   def publish(self, sm, pm):
@@ -213,9 +199,14 @@ class LongitudinalPlanner:
 
     plan_send.valid = sm.all_checks(service_list=['carState', 'controlsState'])
 
+
     longitudinalPlan = plan_send.longitudinalPlan
     longitudinalPlan.modelMonoTime = sm.logMonoTime['modelV2']
     longitudinalPlan.processingDelay = (plan_send.logMonoTime / 1e9) - sm.logMonoTime['modelV2']
+    longitudinalPlan.solverExecutionTime = self.mpc.solve_time
+
+    longitudinalPlan.allowBrake = True
+    longitudinalPlan.allowThrottle = True
 
     longitudinalPlan.speeds = self.v_desired_trajectory.tolist()
     longitudinalPlan.accels = self.a_desired_trajectory.tolist()
@@ -225,40 +216,25 @@ class LongitudinalPlanner:
     longitudinalPlan.longitudinalPlanSource = self.mpc.source
     longitudinalPlan.fcw = self.fcw
 
-    longitudinalPlan.solverExecutionTime = self.mpc.solve_time
-    longitudinalPlan.personality = self.personality
+    a_target, should_stop = get_accel_from_plan(self.CP, longitudinalPlan.speeds, longitudinalPlan.accels)
+    longitudinalPlan.aTarget = a_target
+    longitudinalPlan.shouldStop = should_stop
+    longitudinalPlan.allowBrake = True
+    longitudinalPlan.allowThrottle = True
 
     pm.send('longitudinalPlan', plan_send)
 
+
     # dp - extension
     plan_ext_send = messaging.new_message('longitudinalPlanExt')
-
     plan_ext_send.valid = True
 
     longitudinalPlanExt = plan_ext_send.longitudinalPlanExt
-
-    longitudinalPlanExt.visionTurnControllerState = self.vision_turn_controller.state
-    longitudinalPlanExt.visionTurnSpeed = float(self.vision_turn_controller.v_turn)
-
-    longitudinalPlanExt.dpE2EIsBlended = self.mpc.mode == 'blended'
-    longitudinalPlanExt.de2eIsEnabled = self.dynamic_endtoend_controller.is_enabled()
-
-    longitudinalPlanExt.longitudinalPlanExtSource = self.mpc.source if self.mpc.source != 'cruise' else self.cruise_source
+    # longitudinalPlanExt.visionTurnControllerState = self.vision_turn_controller.state
+    # longitudinalPlanExt.visionTurnSpeed = float(self.vision_turn_controller.v_turn)
+    longitudinalPlanExt.de2eIsBlended = self.mpc.mode == 'blended'
+    longitudinalPlanExt.de2eIsEnabled = self._dynamic_endtoend_controller.is_enabled()
+    longitudinalPlanExt.altDrivingPersonalityIsActive = self._adp_controller.is_active()
+    # longitudinalPlanExt.longitudinalPlanExtSource = self.mpc.source if self.mpc.source != 'cruise' else self.cruise_source
 
     pm.send('longitudinalPlanExt', plan_ext_send)
-
-  def cruise_solutions(self, enabled, v_ego, a_ego, v_cruise, sm):
-    # Update controllers
-    self.vision_turn_controller.update(enabled, v_ego, a_ego, v_cruise, sm)
-
-    # Pick solution with lowest velocity target.
-    a_solutions = {'cruise': float("inf")}
-    v_solutions = {'cruise': v_cruise}
-
-    if self.vision_turn_controller.is_active:
-      a_solutions['turn'] = self.vision_turn_controller.a_target
-      v_solutions['turn'] = self.vision_turn_controller.v_turn
-
-    source = min(v_solutions, key=v_solutions.get)
-
-    return source, a_solutions[source], v_solutions[source]
