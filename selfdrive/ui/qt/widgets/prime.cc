@@ -16,6 +16,9 @@
 #include "selfdrive/ui/qt/qt_window.h"
 #include "selfdrive/ui/qt/widgets/wifi.h"
 
+// dp
+#include "common/params.h"
+
 using qrcodegen::QrCode;
 
 PairingQRWidget::PairingQRWidget(QWidget* parent) : QWidget(parent) {
@@ -225,10 +228,21 @@ SetupWidget::SetupWidget(QWidget* parent) : QFrame(parent) {
   content_layout->setContentsMargins(0, 0, 0, 0);
   content_layout->setSpacing(30);
 
+  // dp - hide it
+  if (!Params().getBool("dp_device_dm_unavailable") && !Params().getBool("dp_device_is_clone")) {
   WiFiPromptWidget *wifi_prompt = new WiFiPromptWidget;
   QObject::connect(wifi_prompt, &WiFiPromptWidget::openSettings, this, &SetupWidget::openSettings);
   content_layout->addWidget(wifi_prompt);
   content_layout->addStretch();
+  } else {
+    // rick - add an empty box to preserve layout
+    QVBoxLayout *empty_layout = new QVBoxLayout();
+    empty_layout->setContentsMargins(56, 40, 56, 40);
+    empty_layout->setSpacing(20);
+    content_layout->addLayout(empty_layout);
+    content_layout->addStretch();
+  }
+
 
   mainLayout->addWidget(content);
 

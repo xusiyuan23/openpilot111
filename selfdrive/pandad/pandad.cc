@@ -506,6 +506,9 @@ void peripheral_control_thread(Panda *panda, bool no_fan_control) {
 
   FirstOrderFilter integ_lines_filter(0, 30.0, 0.05);
 
+  // dp
+  bool dp_device_dm_unavailable = Params().getBool("dp_device_dm_unavailable");
+
   while (!do_exit && panda->connected()) {
     sm.update(1000);
 
@@ -518,7 +521,7 @@ void peripheral_control_thread(Panda *panda, bool no_fan_control) {
       }
     }
 
-    if (sm.updated("driverCameraState")) {
+    if (!dp_device_dm_unavailable && sm.updated("driverCameraState")) {
       auto event = sm["driverCameraState"];
       int cur_integ_lines = event.getDriverCameraState().getIntegLines();
 

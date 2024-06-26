@@ -231,6 +231,8 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_lat_road_edge_detection", PERSISTENT},
     {"dp_device_disable_logging", PERSISTENT},
     {"dp_toyota_pcm_compensation", PERSISTENT},
+    {"dp_device_is_clone", PERSISTENT},
+    {"dp_device_dm_unavailable", PERSISTENT},
 };
 
 } // namespace
