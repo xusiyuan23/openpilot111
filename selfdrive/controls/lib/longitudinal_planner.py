@@ -220,7 +220,6 @@ class LongitudinalPlanner:
 
     pm.send('longitudinalPlan', plan_send)
 
-
     # dp - extension
     plan_ext_send = messaging.new_message('longitudinalPlanExt')
     plan_ext_send.valid = True

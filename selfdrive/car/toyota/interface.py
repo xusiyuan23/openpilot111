@@ -153,10 +153,7 @@ class CarInterface(CarInterfaceBase):
       else:
         ret.stopAccel = -2.5
 
-      ret.stoppingDecelRate = 0.17
-      tune.kpV = [0.]
-      tune.kiV = [0.5]
-    elif candidate in TSS2_CAR:
+    if candidate in TSS2_CAR:
       tune.kpV = [0.0]
       tune.kiV = [0.5]
       ret.vEgoStopping = 0.25
