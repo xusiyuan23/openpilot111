@@ -12,6 +12,7 @@ from openpilot.selfdrive.car.toyota.values import ToyotaFlags, CAR, DBC, STEER_T
                                                   TSS2_CAR, RADAR_ACC_CAR, EPS_SCALE, UNSUPPORTED_DSU_CAR
 
 from openpilot.dp_ext.selfdrive.car.toyota.zss_controller import ZSSController
+from openpilot.dp_ext.selfdrive.car.toyota.bsm.state import BSMState
 
 SteerControlType = car.CarParams.SteerControlType
 
@@ -55,6 +56,8 @@ class CarState(CarStateBase):
     self.zssc = ZSSController()
     # for pcm compensation
     self.pcm_neutral_force = 0.
+    # enhanced bsm
+    self.bsm_state = BSMState()
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -172,6 +175,10 @@ class CarState(CarStateBase):
     if self.CP.enableBsm:
       ret.leftBlindspot = (cp.vl["BSM"]["L_ADJACENT"] == 1) or (cp.vl["BSM"]["L_APPROACHING"] == 1)
       ret.rightBlindspot = (cp.vl["BSM"]["R_ADJACENT"] == 1) or (cp.vl["BSM"]["R_APPROACHING"] == 1)
+
+    # dp - enhanced bsm
+    self.bsm_state.update_states(ret.leftBlindspot, ret.rightBlindspot)
+    ret.leftBlindspot, ret.rightBlindspot = self.bsm_state.get_signals()
 
     if self.CP.carFingerprint != CAR.TOYOTA_PRIUS_V:
       self.lkas_hud = copy.copy(cp_cam.vl["LKAS_HUD"])

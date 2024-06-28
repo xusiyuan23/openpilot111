@@ -72,6 +72,7 @@ def manager_init() -> None:
     ("dp_toyota_pcm_compensation", "0"),
     ("dp_device_is_clone", "0"),
     ("dp_device_dm_unavailable", "0"),
+    ("dp_toyota_enhanced_bsm", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))
