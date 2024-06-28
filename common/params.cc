@@ -234,6 +234,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_device_is_clone", PERSISTENT},
     {"dp_device_dm_unavailable", PERSISTENT},
     {"dp_toyota_enhanced_bsm", PERSISTENT},
+    {"dp_toyota_auto_brake_hold", PERSISTENT},
 };
 
 } // namespace
