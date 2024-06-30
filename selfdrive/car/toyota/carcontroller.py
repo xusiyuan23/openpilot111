@@ -15,6 +15,11 @@ from openpilot.dp_ext.selfdrive.car.toyota.pcm_compensation_controller import PC
 # for pcm compensation
 LongCtrlState = car.CarControl.Actuators.LongControlState
 
+# dp - for enhanced bsm
+from openpilot.dp_ext.selfdrive.car.toyota.bsm.controller import BSMController
+# dp - for auto brake hold
+from openpilot.dp_ext.selfdrive.car.toyota.brake_hold.controller import BrakeHoldController
+
 SteerControlType = car.CarParams.SteerControlType
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
@@ -51,6 +56,8 @@ class CarController(CarControllerBase):
     # dp
     self.dlc = DoorLockController()
     self.pcc = PCMCompensationController(CP, self.params, Params().get_bool("dp_toyota_pcm_compensation"))
+    self.bsmc = BSMController(self.CP)
+    self.bhc = BrakeHoldController()
 
   def update(self, CC, CS, now_nanos):
     actuators = CC.actuators
@@ -62,6 +69,12 @@ class CarController(CarControllerBase):
 
     # *** control msgs ***
     can_sends = []
+
+    # dp - for auto brake hold
+    can_sends = self.bhc.get_can_sends(self.frame, can_sends, CS.brakehold_governor, CS.stock_aeb)
+
+    # dp - for enhanced bsm
+    can_sends = self.bsmc.get_can_sends(self.frame, CS.out.vEgo, can_sends)
 
     result = self.dlc.process(CS.out.gearShifter, CS.out.vEgo, CS.out.doorOpen)
     if result:
