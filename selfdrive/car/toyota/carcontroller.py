@@ -54,10 +54,12 @@ class CarController(CarControllerBase):
     self.gas = 0
     self.accel = 0
     # dp
+    params = Params()
     self.dlc = DoorLockController()
-    self.pcc = PCMCompensationController(CP, self.params, Params().get_bool("dp_toyota_pcm_compensation"))
+    self.pcc = PCMCompensationController(CP, self.params, params.get_bool("dp_toyota_pcm_compensation"))
     self.bsmc = BSMController(self.CP)
     self.bhc = BrakeHoldController()
+    self._dp_toyota_sng = params.get_bool("dp_toyota_sng")
 
   def update(self, CC, CS, now_nanos):
     actuators = CC.actuators
@@ -139,6 +141,9 @@ class CarController(CarControllerBase):
       self.standstill_req = True
     if CS.pcm_acc_status != 8:
       # pcm entered standstill or it's disabled
+      self.standstill_req = False
+    # dp - sng hack
+    if self._dp_toyota_sng:
       self.standstill_req = False
 
     self.last_standstill = CS.out.standstill

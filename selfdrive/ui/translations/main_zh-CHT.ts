@@ -525,6 +525,16 @@ Reboot Required.</source>
 感謝 Alexandre Sato 的貢獻：https://github.com/AlexandreSato/
 需要重新啟動。</translation>
     </message>
+    <message>
+        <source>Enable Stop and Go (SnG) Hack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will stop sending standstill signal when the car is fully stopped.
+ONLY WORK ON SOME VEHICLES.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DeclinePage</name>

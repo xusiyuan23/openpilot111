@@ -376,6 +376,16 @@ Internet required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enable Stop and Go (SnG) Hack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will stop sending standstill signal when the car is fully stopped.
+ONLY WORK ON SOME VEHICLES.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Enable Enhanced BSM</source>
         <translation type="unfinished"></translation>
     </message>
