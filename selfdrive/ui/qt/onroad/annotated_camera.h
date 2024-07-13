@@ -44,7 +44,8 @@ private:
   PersonalityButton *personality_btn;
   KnightScanner *knight_scanner;
   RainbowPath *rainbow_path;
-  ChevronExt * chevron_ext;
+  ChevronExt *chevron_ext;
+  TeTooIndicator *tt_indicator;
   #endif
 
 protected:

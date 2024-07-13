@@ -53,6 +53,9 @@ def dp_onroad_uploads(started, params, CP: car.CarParams) -> bool:
 def dpdmonitoringd(started, params, CP: car.CarParams) -> bool:
   return params.get_bool("dp_device_dm_unavailable") and started
 
+def tetood(started, params, CP: car.CarParams) -> bool:
+  return started and (params.get_bool("dp_tetoo") or params.get_bool("dp_tetoo_speed_camera_taiwan"))
+
 procs = [
   DaemonProcess("manage_athenad", "system.athena.manage_athenad", "AthenadPid"),
 
@@ -100,6 +103,7 @@ procs = [
 
   #dp
   PythonProcess("dpdmonitoringd", "dp_ext.selfdrive.monitoring.dmonitoringd", dpdmonitoringd, enabled=not PC),
+  NativeProcess("tetood", "dp_ext/selfdrive/tetood", ["./tetood"], tetood),
 ]
 
 managed_processes = {p.name: p for p in procs}
