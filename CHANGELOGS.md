@@ -1,5 +1,11 @@
 dragonpilot 0.9.8
 =======================
+* Up to comma.ai openpilot master branch commit cbee4421da690fa7b260f62c4a2c72ccacc6c902 (2024-07-14)
+* DP HIGHLIGHT:
+  * Fixed Lexus IS/GS crashed issue.
+
+dragonpilot [2024.07.13]
+=======================
 * Up to comma.ai openpilot master branch commit 01c2174d5968266b87f1d1fecefce5affaeaa624 (2024-07-02)
 * DP HIGHLIGHT:
   * (TESTING) Tē-Tôo / Map Module

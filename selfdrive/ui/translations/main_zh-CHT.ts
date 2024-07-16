@@ -568,18 +568,6 @@ Internet required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Speed Camera Warning Threshold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Only show the warning when the speed camera limit is within threshold (+/-) % of the vehicle speed or cruise speed or road limit speed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enable Auto Shutdown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -601,12 +589,6 @@ Reboot required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>When enabled, openpilot will display live road name using OpenStreetMap data.
-DO NOT USE IT WITH COMMA PRIME SUBSCRIPTION.
-Internet required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -621,6 +603,24 @@ Internet required.</source>
     <message>
         <source>Warning - Only emits sound when there is a warning.
 Off - Does not emit any sound at all.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will display live road name using OpenStreetMap data.
+DO NOT USE IT WITH COMMA PRIME SUBSCRIPTION.
+Internet required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speed Camera Warning Threshold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only show the warning when the speed camera limit is within threshold (+/-) % of the vehicle speed or cruise speed or road limit speed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
