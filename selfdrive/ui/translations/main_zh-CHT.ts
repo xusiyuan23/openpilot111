@@ -187,19 +187,19 @@ Reboot required.</source>
     </message>
     <message>
         <source>Enable Slow Down on Curve</source>
-        <translation>啟用彎道減速</translation>
+        <translation type="vanished">啟用彎道減速</translation>
     </message>
     <message>
         <source>When enabled, openpilot will reduce vehicle speed on curve road using algorithm found in taco2 branch.
 See https://github.com/commaai/openpilot/commit/7b97ddb3aacb222bfaf0b978c49cb5b756903ef7 for more information.
 Reboot required.</source>
-        <translation>啟用後，Openpilot將使用在 taco2 分支中找到的算法，在彎道上減少車輛速度。
+        <translation type="vanished">啟用後，Openpilot將使用在 taco2 分支中找到的算法，在彎道上減少車輛速度。
 詳細信息請查看https://github.com/commaai/openpilot/commit/7b97ddb3aacb222bfaf0b978c49cb5b756903ef7。
 需要重新啟動。</translation>
     </message>
     <message>
         <source>Enable Dynamic End-to-End Longitudinal Control</source>
-        <translation>啟用動態端到端縱向控制</translation>
+        <translation type="vanished">啟用動態端到端縱向控制</translation>
     </message>
     <message>
         <source>When enabled, openpilot will dynamically change between End-to-End or ACC mode.
@@ -510,7 +510,7 @@ Auto - Change lane automatically.</source>
     </message>
     <message>
         <source>When enabled, openpilot will dynamically change between End-to-End or ACC mode.</source>
-        <translation>啟用後，openpilot 將動態切換端到端或 ACC 模式。</translation>
+        <translation type="vanished">啟用後，openpilot 將動態切換端到端或 ACC 模式。</translation>
     </message>
     <message>
         <source>Enable Automatic Brake Hold</source>
@@ -558,14 +558,6 @@ Internet required.</source>
     <message>
         <source>When enabled, openpilot will display speed camera warning using offline database.</source>
         <translation>啟用後，openpilot 將使用離線資料庫顯示測速照相警告。</translation>
-    </message>
-    <message>
-        <source>Enable Road Condition Detection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, Dynamic End-to-End will check road condition such as traffic signals, large curve, stop sign.</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enable Auto Shutdown</source>

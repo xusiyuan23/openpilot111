@@ -142,7 +142,7 @@ class LongitudinalPlanner:
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
 
     if self.mpc.mode == 'acc':
-      self._pac.update(sm['carState'], sm['radarState'].leadOne.status and v_ego > 0. and sm['radarState'].leadOne.dRel / v_ego < 1.)
+      self._pac.update(sm['carState'], sm['radarState'].leadOne.status and v_ego > 0. and sm['radarState'].leadOne.dRel / v_ego < 2.5)
       # accel_limits = [A_CRUISE_MIN, get_max_accel(v_ego)]
       accel_limits = [A_CRUISE_MIN, self._pac.get_max_accel(v_ego, A_CRUISE_MAX_BP, A_CRUISE_MAX_VALS)]
       accel_limits_turns = limit_accel_in_turns(v_ego, sm['carState'].steeringAngleDeg, accel_limits, self.CP)

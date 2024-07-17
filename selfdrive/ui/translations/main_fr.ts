@@ -198,32 +198,6 @@ Reboot required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable Slow Down on Curve</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will reduce vehicle speed on curve road using algorithm found in taco2 branch.
-See https://github.com/commaai/openpilot/commit/7b97ddb3aacb222bfaf0b978c49cb5b756903ef7 for more information.
-Reboot required.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Dynamic End-to-End Longitudinal Control</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, openpilot will dynamically change between End-to-End or ACC mode.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable Road Condition Detection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>When enabled, Dynamic End-to-End will check road condition such as traffic signals, large curve, stop sign.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>On-Screen Personality Button</source>
         <translation type="unfinished"></translation>
     </message>
