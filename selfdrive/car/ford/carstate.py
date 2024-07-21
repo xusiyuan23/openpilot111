@@ -15,8 +15,7 @@ class CarState(CarStateBase):
     super().__init__(CP)
     can_define = CANDefine(DBC[CP.carFingerprint]["pt"])
     if CP.transmissionType == TransmissionType.automatic:
-      self.shifter_values = can_define.dv["PowertrainData_10"]["TrnRng_D_Rq"]
-
+    self.shifter_values = can_define.dv["TransGearData"]["GearLvrPos_D_Actl"]
     self.vehicle_sensors_valid = False
 
     self.prev_distance_button = 0
