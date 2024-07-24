@@ -20,7 +20,7 @@ from openpilot.common.params import Params
 from openpilot.dp_ext.selfdrive.controls.lib.dynamic_endtoend_controller import DynamicEndtoEndController
 from openpilot.dp_ext.selfdrive.controls.lib.alt_driving_personality_controller import AlternativeDrivingPersonalityController
 from openpilot.dp_ext.selfdrive.controls.lib.curve_speed_limiter import CurveSpeedLimiter
-from openpilot.dp_ext.selfdrive.controls.lib.personalized_accel_controller import PersonalizedAccelController
+from openpilot.dp_ext.selfdrive.controls.lib.personalized_accel_learner import PersonalizedAccelLearner
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MIN = -1.2
@@ -91,7 +91,7 @@ class LongitudinalPlanner:
     self._dynamic_endtoend_controller = DynamicEndtoEndController()
     self._adp_controller = AlternativeDrivingPersonalityController()
     self._curve_speed_limiter = CurveSpeedLimiter()
-    self._pac = PersonalizedAccelController()
+    self._pal = PersonalizedAccelLearner()
 
   @staticmethod
   def parse_model(model_msg, model_error):
@@ -111,8 +111,8 @@ class LongitudinalPlanner:
 
   def update(self, sm):
     if self._frame % 50 == 0:
-      self._dynamic_endtoend_controller.set_enabled(self.params.get_bool("dp_long_de2e"))
-      self._pac.set_enabled(self.params.get_bool("dp_long_pac"))
+      self._dynamic_endtoend_controller.set_enabled(sm['controlsState'].experimentalMode and self.params.get_bool("dp_long_de2e"))
+      self._pal.set_enabled(self.params.get_bool("dp_long_pal"))
 
     self._frame += 1
 
@@ -142,9 +142,8 @@ class LongitudinalPlanner:
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
 
     if self.mpc.mode == 'acc':
-      self._pac.update(sm['carState'], sm['radarState'].leadOne.status and v_ego > 0. and sm['radarState'].leadOne.dRel / v_ego < 2.5)
-      # accel_limits = [A_CRUISE_MIN, get_max_accel(v_ego)]
-      accel_limits = [A_CRUISE_MIN, self._pac.get_max_accel(v_ego, A_CRUISE_MAX_BP, A_CRUISE_MAX_VALS)]
+      self._pal.update(sm['carState'], sm['radarState'].leadOne.status and v_ego > 0. and sm['radarState'].leadOne.dRel / v_ego < 2.5)
+      accel_limits = [A_CRUISE_MIN, self._pal.get_max_accel(v_ego, A_CRUISE_MAX_BP, A_CRUISE_MAX_VALS)]
       accel_limits_turns = limit_accel_in_turns(v_ego, sm['carState'].steeringAngleDeg, accel_limits, self.CP)
     else:
       accel_limits = [ACCEL_MIN, ACCEL_MAX]

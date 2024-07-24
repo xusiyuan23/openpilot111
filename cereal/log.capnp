@@ -2352,7 +2352,7 @@ struct Event {
     controlsStateExt @107 :Custom.ControlsStateExt;
     longitudinalPlanExt @108 :Custom.LongitudinalPlanExt;
     teToo @109 :Custom.TeToo;
-    customReserved3 @110 :Custom.CustomReserved3;
+    lateralPlan @110 :LateralPlan;
     customReserved4 @111 :Custom.CustomReserved4;
     customReserved5 @112 :Custom.CustomReserved5;
     customReserved6 @113 :Custom.CustomReserved6;

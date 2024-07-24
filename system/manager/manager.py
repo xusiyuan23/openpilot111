@@ -84,7 +84,13 @@ def manager_init() -> None:
     ("dp_device_auto_shutdown", "0"),
     ("dp_device_auto_shutdown_in", "30"),
     ("dp_device_audible_alert_mode", "0"),
-    ("dp_long_pac", "0"),
+    ("dp_long_pal", "0"),
+    ("dp_long_pal_freeze", "0"),
+    ("dp_long_pal_launch_boost", "0"),
+    ("dp_vag_pq_steering_patch", "0"),
+    ("dp_lat_lane_priority_mode", "0"),
+    ("dp_lat_lane_priority_mode_speed", "0"),
+    ("dp_lat_lane_priority_mode_camera_offset", "4"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))
