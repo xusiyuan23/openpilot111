@@ -56,6 +56,9 @@ def dpdmonitoringd(started, params, CP: car.CarParams) -> bool:
 def tetood(started, params, CP: car.CarParams) -> bool:
   return started and (params.get_bool("dp_tetoo") or params.get_bool("dp_tetoo_speed_camera_taiwan"))
 
+def latpland(started, params, CP: car.CarParams) -> bool:
+  return started and params.get_bool("dp_lat_lane_priority_mode")
+
 procs = [
   DaemonProcess("manage_athenad", "system.athena.manage_athenad", "AthenadPid"),
 
@@ -104,6 +107,7 @@ procs = [
   #dp
   PythonProcess("dpdmonitoringd", "dp_ext.selfdrive.monitoring.dmonitoringd", dpdmonitoringd, enabled=not PC),
   NativeProcess("tetood", "dp_ext/selfdrive/tetood", ["./tetood"], tetood),
+  PythonProcess("latpland", "dp_ext.selfdrive.controls.latpland", latpland),
 ]
 
 managed_processes = {p.name: p for p in procs}

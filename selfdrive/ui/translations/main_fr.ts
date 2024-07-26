@@ -129,6 +129,44 @@ Reboot required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enable Lane Priority Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will use lane lines for lateral control, fallback to laneless mode automatically when lane lines probabilities are low.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only When Drive Above</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Any - Use Lane Line when available.
+*Number* - Use Lane Line when available and when vehicle speed is above the *number*.
+1 km/h = 0.62 mph.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> km/h</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Any</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera Offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Adjust your camera position if your device is not mounted as per guidance.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> cm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>OP</source>
         <translation type="unfinished"></translation>
     </message>
@@ -174,14 +212,6 @@ Reboot required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> km/h</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Any</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Perform Auto Lane Change After</source>
         <translation type="unfinished"></translation>
     </message>
@@ -195,6 +225,40 @@ Reboot required.</source>
     </message>
     <message>
         <source>Ctrl - Longitudinal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable PAL (Personalized Accel Learner)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will learn from your acceleration habits.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Freeze PAL Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will stop updating your PAL parameters.
+Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Dynamic End-to-End Longitudinal Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, openpilot will dynamically change between End-to-End or ACC mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Road Condition Detection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When enabled, Dynamic End-to-End will check road condition such as traffic signals, large curve, stop sign.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -233,6 +297,30 @@ Once activate, the lead vehicle indicator will display an &quot;A&quot;</source>
     </message>
     <message>
         <source>Alt. Driving Personality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PAL Launch Boost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Boost initial acceleration (up to 18 km/h ≈ 11 mph), limited to 2 m/s².</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> %</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reset PAL Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RESET</source>
+        <translation type="unfinished">RÉINITIALISER</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to reset PAL parameters?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -422,10 +510,6 @@ Internet required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> %</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Toyota / Lexus</source>
         <translation type="unfinished"></translation>
     </message>
@@ -514,6 +598,14 @@ Reboot required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Patch for modified PQ Platform</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reboot Required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Hyundai / Kia / Genesis</source>
         <translation type="unfinished"></translation>
     </message>
@@ -530,10 +622,6 @@ Reboot required.</source>
     <message>
         <source>Reset dragonpilot settings</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RESET</source>
-        <translation type="unfinished">RÉINITIALISER</translation>
     </message>
     <message>
         <source>Are you sure you want to reset all dp settings?
@@ -696,6 +784,18 @@ This will also reboot your device.</source>
     </message>
     <message>
         <source>PAIR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete All Logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DELETE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete all logs?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

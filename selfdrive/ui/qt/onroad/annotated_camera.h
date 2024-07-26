@@ -47,6 +47,7 @@ private:
   ChevronExt *chevron_ext;
   TeTooIndicator *tt_indicator;
   #endif
+  bool dp_lat_lane_priority_mode_active = false;
 
 protected:
   void paintGL() override;

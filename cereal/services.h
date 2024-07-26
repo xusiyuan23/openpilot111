@@ -81,6 +81,7 @@ static std::map<std::string, service> services = {
   { "controlsStateExt", {"controlsStateExt", false, 100, 10}},
   { "longitudinalPlanExt", {"longitudinalPlanExt", false, 20, 5}},
   { "teToo", {"teToo", false, 5, -1}},
+  { "lateralPlan", {"lateralPlan", false, 20, 5}},
 };
 #endif
 
